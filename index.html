@@ -1,428 +1,167 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ore AI</title>
 
-    <title>Ore</title>
+```
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        ore: {
-                            green: "#10B981",
-                            dark: "#000000",
-                            sidebar: "#050505",
-                            surface: "#171717",
-                            border: "#262626",
-                            muted: "#8E8E8E"
-                        }
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    ore: {
+                        green: "#22c55e",
+                        dark: "#050505",
+                        panel: "#0b0b0b",
+                        border: "#1f1f1f"
                     }
                 }
             }
         }
-    </script>
+    }
+</script>
 
-    <style>
-        * {
-            box-sizing: border-box;
+<style>
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #2a2a2a transparent;
+    }
+
+    body {
+        background: #050505;
+        color: #ffffff;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    .message-content {
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .sidebar-transition {
+        transition: transform 0.25s ease, width 0.25s ease;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
         }
 
-        html,
-        body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            color: #ECECEC;
-            font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .typing-dot {
+        animation: typing 1.2s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            opacity: 0.25;
         }
 
-        body {
-            overflow: hidden;
+        30% {
+            opacity: 1;
         }
+    }
+</style>
+```
 
-        ::selection {
-            background: rgba(16, 185, 129, 0.25);
-        }
-
-        .scrollbar::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .scrollbar::-webkit-scrollbar-thumb {
-            background: #262626;
-            border-radius: 999px;
-        }
-
-        .scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #3a3a3a;
-        }
-
-        .sidebar-transition {
-            transition:
-                width 0.2s ease,
-                transform 0.2s ease;
-        }
-
-        .message-fade {
-            animation: messageFade 0.2s ease;
-        }
-
-        @keyframes messageFade {
-            from {
-                opacity: 0;
-                transform: translateY(4px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 </head>
 
-<body>
+<body class="h-screen overflow-hidden bg-[#050505] text-white">
 
-<!-- ========================================================= -->
-<!-- AUTHENTICATION SCREEN -->
-<!-- ========================================================= -->
+```
+<!-- =====================================================
+     APP
+====================================================== -->
 
-<div
-    id="auth-screen"
-    class="fixed inset-0 z-50 flex min-h-screen items-center justify-center bg-black px-4"
->
+<div class="flex h-screen w-full">
 
-    <div class="w-full max-w-sm">
-
-        <!-- Ore Logo -->
-        <div class="mb-8 flex justify-center">
-
-            <div
-                class="flex h-16 w-16 items-center justify-center rounded-2xl
-                       border border-emerald-500/30
-                       bg-emerald-500/10
-                       shadow-[0_0_40px_rgba(16,185,129,0.08)]"
-            >
-
-                <!-- Diamond -->
-                <svg
-                    viewBox="0 0 24 24"
-                    class="h-8 w-8 fill-none stroke-emerald-400"
-                    stroke-width="1.7"
-                >
-                    <path d="M12 2L3 8.5L12 22L21 8.5L12 2Z"/>
-                    <path d="M3 8.5H21"/>
-                    <path d="M8 8.5L12 22L16 8.5"/>
-                </svg>
-
-            </div>
-
-        </div>
-
-        <!-- Heading -->
-        <div class="mb-8 text-center">
-
-            <h1 class="text-3xl font-semibold tracking-tight text-white">
-                Welcome to Ore
-            </h1>
-
-            <p class="mt-2 text-sm text-neutral-500">
-                Your Nigerian AI assistant
-            </p>
-
-        </div>
-
-        <!-- Auth Card -->
-        <div
-            class="rounded-2xl border border-neutral-800
-                   bg-[#0D0D0D] p-6"
-        >
-
-            <!-- Tabs -->
-            <div
-                class="mb-6 flex rounded-xl border border-neutral-800
-                       bg-black p-1"
-            >
-
-                <button
-                    id="login-tab"
-                    onclick="showLogin()"
-                    class="flex-1 rounded-lg bg-neutral-800
-                           px-4 py-2 text-sm font-medium text-white"
-                >
-                    Sign in
-                </button>
-
-                <button
-                    id="signup-tab"
-                    onclick="showSignup()"
-                    class="flex-1 rounded-lg px-4 py-2
-                           text-sm font-medium text-neutral-500
-                           transition hover:text-white"
-                >
-                    Create account
-                </button>
-
-            </div>
-
-            <!-- Login -->
-            <form id="login-form" class="space-y-4">
-
-                <div>
-
-                    <label class="mb-2 block text-xs text-neutral-400">
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        placeholder="you@example.com"
-                        class="w-full rounded-xl border border-neutral-800
-                               bg-black px-4 py-3 text-sm text-white
-                               outline-none transition
-                               placeholder:text-neutral-700
-                               focus:border-emerald-500/60"
-                    >
-
-                </div>
-
-                <div>
-
-                    <label class="mb-2 block text-xs text-neutral-400">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        placeholder="Enter your password"
-                        class="w-full rounded-xl border border-neutral-800
-                               bg-black px-4 py-3 text-sm text-white
-                               outline-none transition
-                               placeholder:text-neutral-700
-                               focus:border-emerald-500/60"
-                    >
-
-                </div>
-
-                <button
-                    type="button"
-                    onclick="openOre()"
-                    class="w-full rounded-xl bg-emerald-500
-                           py-3 text-sm font-semibold text-black
-                           transition hover:bg-emerald-400"
-                >
-                    Sign in
-                </button>
-
-            </form>
-
-            <!-- Signup -->
-            <form id="signup-form" class="hidden space-y-4">
-
-                <div>
-
-                    <label class="mb-2 block text-xs text-neutral-400">
-                        Name
-                    </label>
-
-                    <input
-                        type="text"
-                        placeholder="Your name"
-                        class="w-full rounded-xl border border-neutral-800
-                               bg-black px-4 py-3 text-sm text-white
-                               outline-none transition
-                               placeholder:text-neutral-700
-                               focus:border-emerald-500/60"
-                    >
-
-                </div>
-
-                <div>
-
-                    <label class="mb-2 block text-xs text-neutral-400">
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        placeholder="you@example.com"
-                        class="w-full rounded-xl border border-neutral-800
-                               bg-black px-4 py-3 text-sm text-white
-                               outline-none transition
-                               placeholder:text-neutral-700
-                               focus:border-emerald-500/60"
-                    >
-
-                </div>
-
-                <div>
-
-                    <label class="mb-2 block text-xs text-neutral-400">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        placeholder="Create a password"
-                        class="w-full rounded-xl border border-neutral-800
-                               bg-black px-4 py-3 text-sm text-white
-                               outline-none transition
-                               placeholder:text-neutral-700
-                               focus:border-emerald-500/60"
-                    >
-
-                </div>
-
-                <button
-                    type="button"
-                    onclick="openOre()"
-                    class="w-full rounded-xl bg-emerald-500
-                           py-3 text-sm font-semibold text-black
-                           transition hover:bg-emerald-400"
-                >
-                    Create account
-                </button>
-
-            </form>
-
-            <!-- Divider -->
-            <div class="my-6 flex items-center gap-3">
-
-                <div class="h-px flex-1 bg-neutral-800"></div>
-
-                <span class="text-[11px] uppercase tracking-wider text-neutral-600">
-                    or
-                </span>
-
-                <div class="h-px flex-1 bg-neutral-800"></div>
-
-            </div>
-
-            <!-- Guest -->
-            <button
-                onclick="openOre()"
-                class="w-full rounded-xl border border-neutral-800
-                       bg-transparent py-3 text-sm font-medium
-                       text-neutral-300 transition
-                       hover:bg-neutral-900 hover:text-white"
-            >
-                Continue as guest
-            </button>
-
-        </div>
-
-        <p class="mt-5 text-center text-xs text-neutral-600">
-            Ore · Nigerian AI
-        </p>
-
-    </div>
-
-</div>
-
-
-<!-- ========================================================= -->
-<!-- MAIN ORE APPLICATION -->
-<!-- ========================================================= -->
-
-<div
-    id="ore-app"
-    class="hidden h-screen w-full bg-black"
->
-
-    <!-- ===================================================== -->
-    <!-- SIDEBAR -->
-    <!-- ===================================================== -->
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
 
     <aside
         id="sidebar"
-        class="sidebar-transition flex h-full w-[260px]
-               shrink-0 flex-col border-r border-neutral-900
-               bg-[#050505]"
+        class="sidebar-transition fixed inset-y-0 left-0 z-40 flex w-[280px] -translate-x-full flex-col border-r border-[#1f1f1f] bg-[#080808] md:relative md:translate-x-0"
     >
 
-        <!-- Sidebar Top -->
-        <div class="p-3">
+        <!-- Logo -->
+        <div class="flex h-16 items-center px-5">
 
-            <!-- Ore Brand -->
-            <div class="mb-4 flex items-center justify-between px-2 py-2">
+            <div class="flex items-center gap-3">
 
-                <div class="flex items-center gap-3">
-
-                    <div
-                        class="flex h-8 w-8 items-center justify-center
-                               rounded-lg border border-emerald-500/30
-                               bg-emerald-500/10"
+                <!-- Green Diamond -->
+                <div class="flex h-9 w-9 items-center justify-center">
+                    <svg
+                        viewBox="0 0 40 40"
+                        class="h-9 w-9"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                     >
+                        <path
+                            d="M20 3L35 20L20 37L5 20L20 3Z"
+                            stroke="#22c55e"
+                            stroke-width="2.5"
+                        />
 
-                        <svg
-                            viewBox="0 0 24 24"
-                            class="h-5 w-5 fill-none stroke-emerald-400"
-                            stroke-width="1.8"
-                        >
-                            <path d="M12 2L3 8.5L12 22L21 8.5L12 2Z"/>
-                            <path d="M3 8.5H21"/>
-                            <path d="M8 8.5L12 22L16 8.5"/>
-                        </svg>
-
-                    </div>
-
-                    <span class="text-lg font-semibold text-white">
-                        Ore
-                    </span>
-
+                        <path
+                            d="M20 9L29.5 20L20 31L10.5 20L20 9Z"
+                            fill="#22c55e"
+                        />
+                    </svg>
                 </div>
 
-                <button
-                    onclick="toggleSidebar()"
-                    class="rounded-lg p-2 text-neutral-600
-                           transition hover:bg-neutral-900
-                           hover:text-white"
-                >
-                    <svg
-                        class="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        viewBox="0 0 24 24"
-                    >
-                        <path d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
+                <span class="text-lg font-semibold tracking-tight">
+                    Ore
+                </span>
 
             </div>
 
-            <!-- New Chat -->
+        </div>
+
+
+        <!-- New Chat -->
+        <div class="px-3 pt-2">
+
             <button
                 onclick="newChat()"
-                class="flex w-full items-center gap-3 rounded-xl
-                       border border-neutral-800 bg-neutral-900
-                       px-4 py-3 text-sm font-medium text-white
-                       transition hover:bg-neutral-800"
+                class="flex w-full items-center gap-3 rounded-xl border border-[#242424] bg-[#111111] px-4 py-3 text-sm text-gray-200 transition hover:bg-[#181818]"
             >
 
                 <svg
-                    class="h-4 w-4 text-neutral-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     stroke-width="1.8"
-                    viewBox="0 0 24 24"
                 >
                     <path d="M12 5v14M5 12h14"/>
                 </svg>
@@ -434,102 +173,100 @@
         </div>
 
 
-        <!-- Recent Chats -->
-        <div class="scrollbar flex-1 overflow-y-auto px-3">
+        <!-- Recent -->
+        <div class="flex-1 overflow-y-auto px-3 pt-7">
 
-            <p
-                class="px-2 py-3 text-[11px] font-medium
-                       uppercase tracking-wider text-neutral-700"
-            >
+            <p class="px-3 text-xs font-medium uppercase tracking-wider text-gray-500">
                 Recent
             </p>
 
             <div
-                id="conversation-list"
-                class="space-y-1"
+                id="recentChats"
+                class="mt-3 space-y-1"
             >
 
-                <!-- Conversations will appear here later -->
+                <div class="rounded-lg px-3 py-2 text-sm text-gray-500">
+                    No conversations yet
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- Sidebar Bottom -->
-        <div class="border-t border-neutral-900 p-3">
+        <!-- User -->
+        <div class="border-t border-[#1f1f1f] p-3">
 
-            <button
-                class="flex w-full items-center gap-3 rounded-xl
-                       px-3 py-3 text-left transition
-                       hover:bg-neutral-900"
-            >
+            <div class="flex items-center gap-3 rounded-xl px-3 py-3">
 
-                <div
-                    class="flex h-8 w-8 items-center justify-center
-                           rounded-full bg-neutral-800
-                           text-xs font-semibold text-white"
-                >
-                    U
+                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#1a1a1a] text-sm font-medium">
+                    G
                 </div>
 
                 <div class="min-w-0 flex-1">
 
-                    <p class="truncate text-sm font-medium text-white">
+                    <p class="truncate text-sm font-medium">
                         Guest
                     </p>
 
-                    <p class="text-xs text-neutral-600">
-                        Free account
+                    <p class="text-xs text-gray-500">
+                        Free
                     </p>
 
                 </div>
 
-                <svg
-                    class="h-4 w-4 text-neutral-600"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    viewBox="0 0 24 24"
+                <button
+                    class="text-gray-500 hover:text-white"
+                    title="Settings"
                 >
-                    <path d="M6 9l6 6 6-6"/>
-                </svg>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.04 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.56-1.04H6v-2.4h.2A1.7 1.7 0 0 0 7.76 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06A1.7 1.7 0 0 0 11 6.76 1.7 1.7 0 0 0 12.04 5.2V5h2.4v.2A1.7 1.7 0 0 0 15.48 6.76a1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 18.72 10a1.7 1.7 0 0 0 1.56 1.04h.2v2.4h-.2A1.7 1.7 0 0 0 19.4 15Z"/>
+                    </svg>
+                </button>
 
-            </button>
+            </div>
 
         </div>
 
     </aside>
 
 
-    <!-- ===================================================== -->
-    <!-- MAIN -->
-    <!-- ===================================================== -->
+    <!-- =================================================
+         MAIN
+    ================================================== -->
 
-    <main class="flex min-w-0 flex-1 flex-col bg-black">
+    <main class="relative flex min-w-0 flex-1 flex-col bg-[#050505]">
 
 
-        <!-- Header -->
-        <header
-            class="flex h-14 shrink-0 items-center
-                   justify-between border-b border-neutral-900
-                   px-4"
-        >
+        <!-- =================================================
+             HEADER
+        ================================================== -->
 
-            <!-- Mobile / collapsed sidebar -->
+        <header class="flex h-16 shrink-0 items-center border-b border-[#181818] px-4">
+
+            <!-- Mobile sidebar button -->
             <button
                 onclick="toggleSidebar()"
-                class="rounded-lg p-2 text-neutral-500
-                       transition hover:bg-neutral-900
-                       hover:text-white"
+                class="mr-3 flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-[#111111] hover:text-white md:hidden"
             >
 
                 <svg
-                    class="h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     stroke-width="1.8"
-                    viewBox="0 0 24 24"
                 >
                     <path d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
@@ -537,173 +274,205 @@
             </button>
 
 
-            <!-- Header Ore -->
-            <div class="flex items-center gap-2">
+            <!-- Ore header logo -->
 
-                <div
-                    class="flex h-7 w-7 items-center justify-center
-                           rounded-lg bg-emerald-500/10
-                           border border-emerald-500/20"
+            <div class="flex items-center gap-2.5">
+
+                <svg
+                    viewBox="0 0 40 40"
+                    class="h-7 w-7"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                 >
+                    <path
+                        d="M20 3L35 20L20 37L5 20L20 3Z"
+                        stroke="#22c55e"
+                        stroke-width="2.5"
+                    />
 
-                    <svg
-                        viewBox="0 0 24 24"
-                        class="h-4 w-4 fill-none stroke-emerald-400"
-                        stroke-width="1.8"
-                    >
-                        <path d="M12 2L3 8.5L12 22L21 8.5L12 2Z"/>
-                        <path d="M3 8.5H21"/>
-                        <path d="M8 8.5L12 22L16 8.5"/>
-                    </svg>
+                    <path
+                        d="M20 9L29.5 20L20 31L10.5 20L20 9Z"
+                        fill="#22c55e"
+                    />
+                </svg>
 
-                </div>
-
-                <span class="text-sm font-semibold text-white">
+                <span class="font-semibold">
                     Ore
                 </span>
 
             </div>
 
-
-            <!-- Header spacer -->
-            <div class="w-9"></div>
-
         </header>
 
 
-        <!-- ================================================= -->
-        <!-- CHAT -->
-        <!-- ================================================= -->
+        <!-- =================================================
+             CHAT AREA
+        ================================================== -->
 
         <section
-            id="chat-container"
-            class="scrollbar flex-1 overflow-y-auto"
+            id="chatArea"
+            class="flex-1 overflow-y-auto"
         >
 
+            <!-- Welcome -->
+
             <div
-                id="chat-messages"
-                class="mx-auto flex min-h-full
-                       w-full max-w-3xl flex-col
-                       px-5 pb-36 pt-8"
+                id="welcomeScreen"
+                class="flex min-h-full flex-col items-center justify-center px-5 pb-32"
             >
 
-                <!-- Welcome -->
-                <div
-                    id="welcome-screen"
-                    class="flex flex-1 flex-col
-                           items-center justify-center
-                           py-20 text-center"
-                >
+                <div class="mb-7">
 
-                    <!-- Large Diamond -->
-                    <div
-                        class="mb-7 flex h-20 w-20 items-center
-                               justify-center rounded-3xl
-                               border border-emerald-500/20
-                               bg-emerald-500/5
-                               shadow-[0_0_60px_rgba(16,185,129,0.06)]"
+                    <svg
+                        viewBox="0 0 80 80"
+                        class="h-20 w-20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
                     >
 
-                        <svg
-                            viewBox="0 0 24 24"
-                            class="h-10 w-10 fill-none stroke-emerald-400"
-                            stroke-width="1.5"
-                        >
-                            <path d="M12 2L3 8.5L12 22L21 8.5L12 2Z"/>
-                            <path d="M3 8.5H21"/>
-                            <path d="M8 8.5L12 22L16 8.5"/>
-                        </svg>
+                        <path
+                            d="M40 4L72 40L40 76L8 40L40 4Z"
+                            stroke="#22c55e"
+                            stroke-width="3"
+                        />
 
-                    </div>
+                        <path
+                            d="M40 17L60 40L40 63L20 40L40 17Z"
+                            fill="#22c55e"
+                        />
+
+                    </svg>
+
+                </div>
 
 
-                    <h1
-                        class="text-3xl font-semibold
-                               tracking-tight text-white"
+                <h1 class="text-center text-3xl font-semibold tracking-tight sm:text-4xl">
+                    How can Ore help?
+                </h1>
+
+                <p class="mt-3 max-w-lg text-center text-sm leading-6 text-gray-500 sm:text-base">
+                    Ask Ore about Nigeria, history, geography, culture,
+                    technology, education, business and more.
+                </p>
+
+
+                <!-- Example prompts -->
+
+                <div class="mt-8 grid w-full max-w-2xl grid-cols-1 gap-2 sm:grid-cols-2">
+
+                    <button
+                        onclick="usePrompt('Tell me about Nigerian history')"
+                        class="rounded-xl border border-[#1f1f1f] bg-[#0b0b0b] p-4 text-left transition hover:border-[#333333] hover:bg-[#101010]"
                     >
-                        What can I help you with?
-                    </h1>
+                        <p class="text-sm font-medium">
+                            Nigerian history
+                        </p>
+
+                        <p class="mt-1 text-xs text-gray-500">
+                            Explore important events and people
+                        </p>
+                    </button>
 
 
-                    <p
-                        class="mt-3 max-w-md text-sm
-                               leading-6 text-neutral-500"
+                    <button
+                        onclick="usePrompt('What are the six geopolitical zones in Nigeria?')"
+                        class="rounded-xl border border-[#1f1f1f] bg-[#0b0b0b] p-4 text-left transition hover:border-[#333333] hover:bg-[#101010]"
                     >
-                        Ask Ore about Nigeria, history, geography,
-                        culture, technology, or anything else.
-                    </p>
+                        <p class="text-sm font-medium">
+                            Nigerian geography
+                        </p>
+
+                        <p class="mt-1 text-xs text-gray-500">
+                            Learn about regions and states
+                        </p>
+                    </button>
+
+
+                    <button
+                        onclick="usePrompt('Tell me about Nigerian culture')"
+                        class="rounded-xl border border-[#1f1f1f] bg-[#0b0b0b] p-4 text-left transition hover:border-[#333333] hover:bg-[#101010]"
+                    >
+                        <p class="text-sm font-medium">
+                            Nigerian culture
+                        </p>
+
+                        <p class="mt-1 text-xs text-gray-500">
+                            Languages, food and traditions
+                        </p>
+                    </button>
+
+
+                    <button
+                        onclick="usePrompt('Explain how technology is changing Nigeria')"
+                        class="rounded-xl border border-[#1f1f1f] bg-[#0b0b0b] p-4 text-left transition hover:border-[#333333] hover:bg-[#101010]"
+                    >
+                        <p class="text-sm font-medium">
+                            Technology
+                        </p>
+
+                        <p class="mt-1 text-xs text-gray-500">
+                            Nigerian technology and digital life
+                        </p>
+                    </button>
 
                 </div>
 
             </div>
 
+
+            <!-- Messages -->
+
+            <div
+                id="messages"
+                class="mx-auto hidden w-full max-w-3xl px-4 pb-40 pt-8"
+            >
+            </div>
+
         </section>
 
 
-        <!-- ================================================= -->
-        <!-- COMPOSER -->
-        <!-- ================================================= -->
+        <!-- =================================================
+             COMPOSER
+        ================================================== -->
 
-        <footer
-            class="fixed bottom-0 left-0 right-0
-                   pointer-events-none"
-        >
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent px-4 pb-5 pt-12">
 
-            <div
-                class="mx-auto w-full max-w-3xl
-                       px-4 pb-5"
-            >
+            <div class="mx-auto max-w-3xl">
 
-                <div
-                    class="pointer-events-auto rounded-2xl
-                           border border-neutral-800
-                           bg-[#171717]
-                           shadow-[0_8px_40px_rgba(0,0,0,0.45)]"
-                >
+                <div class="rounded-2xl border border-[#292929] bg-[#0d0d0d] shadow-2xl">
 
                     <!-- Textarea -->
+
                     <textarea
-                        id="message-input"
+                        id="messageInput"
                         rows="1"
                         placeholder="Message Ore..."
-                        class="block max-h-40 min-h-[52px]
-                               w-full resize-none
-                               bg-transparent px-5 pt-4 pb-2
-                               text-sm text-white outline-none
-                               placeholder:text-neutral-600"
+                        class="max-h-48 min-h-[52px] w-full bg-transparent px-4 pt-4 text-sm leading-6 text-white outline-none placeholder:text-gray-600"
+                        onkeydown="handleKeyDown(event)"
+                        oninput="autoResize(this)"
                     ></textarea>
 
 
-                    <!-- Composer Bottom -->
-                    <div
-                        class="flex items-center justify-between
-                               px-4 pb-3"
-                    >
+                    <!-- Composer bottom -->
+
+                    <div class="flex items-center justify-between px-3 pb-3 pt-2">
 
                         <!-- Language -->
-                        <div
-                            class="flex items-center rounded-full
-                                   border border-neutral-800
-                                   bg-black p-1"
-                        >
+
+                        <div class="flex items-center rounded-lg border border-[#252525] bg-[#101010] p-0.5">
 
                             <button
-                                id="pidgin-button"
+                                id="pidginButton"
                                 onclick="setLanguage('pidgin')"
-                                class="rounded-full bg-neutral-800
-                                       px-3 py-1.5 text-xs
-                                       font-medium text-white"
+                                class="rounded-md bg-[#1a1a1a] px-3 py-1.5 text-xs font-medium text-white"
                             >
                                 Pidgin
                             </button>
 
                             <button
-                                id="english-button"
+                                id="englishButton"
                                 onclick="setLanguage('english')"
-                                class="rounded-full px-3 py-1.5
-                                       text-xs font-medium
-                                       text-neutral-500
-                                       transition hover:text-white"
+                                class="rounded-md px-3 py-1.5 text-xs font-medium text-gray-500 transition hover:text-gray-300"
                             >
                                 English
                             </button>
@@ -712,24 +481,24 @@
 
 
                         <!-- Send -->
+
                         <button
-                            id="send-button"
+                            id="sendButton"
                             onclick="sendMessage()"
-                            class="flex h-9 w-9 items-center
-                                   justify-center rounded-full
-                                   bg-white text-black
-                                   transition hover:bg-neutral-300"
+                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-40"
                         >
 
                             <svg
-                                class="h-4 w-4"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
                                 stroke-width="2"
-                                viewBox="0 0 24 24"
                             >
-                                <path d="M12 19V5"/>
-                                <path d="M6 11l6-6 6 6"/>
+                                <path d="M22 2L11 13"/>
+                                <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
                             </svg>
 
                         </button>
@@ -739,370 +508,503 @@
                 </div>
 
 
-                <p
-                    class="mt-2 text-center text-[10px]
-                           text-neutral-700"
-                >
-                    Ore can make mistakes. Check important information.
+                <p class="mt-2 text-center text-[11px] text-gray-600">
+                    Ore can make mistakes. Verify important information.
                 </p>
 
             </div>
 
-        </footer>
+        </div>
 
     </main>
 
 </div>
 
 
-<!-- ========================================================= -->
-<!-- JAVASCRIPT -->
-<!-- ========================================================= -->
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
 
 <script>
 
-    let selectedLanguage = "pidgin";
-    let sidebarOpen = true;
+    // ====================================================
+    // BACKEND
+    // ====================================================
+
+    /*
+     * When testing locally in Colab/your computer,
+     * replace this with your public backend URL.
+     *
+     * Example:
+     * https://your-backend-url.com
+     */
+
+    const API_URL = "";
 
 
-    // ========================================================
-    // AUTH UI
-    // ========================================================
+    // ====================================================
+    // STATE
+    // ====================================================
 
-    function showLogin() {
-
-        document
-            .getElementById("login-form")
-            .classList
-            .remove("hidden");
-
-        document
-            .getElementById("signup-form")
-            .classList
-            .add("hidden");
+    let currentLanguage = "pidgin";
+    let isGenerating = false;
 
 
-        document
-            .getElementById("login-tab")
-            .className =
-            "flex-1 rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-white";
+    // ====================================================
+    // LANGUAGE
+    // ====================================================
+
+    function setLanguage(language) {
+
+        currentLanguage = language;
+
+        const pidginButton =
+            document.getElementById("pidginButton");
+
+        const englishButton =
+            document.getElementById("englishButton");
 
 
-        document
-            .getElementById("signup-tab")
-            .className =
-            "flex-1 rounded-lg px-4 py-2 text-sm font-medium text-neutral-500 transition hover:text-white";
+        if (language === "pidgin") {
+
+            pidginButton.className =
+                "rounded-md bg-[#1a1a1a] px-3 py-1.5 text-xs font-medium text-white";
+
+            englishButton.className =
+                "rounded-md px-3 py-1.5 text-xs font-medium text-gray-500 transition hover:text-gray-300";
+
+        } else {
+
+            englishButton.className =
+                "rounded-md bg-[#1a1a1a] px-3 py-1.5 text-xs font-medium text-white";
+
+            pidginButton.className =
+                "rounded-md px-3 py-1.5 text-xs font-medium text-gray-500 transition hover:text-gray-300";
+        }
     }
 
 
-    function showSignup() {
+    // ====================================================
+    // SEND MESSAGE
+    // ====================================================
+
+    async function sendMessage() {
+
+        if (isGenerating) {
+            return;
+        }
+
+
+        const input =
+            document.getElementById("messageInput");
+
+        const message =
+            input.value.trim();
+
+
+        if (!message) {
+            return;
+        }
+
+
+        isGenerating = true;
 
         document
-            .getElementById("signup-form")
-            .classList
-            .remove("hidden");
+            .getElementById("sendButton")
+            .disabled = true;
+
+
+        // Hide welcome screen
 
         document
-            .getElementById("login-form")
-            .classList
-            .add("hidden");
+            .getElementById("welcomeScreen")
+            .classList.add("hidden");
 
+
+        // Show message container
+
+        const messages =
+            document.getElementById("messages");
+
+        messages.classList.remove("hidden");
+
+
+        // Add user message
+
+        addMessage(
+            "user",
+            message
+        );
+
+
+        // Clear input
+
+        input.value = "";
+
+        autoResize(input);
+
+
+        // Add typing indicator
+
+        const typingId =
+            addTypingIndicator();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/chat`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            message: message,
+                            language: currentLanguage
+                        })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `Server returned ${response.status}`
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            removeTypingIndicator(
+                typingId
+            );
+
+
+            addMessage(
+                "ore",
+                data.response || "Ore returned an empty response."
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            removeTypingIndicator(
+                typingId
+            );
+
+
+            addMessage(
+                "ore",
+                "I couldn't connect to the Ore backend. Make sure the FastAPI server is running and API_URL is configured correctly."
+            );
+
+        }
+
+
+        isGenerating = false;
 
         document
-            .getElementById("signup-tab")
-            .className =
-            "flex-1 rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-white";
+            .getElementById("sendButton")
+            .disabled = false;
 
 
-        document
-            .getElementById("login-tab")
-            .className =
-            "flex-1 rounded-lg px-4 py-2 text-sm font-medium text-neutral-500 transition hover:text-white";
+        input.focus();
     }
 
 
-    // TEMPORARY
-    // This only opens the UI.
-    // Real authentication will be connected later.
+    // ====================================================
+    // ADD MESSAGE
+    // ====================================================
 
-    function openOre() {
+    function addMessage(
+        sender,
+        text
+    ) {
 
-        document
-            .getElementById("auth-screen")
-            .classList
-            .add("hidden");
+        const messages =
+            document.getElementById("messages");
 
-        document
-            .getElementById("ore-app")
-            .classList
-            .remove("hidden");
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className =
+            "fade-in mb-8";
+
+
+        if (sender === "user") {
+
+            wrapper.innerHTML = `
+                <div class="flex justify-end">
+                    <div class="max-w-[85%] rounded-2xl bg-[#1a1a1a] px-4 py-3 text-sm leading-6 text-gray-100">
+                        <div class="message-content"></div>
+                    </div>
+                </div>
+            `;
+
+        } else {
+
+            wrapper.innerHTML = `
+                <div class="flex gap-3">
+
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center">
+                        <svg
+                            viewBox="0 0 40 40"
+                            class="h-7 w-7"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M20 3L35 20L20 37L5 20L20 3Z"
+                                stroke="#22c55e"
+                                stroke-width="2.5"
+                            />
+
+                            <path
+                                d="M20 9L29.5 20L20 31L10.5 20L20 9Z"
+                                fill="#22c55e"
+                            />
+                        </svg>
+                    </div>
+
+                    <div class="min-w-0 flex-1">
+                        <div class="mb-1 text-sm font-semibold">
+                            Ore
+                        </div>
+
+                        <div class="message-content text-sm leading-7 text-gray-300"></div>
+                    </div>
+
+                </div>
+            `;
+        }
+
+
+        const content =
+            wrapper.querySelector(".message-content");
+
+        content.textContent = text;
+
+
+        messages.appendChild(wrapper);
+
+
+        scrollToBottom();
     }
 
 
-    // ========================================================
+    // ====================================================
+    // TYPING INDICATOR
+    // ====================================================
+
+    function addTypingIndicator() {
+
+        const messages =
+            document.getElementById("messages");
+
+        const id =
+            "typing-" + Date.now();
+
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.id = id;
+
+        wrapper.className =
+            "mb-8 fade-in";
+
+
+        wrapper.innerHTML = `
+            <div class="flex gap-3">
+
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center">
+
+                    <svg
+                        viewBox="0 0 40 40"
+                        class="h-7 w-7"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M20 3L35 20L20 37L5 20L20 3Z"
+                            stroke="#22c55e"
+                            stroke-width="2.5"
+                        />
+
+                        <path
+                            d="M20 9L29.5 20L20 31L10.5 20L20 9Z"
+                            fill="#22c55e"
+                        />
+                    </svg>
+
+                </div>
+
+                <div class="flex items-center gap-1 pt-2">
+
+                    <span class="typing-dot h-1.5 w-1.5 rounded-full bg-gray-400"></span>
+                    <span class="typing-dot h-1.5 w-1.5 rounded-full bg-gray-400"></span>
+                    <span class="typing-dot h-1.5 w-1.5 rounded-full bg-gray-400"></span>
+
+                </div>
+
+            </div>
+        `;
+
+
+        messages.appendChild(wrapper);
+
+        scrollToBottom();
+
+
+        return id;
+    }
+
+
+    function removeTypingIndicator(id) {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+            element.remove();
+        }
+    }
+
+
+    // ====================================================
+    // PROMPT BUTTONS
+    // ====================================================
+
+    function usePrompt(text) {
+
+        const input =
+            document.getElementById("messageInput");
+
+        input.value = text;
+
+        autoResize(input);
+
+        input.focus();
+
+    }
+
+
+    // ====================================================
+    // NEW CHAT
+    // ====================================================
+
+    function newChat() {
+
+        const messages =
+            document.getElementById("messages");
+
+        messages.innerHTML = "";
+
+        messages.classList.add("hidden");
+
+
+        document
+            .getElementById("welcomeScreen")
+            .classList.remove("hidden");
+
+
+        document
+            .getElementById("messageInput")
+            .focus();
+
+    }
+
+
+    // ====================================================
+    // ENTER KEY
+    // ====================================================
+
+    function handleKeyDown(event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+        }
+    }
+
+
+    // ====================================================
+    // TEXTAREA RESIZE
+    // ====================================================
+
+    function autoResize(textarea) {
+
+        textarea.style.height = "auto";
+
+        textarea.style.height =
+            Math.min(
+                textarea.scrollHeight,
+                192
+            ) + "px";
+    }
+
+
+    // ====================================================
+    // SCROLL
+    // ====================================================
+
+    function scrollToBottom() {
+
+        const chatArea =
+            document.getElementById("chatArea");
+
+        setTimeout(() => {
+
+            chatArea.scrollTo({
+                top: chatArea.scrollHeight,
+                behavior: "smooth"
+            });
+
+        }, 50);
+    }
+
+
+    // ====================================================
     // SIDEBAR
-    // ========================================================
+    // ====================================================
 
     function toggleSidebar() {
 
         const sidebar =
             document.getElementById("sidebar");
 
-        sidebarOpen = !sidebarOpen;
-
-        if (sidebarOpen) {
-
-            sidebar.classList.remove("w-0");
-            sidebar.classList.add("w-[260px]");
-
-        } else {
-
-            sidebar.classList.remove("w-[260px]");
-            sidebar.classList.add("w-0");
-        }
+        sidebar.classList.toggle(
+            "-translate-x-full"
+        );
     }
 
 
-    // ========================================================
-    // LANGUAGE
-    // ========================================================
-
-    function setLanguage(language) {
-
-        selectedLanguage = language;
-
-        const pidgin =
-            document.getElementById("pidgin-button");
-
-        const english =
-            document.getElementById("english-button");
-
-
-        if (language === "pidgin") {
-
-            pidgin.className =
-                "rounded-full bg-neutral-800 px-3 py-1.5 text-xs font-medium text-white";
-
-            english.className =
-                "rounded-full px-3 py-1.5 text-xs font-medium text-neutral-500 transition hover:text-white";
-
-        } else {
-
-            english.className =
-                "rounded-full bg-neutral-800 px-3 py-1.5 text-xs font-medium text-white";
-
-            pidgin.className =
-                "rounded-full px-3 py-1.5 text-xs font-medium text-neutral-500 transition hover:text-white";
-        }
-    }
-
-
-    // ========================================================
-    // NEW CHAT
-    // ========================================================
-
-    function newChat() {
-
-        const messages =
-            document.getElementById("chat-messages");
-
-        messages.innerHTML = `
-
-            <div
-                id="welcome-screen"
-                class="flex flex-1 flex-col
-                       items-center justify-center
-                       py-20 text-center"
-            >
-
-                <div
-                    class="mb-7 flex h-20 w-20 items-center
-                           justify-center rounded-3xl
-                           border border-emerald-500/20
-                           bg-emerald-500/5"
-                >
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        class="h-10 w-10 fill-none stroke-emerald-400"
-                        stroke-width="1.5"
-                    >
-                        <path d="M12 2L3 8.5L12 22L21 8.5L12 2Z"/>
-                        <path d="M3 8.5H21"/>
-                        <path d="M8 8.5L12 22L16 8.5"/>
-                    </svg>
-
-                </div>
-
-                <h1
-                    class="text-3xl font-semibold
-                           tracking-tight text-white"
-                >
-                    What can I help you with?
-                </h1>
-
-                <p
-                    class="mt-3 max-w-md text-sm
-                           leading-6 text-neutral-500"
-                >
-                    Ask Ore about Nigeria, history, geography,
-                    culture, technology, or anything else.
-                </p>
-
-            </div>
-        `;
-
-        document
-            .getElementById("message-input")
-            .value = "";
-    }
-
-
-    // ========================================================
-    // CHAT
-    // ========================================================
-
-    function sendMessage() {
-
-        const input =
-            document.getElementById("message-input");
-
-        const text =
-            input.value.trim();
-
-        if (!text) return;
-
-
-        const welcome =
-            document.getElementById("welcome-screen");
-
-        if (welcome) {
-            welcome.remove();
-        }
-
-
-        const messages =
-            document.getElementById("chat-messages");
-
-
-        // User message
-        const userMessage =
-            document.createElement("div");
-
-        userMessage.className =
-            "message-fade mb-6 flex justify-end";
-
-
-        const bubble =
-            document.createElement("div");
-
-        bubble.className =
-            "max-w-[80%] rounded-2xl bg-neutral-800 px-4 py-3 text-sm leading-6 text-white";
-
-
-        bubble.textContent = text;
-
-        userMessage.appendChild(bubble);
-
-        messages.appendChild(userMessage);
-
-
-        input.value = "";
-
-        input.style.height = "auto";
-
-
-        // Temporary Ore response
-        // Backend connection comes later.
-
-        const oreMessage =
-            document.createElement("div");
-
-        oreMessage.className =
-            "message-fade mb-6 flex gap-3";
-
-
-        const logo =
-            document.createElement("div");
-
-        logo.className =
-            "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10";
-
-
-        logo.innerHTML = `
-            <svg
-                viewBox="0 0 24 24"
-                class="h-4 w-4 fill-none stroke-emerald-400"
-                stroke-width="1.8"
-            >
-                <path d="M12 2L3 8.5L12 22L21 8.5L12 2Z"/>
-                <path d="M3 8.5H21"/>
-                <path d="M8 8.5L12 22L16 8.5"/>
-            </svg>
-        `;
-
-
-        const response =
-            document.createElement("div");
-
-        response.className =
-            "pt-1 text-sm leading-6 text-neutral-400";
-
-
-        response.textContent =
-            "Ore is getting ready. The model connection will be added next.";
-
-
-        oreMessage.appendChild(logo);
-        oreMessage.appendChild(response);
-
-        messages.appendChild(oreMessage);
-
-
-        document
-            .getElementById("chat-container")
-            .scrollTop =
-            document.getElementById("chat-container").scrollHeight;
-    }
-
-
-    // ========================================================
-    // TEXTAREA AUTO HEIGHT
-    // ========================================================
-
-    const messageInput =
-        document.getElementById("message-input");
-
-
-    messageInput.addEventListener(
-        "input",
-        function () {
-
-            this.style.height = "auto";
-
-            this.style.height =
-                Math.min(this.scrollHeight, 160) + "px";
-        }
-    );
-
-
-    messageInput.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                sendMessage();
-            }
-        }
-    );
+    // ====================================================
+    // INITIALIZATION
+    // ====================================================
+
+    document
+        .getElementById("messageInput")
+        .focus();
 
 </script>
+```
 
 </body>
 </html>
