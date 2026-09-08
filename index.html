@@ -166,8 +166,8 @@
   </div>
 
   <script>
-    // PERMANENT RENDER BACKEND URL
-    const BACKEND_URL = "https://ore-prime.onrender.com";
+    // 🔗 LIVE NGROK BACKEND URL FROM YOUR COLAB SESSION
+    const BACKEND_URL = "https://isotope-headed-refusal.ngrok-free.dev";
 
     const sidebar = document.getElementById('sidebar');
     const chatBox = document.getElementById('chat-box');
@@ -248,7 +248,8 @@
         const res = await fetch(`${BACKEND_URL}/api/chat`, {
           method: 'POST',
           headers: { 
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
           },
           body: JSON.stringify({ message: text, language: selectedLanguage })
         });
