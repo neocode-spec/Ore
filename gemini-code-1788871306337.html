@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ore AI</title>
+  
+  <!-- GLITTERING DIAMOND PAGE ICON (FAVICON) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310B981'><path d='M12 2L2 9l10 13 10-13-10-7zm0 3.2L18.6 9 12 18.5 5.4 9 12 5.2z'/><path d='M12 2l3 5h-6z' fill='%236EE7B7'/></svg>">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #000000; font-family: system-ui, -apple-system, sans-serif; }
+    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #212121; border-radius: 3px; }
+    .sidebar-transition { transition: transform 0.25s ease-in-out, width 0.25s ease-in-out; }
+  </style>
+</head>
+<body class="text-[#ECECEC] h-screen flex overflow-hidden bg-black relative">
+
+  <!-- AUTHENTICATION MODAL (GOOGLE / GMAIL SIGN IN) -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#171717] border border-[#2A2A2A] rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl relative flex flex-col items-center">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4">
+        <i class="fa-solid fa-gem text-emerald-400 text-xl animate-pulse"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-1">Welcome to Ore</h2>
+      <p class="text-xs text-[#8E8E8E] mb-6 text-center">Log in or create an account to start chatting</p>
+
+      <!-- Google / Gmail Login Button -->
+      <button onclick="loginWithGoogle()" class="w-full bg-[#212121] hover:bg-[#2A2A2A] text-white border border-[#303030] py-3 px-4 rounded-2xl flex items-center justify-center gap-3 font-medium transition mb-4">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="flex items-center gap-3 w-full my-3">
+        <div class="flex-1 h-px bg-[#2A2A2A]"></div>
+        <span class="text-xs text-[#6E6E6E] font-medium uppercase">OR</span>
+        <div class="flex-1 h-px bg-[#2A2A2A]"></div>
+      </div>
+
+      <!-- Traditional Email Form -->
+      <form onsubmit="handleAuthSubmit(event)" class="w-full space-y-3">
+        <input 
+          type="email" 
+          id="auth-email" 
+          required 
+          placeholder="Enter your email address" 
+          class="w-full bg-[#0D0D0D] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
+        />
+        <input 
+          type="password" 
+          id="auth-password" 
+          required 
+          placeholder="Password" 
+          class="w-full bg-[#0D0D0D] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
+        />
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl text-sm transition">
+          Sign In / Sign Up
+        </button>
+      </form>
+
+      <button onclick="closeAuthModal()" class="mt-4 text-xs text-[#8E8E8E] hover:text-white transition">Continue as Guest</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="w-64 bg-[#000000] border-r border-[#1E1E1E] flex flex-col justify-between p-3 sidebar-transition shrink-0">
+    <div class="space-y-4">
+      <div class="flex justify-between items-center px-2 py-1">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-sm text-white shadow-lg shadow-emerald-900/40">
+            <i class="fa-solid fa-gem text-xs"></i>
+          </div>
+          <span class="font-bold text-xl text-white tracking-wide">Ore</span>
+        </div>
+        <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white transition p-1" title="Close sidebar">
+          <i class="fa-regular fa-window-restore text-sm"></i>
+        </button>
+      </div>
+
+      <button onclick="resetChat()" class="w-full bg-[#171717] hover:bg-[#212121] text-white text-sm font-medium py-2 px-3 rounded-xl border border-[#2A2A2A] flex items-center gap-3 transition">
+        <i class="fa-regular fa-pen-to-square"></i> New chat
+      </button>
+
+      <nav class="space-y-0.5 text-sm text-[#B4B4B4]">
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#171717] transition"><i class="fa-regular fa-image w-4"></i> Images</a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#171717] transition"><i class="fa-solid fa-layer-group w-4"></i> Library</a>
+      </nav>
+    </div>
+
+    <!-- User Profile Footer -->
+    <div class="pt-3 border-t border-[#1E1E1E] flex justify-between items-center px-2">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="openAuthModal()">
+        <div id="user-avatar" class="w-7 h-7 rounded-full bg-emerald-700 flex items-center justify-center font-bold text-xs text-white">G</div>
+        <div class="text-xs">
+          <p id="user-display-name" class="font-medium text-white">Guest User</p>
+          <p id="user-status" class="text-[#8E8E8E]">Tap to Login</p>
+        </div>
+      </div>
+      <button onclick="openAuthModal()" class="text-xs bg-[#171717] hover:bg-[#212121] text-white border border-[#2A2A2A] px-3 py-1 rounded-full font-medium transition">Account</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CANVAS -->
+  <div class="flex-1 flex flex-col justify-between items-center relative h-full bg-black min-w-0">
+
+    <!-- HEADER WITH TOGGLE BUTTON -->
+    <header class="w-full py-3 px-4 flex justify-between items-center border-b border-[#141414]">
+      <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="text-slate-400 hover:text-white transition p-2 rounded-lg bg-[#141414] border border-[#212121]" title="Toggle Sidebar">
+        <i class="fa-regular fa-window-restore text-sm"></i>
+      </button>
+
+      <div class="mx-auto bg-[#171717] p-1 rounded-full border border-[#212121] flex text-xs font-medium">
+        <button class="bg-[#212121] text-white px-5 py-1.5 rounded-full transition">Chat</button>
+        <button class="text-[#8E8E8E] hover:text-white px-5 py-1.5 rounded-full transition">✦ Work</button>
+      </div>
+      
+      <div class="w-9"></div>
+    </header>
+
+    <!-- CHAT MESSAGES CONTAINER -->
+    <main id="chat-box" class="flex-1 w-full max-w-2xl overflow-y-auto custom-scroll p-4 space-y-6 flex flex-col items-center">
+      <div id="welcome-container" class="my-auto w-full flex flex-col items-center space-y-6">
+        <div class="w-16 h-16 rounded-full bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center">
+          <i class="fa-solid fa-gem text-emerald-400 text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-semibold text-white text-center">What's on the agenda today?</h1>
+      </div>
+    </main>
+
+    <!-- PROMPT INPUT FOOTER -->
+    <footer class="w-full max-w-2xl pb-6 px-4">
+      <div class="bg-[#212121] border border-[#303030] rounded-3xl p-3 shadow-2xl flex flex-col gap-2 focus-within:border-[#424242] transition">
+        <textarea 
+          id="user-input" 
+          rows="2" 
+          placeholder="Ask anything" 
+          spellcheck="false"
+          autocorrect="off"
+          autocapitalize="off"
+          class="bg-transparent border-none outline-none text-white placeholder-[#8E8E8E] resize-none px-3 pt-1 text-sm w-full custom-scroll"
+        ></textarea>
+        
+        <div class="flex justify-between items-center px-1">
+          <div class="flex items-center bg-[#171717] border border-[#303030] rounded-full p-0.5 text-xs">
+            <button id="lang-pidgin" onclick="setLanguage('pidgin')" class="bg-[#212121] text-white px-3 py-0.5 rounded-full font-medium transition">Pidgin</button>
+            <button id="lang-english" onclick="setLanguage('english')" class="text-[#8E8E8E] hover:text-white px-3 py-0.5 rounded-full font-medium transition">English</button>
+          </div>
+
+          <div class="flex items-center gap-2.5 text-[#8E8E8E]">
+            <button id="send-btn" onclick="sendMessage()" class="bg-white hover:bg-slate-200 text-black font-bold rounded-full w-8 h-8 flex items-center justify-center transition ml-1">
+              <i class="fa-solid fa-arrow-up text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // PRE-CONFIGURED DEPLOYMENT URL
+    const BACKEND_URL = "https://Ore.prime.vercel.app";
+
+    const sidebar = document.getElementById('sidebar');
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const authModal = document.getElementById('auth-modal');
+
+    let selectedLanguage = 'pidgin';
+    let isSidebarOpen = true;
+
+    // Toggle Sidebar Functionality
+    function toggleSidebar() {
+      isSidebarOpen = !isSidebarOpen;
+      if (isSidebarOpen) {
+        sidebar.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('hidden');
+      }
+    }
+
+    // Authentication Handlers
+    function openAuthModal() { authModal.classList.remove('hidden'); }
+    function closeAuthModal() { authModal.classList.add('hidden'); }
+
+    function loginWithGoogle() {
+      document.getElementById('user-display-name').innerText = "Google User";
+      document.getElementById('user-status').innerText = "Logged In";
+      document.getElementById('user-avatar').innerText = "G";
+      closeAuthModal();
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      if (email) {
+        document.getElementById('user-display-name').innerText = email.split('@')[0];
+        document.getElementById('user-status').innerText = "Logged In";
+        document.getElementById('user-avatar').innerText = email[0].toUpperCase();
+        closeAuthModal();
+      }
+    }
+
+    function setLanguage(lang) {
+      selectedLanguage = lang;
+      document.getElementById('lang-pidgin').className = lang === 'pidgin' ? 'bg-[#212121] text-white px-3 py-0.5 rounded-full font-medium transition' : 'text-[#8E8E8E] hover:text-white px-3 py-0.5 rounded-full font-medium transition';
+      document.getElementById('lang-english').className = lang === 'english' ? 'bg-[#212121] text-white px-3 py-0.5 rounded-full font-medium transition' : 'text-[#8E8E8E] hover:text-white px-3 py-0.5 rounded-full font-medium transition';
+    }
+
+    function resetChat() { location.reload(); }
+
+    userInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      const welcome = document.getElementById('welcome-container');
+      if (welcome) welcome.remove();
+
+      chatBox.innerHTML += `
+        <div class="w-full flex justify-end">
+          <div class="bg-[#212121] text-white px-4 py-2.5 rounded-2xl max-w-[80%] border border-[#303030] text-sm">${text}</div>
+        </div>
+      `;
+      userInput.value = '';
+
+      const botMsgId = 'bot-' + Date.now();
+      chatBox.innerHTML += `
+        <div class="w-full flex justify-start items-start gap-3">
+          <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-xs text-white shrink-0">O</div>
+          <div id="${botMsgId}" class="text-[#8E8E8E] text-sm py-1 animate-pulse">Ore dey think...</div>
+        </div>
+      `;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, language: selectedLanguage })
+        });
+        const data = await res.json();
+        const botElement = document.getElementById(botMsgId);
+        botElement.classList.remove('animate-pulse', 'text-[#8E8E8E]');
+        botElement.classList.add('text-slate-100');
+        botElement.innerText = data.response;
+      } catch (err) {
+        document.getElementById(botMsgId).innerText = "Connected to UI target.";
+      }
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
