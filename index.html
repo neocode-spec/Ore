@@ -166,8 +166,8 @@
   </div>
 
   <script>
-    // PRE-CONFIGURED DEPLOYMENT URL
-    const BACKEND_URL = "https://Ore.prime.vercel.app";
+    // ACTIVE LOCAL TUNNEL DEPLOYMENT URL
+    const BACKEND_URL = "https://bumpy-games-wait.loca.lt";
 
     const sidebar = document.getElementById('sidebar');
     const chatBox = document.getElementById('chat-box');
@@ -247,7 +247,10 @@
       try {
         const res = await fetch(`${BACKEND_URL}/api/chat`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Bypass-Tunnel-Reminder': 'true'
+          },
           body: JSON.stringify({ message: text, language: selectedLanguage })
         });
         const data = await res.json();
@@ -256,7 +259,7 @@
         botElement.classList.add('text-slate-100');
         botElement.innerText = data.response;
       } catch (err) {
-        document.getElementById(botMsgId).innerText = "Connected to UI target.";
+        document.getElementById(botMsgId).innerText = "Error connecting to backend model.";
       }
       chatBox.scrollTop = chatBox.scrollHeight;
     }
