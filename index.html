@@ -166,8 +166,8 @@
   </div>
 
   <script>
-    // ACTIVE LOCAL TUNNEL DEPLOYMENT URL
-    const BACKEND_URL = "https://ore-ai-backend-ph.loca.lt";
+    // PERMANENT RENDER BACKEND URL
+    const BACKEND_URL = "https://ore-prime.onrender.com";
 
     const sidebar = document.getElementById('sidebar');
     const chatBox = document.getElementById('chat-box');
@@ -248,8 +248,7 @@
         const res = await fetch(`${BACKEND_URL}/api/chat`, {
           method: 'POST',
           headers: { 
-            'Content-Type': 'application/json',
-            'Bypass-Tunnel-Reminder': 'true'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ message: text, language: selectedLanguage })
         });
