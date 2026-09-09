@@ -3,7 +3,6 @@ import torch
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
@@ -11,11 +10,12 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 # ORE CONFIG
 # ============================================================
 
-MODEL_PATH = "/content/ore_nigerian_history_model"
+MODEL_PATH = "/content/drive/MyDrive/ore_model"
 
 MAX_NEW_TOKENS = 120
 TEMPERATURE = 0.8
 TOP_P = 0.9
+TOP_K = 50
 
 
 # ============================================================
@@ -69,16 +69,14 @@ class ChatRequest(BaseModel):
 
 print("\nLoading tokenizer...")
 
-tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_PATH
-)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
 
 # ============================================================
-# LOAD TRAINED ORE MODEL
+# LOAD ORE
 # ============================================================
 
 print("Loading trained Ore model...")
@@ -90,7 +88,6 @@ model = AutoModelForCausalLM.from_pretrained(
 model.config.pad_token_id = tokenizer.pad_token_id
 
 model = model.to(DEVICE)
-
 model.eval()
 
 print("\n========================================")
@@ -126,7 +123,6 @@ def chat(req: ChatRequest):
             detail="Message cannot be empty."
         )
 
-
     # --------------------------------------------------------
     # LANGUAGE
     # --------------------------------------------------------
@@ -143,7 +139,6 @@ def chat(req: ChatRequest):
             "Respond in clear Standard English."
         )
 
-
     # --------------------------------------------------------
     # PROMPT
     # --------------------------------------------------------
@@ -157,7 +152,6 @@ education, technology, business, government and everyday Nigerian life.
 
 User: {user_message}
 Ore:"""
-
 
     # --------------------------------------------------------
     # TOKENIZE
@@ -175,7 +169,6 @@ Ore:"""
         for key, value in inputs.items()
     }
 
-
     # --------------------------------------------------------
     # GENERATE
     # --------------------------------------------------------
@@ -184,24 +177,16 @@ Ore:"""
 
         output = model.generate(
             **inputs,
-
             max_new_tokens=MAX_NEW_TOKENS,
-
             do_sample=True,
-
             temperature=TEMPERATURE,
-
             top_p=TOP_P,
-
+            top_k=TOP_K,
             repetition_penalty=1.1,
-
             no_repeat_ngram_size=3,
-
             pad_token_id=tokenizer.pad_token_id,
-
             eos_token_id=tokenizer.eos_token_id
         )
-
 
     # --------------------------------------------------------
     # DECODE
@@ -211,7 +196,6 @@ Ore:"""
         output[0],
         skip_special_tokens=True
     )
-
 
     # --------------------------------------------------------
     # REMOVE PROMPT
@@ -228,6 +212,22 @@ Ore:"""
 
         response = generated_text.strip()
 
+    # --------------------------------------------------------
+    # STOP IF MODEL STARTS ANOTHER ROLE
+    # --------------------------------------------------------
+
+    for stop_text in [
+        "\nUser:",
+        "\nSystem:",
+        "\nOre:"
+    ]:
+
+        if stop_text in response:
+
+            response = response.split(
+                stop_text,
+                1
+            )[0].strip()
 
     # --------------------------------------------------------
     # FALLBACK
@@ -243,9 +243,8 @@ Ore:"""
 
             response = "I couldn't generate a response to that."
 
-
     # --------------------------------------------------------
-    # RETURN TO FRONTEND
+    # RETURN
     # --------------------------------------------------------
 
     return {
@@ -254,7 +253,7 @@ Ore:"""
 
 
 # ============================================================
-# RUN
+# LOCAL RUN
 # ============================================================
 
 if __name__ == "__main__":
