@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Ore</title>
 
 <link
@@ -15,7 +14,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
@@ -25,74 +23,50 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
-    background: #212121;
+    background: #000000;
     color: #ececec;
-    font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+    font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif;
 }
 
 body {
     overflow: hidden;
 }
 
-/* ============================================================
-   SCROLLBAR
-============================================================ */
-
+/* Scrollbar */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
-
 ::-webkit-scrollbar-track {
     background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-    background: #424242;
+    background: #2a2a2a;
     border-radius: 999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #3e3e3e;
 }
 
-
-/* ============================================================
-   APP
-============================================================ */
-
+/* App Layout */
 #app {
     width: 100%;
     height: 100%;
     display: flex;
     overflow: hidden;
+    background: #000000;
 }
 
-
-/* ============================================================
-   SIDEBAR
-============================================================ */
-
+/* Sidebar */
 #sidebar {
     width: 260px;
     height: 100%;
     flex-shrink: 0;
-    background: #171717;
+    background: #000000;
     display: flex;
     flex-direction: column;
-    transition: width 0.2s ease, transform 0.25s ease;
-    overflow: hidden;
-}
-
-#sidebar.collapsed {
-    width: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.25s ease, width 0.2s ease;
 }
 
 .sidebar-inner {
@@ -100,1261 +74,566 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
-}
-
-
-/* ============================================================
-   SIDEBAR TOP
-============================================================ */
-
-.sidebar-top {
-    padding: 12px;
-}
-
-.sidebar-top-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.sidebar-icon-button {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #b4b4b4;
-    transition: background 0.15s ease, color 0.15s ease;
-}
-
-.sidebar-icon-button:hover {
-    background: #212121;
-    color: #fff;
-}
-
-
-/* ============================================================
-   ORE LOGO
-============================================================ */
-
-.ore-logo {
-    width: 26px;
-    height: 26px;
-    flex-shrink: 0;
-}
-
-.ore-logo-large {
-    width: 56px;
-    height: 56px;
-}
-
-
-/* ============================================================
-   NEW CHAT & SEARCH
-============================================================ */
-
-.new-chat {
-    margin-top: 10px;
-    width: 100%;
-    height: 40px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0 10px;
-    color: #ececec;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background 0.15s ease;
-}
-
-.new-chat:hover {
-    background: #212121;
-}
-
-.sidebar-search {
-    width: 100%;
-    height: 38px;
-    margin-top: 2px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0 10px;
-    color: #b4b4b4;
-    font-size: 14px;
-    transition: background 0.15s ease;
-}
-
-.sidebar-search:hover {
-    background: #212121;
-    color: #fff;
-}
-
-
-/* ============================================================
-   HISTORY
-============================================================ */
-
-.history {
-    flex: 1;
-    overflow-y: auto;
     padding: 12px 8px;
 }
 
-.history-label {
-    padding: 8px 10px 6px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.history-item {
-    width: 100%;
-    height: 36px;
-    padding: 0 10px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    color: #d1d1d1;
-    font-size: 13px;
-    text-align: left;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    transition: background 0.15s ease;
-}
-
-.history-item:hover {
-    background: #212121;
-}
-
-.history-item.active {
-    background: #212121;
-    color: #fff;
-}
-
-
-/* ============================================================
-   SIDEBAR BOTTOM
-============================================================ */
-
-.sidebar-bottom {
-    padding: 8px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-.account-button {
-    width: 100%;
-    padding: 8px 10px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-align: left;
-    transition: background 0.15s ease;
-}
-
-.account-button:hover {
-    background: #212121;
-}
-
-.avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #00ff66;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-}
-
-
-/* ============================================================
-   MAIN
-============================================================ */
-
-#main {
-    min-width: 0;
-    min-height: 0;
-    flex: 1;
-    height: 100%;
-    background: #212121;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-
-/* ============================================================
-   HEADER
-============================================================ */
-
-#header {
-    height: 52px;
-    flex-shrink: 0;
+/* Sidebar Top Header */
+.sidebar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
-    position: relative;
-    z-index: 10;
+    padding: 4px 8px 12px;
 }
 
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.header-button {
-    height: 36px;
-    padding: 0 10px;
-    border-radius: 8px;
-    color: #b4b4b4;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.brand-title {
+    font-size: 18px;
     font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9b9b9b;
     transition: background 0.15s ease, color 0.15s ease;
 }
 
-.header-button:hover {
-    background: #2f2f2f;
-    color: #fff;
+.icon-btn:hover {
+    background: #171717;
+    color: #ffffff;
 }
 
-.mobile-menu-button {
-    display: none;
-}
-
-
-/* ============================================================
-   CHAT AREA
-============================================================ */
-
-#chat-container {
+/* Sidebar Menu */
+.nav-section {
     flex: 1;
-    min-height: 0;
     overflow-y: auto;
-    position: relative;
-}
-
-#welcome-screen {
-    width: 100%;
-    min-height: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px 180px;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.welcome-content {
+.nav-item {
     width: 100%;
-    max-width: 768px;
-    text-align: center;
-}
-
-.welcome-title {
-    font-size: 32px;
-    line-height: 1.25;
-    font-weight: 600;
-    color: #f5f5f5;
-    letter-spacing: -0.02em;
-}
-
-.welcome-subtitle {
-    margin-top: 10px;
-    color: #8e8e8e;
-    font-size: 15px;
-}
-
-
-/* ============================================================
-   PROMPT CARDS
-============================================================ */
-
-.prompt-grid {
-    margin-top: 36px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
     gap: 12px;
-}
-
-.prompt-card {
-    padding: 14px 16px;
-    min-height: 72px;
-    text-align: left;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    background: transparent;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    color: #ececec;
+    font-size: 14px;
+    font-weight: 400;
+    transition: background 0.15s ease;
     cursor: pointer;
 }
 
-.prompt-card:hover {
-    background: #2f2f2f;
-    border-color: rgba(255,255,255,0.15);
+.nav-item:hover {
+    background: #171717;
 }
 
-.prompt-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ececec;
+.badge-updated {
+    background: #262626;
+    color: #b4b4b4;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
 }
 
-.prompt-description {
-    margin-top: 4px;
-    color: #8e8e8e;
+.section-divider {
+    padding: 16px 10px 6px;
     font-size: 12px;
-}
-
-
-/* ============================================================
-   MESSAGES
-============================================================ */
-
-#messages {
-    width: 100%;
-    padding-bottom: 170px;
-}
-
-.message-row {
-    width: 100%;
-}
-
-.message-inner {
-    width: 100%;
-    max-width: 768px;
-    margin: 0 auto;
-    padding: 24px 20px;
-}
-
-.user-message {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.user-bubble {
-    max-width: 70%;
-    background: #2f2f2f;
-    border-radius: 20px;
-    padding: 12px 18px;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #f5f5f5;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.ore-message {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-.ore-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: #212121;
-    border: 1px solid rgba(255,255,255,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-.ore-content {
-    min-width: 0;
-    flex: 1;
-    color: #ececec;
-    font-size: 15px;
-    line-height: 1.65;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-
-/* ============================================================
-   TYPING
-============================================================ */
-
-.typing-dots {
-    display: flex;
-    gap: 5px;
-    padding-top: 8px;
-}
-
-.typing-dots span {
-    width: 6px;
-    height: 6px;
-    background: #8e8e8e;
-    border-radius: 50%;
-    animation: typing 1.2s infinite ease-in-out;
-}
-
-.typing-dots span:nth-child(2) {
-    animation-delay: 0.15s;
-}
-
-.typing-dots span:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-@keyframes typing {
-    0%, 60%, 100% {
-        opacity: 0.3;
-        transform: translateY(0);
-    }
-    30% {
-        opacity: 1;
-        transform: translateY(-3px);
-    }
-}
-
-
-/* ============================================================
-   COMPOSER
-============================================================ */
-
-#composer-area {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 0 20px 16px;
-    pointer-events: none;
-    background: linear-gradient(
-        to bottom,
-        rgba(33,33,33,0),
-        rgba(33,33,33,0.95) 30%,
-        #212121 60%
-    );
-}
-
-#composer {
-    width: 100%;
-    max-width: 768px;
-    margin: 0 auto;
-    pointer-events: auto;
-}
-
-.composer-box {
-    background: #2f2f2f;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    padding: 12px 14px 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    transition: border-color 0.15s ease;
-}
-
-.composer-box:focus-within {
-    border-color: rgba(255,255,255,0.2);
-}
-
-#message-input {
-    width: 100%;
-    max-height: 200px;
-    min-height: 24px;
-    resize: none;
-    overflow-y: auto;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: #fff;
-    font-family: inherit;
-    font-size: 15px;
-    line-height: 1.5;
-    padding: 2px 6px;
-}
-
-#message-input::placeholder {
-    color: #8e8e8e;
-}
-
-.composer-bottom {
-    height: 36px;
+    font-weight: 600;
+    color: #666666;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 6px;
 }
 
-.composer-left {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+/* Sidebar Bottom User Profile */
+.sidebar-bottom {
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.tool-button {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    color: #b4b4b4;
+.claim-offer-btn {
+    width: 100%;
+    height: 36px;
+    border-radius: 18px;
+    background: #171717;
+    color: #ececec;
+    font-size: 13px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s ease, color 0.15s ease;
+    gap: 8px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.15s ease;
 }
 
-.tool-button:hover {
-    background: #383838;
-    color: #fff;
+.claim-offer-btn:hover {
+    background: #222222;
 }
 
-.tool-button.active {
-    color: #00ff66;
-    background: rgba(0,255,102,0.1);
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-.language-button {
+.user-profile:hover {
+    background: #171717;
+}
+
+.user-avatar {
+    width: 28px;
     height: 28px;
-    padding: 0 10px;
-    border-radius: 999px;
-    color: #8e8e8e;
-    font-size: 12px;
+    border-radius: 50%;
+    background: #ab47bc;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.user-name {
+    font-size: 13px;
     font-weight: 500;
+    color: #ffffff;
+}
+
+.user-plan {
+    font-size: 11px;
+    color: #8e8e8e;
+}
+
+/* Main Workspace */
+#main {
+    flex: 1;
+    height: 100%;
+    background: #000000;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Top Nav Pill Bar */
+.top-nav-bar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0 16px;
+}
+
+.mode-pill {
+    background: #171717;
+    border-radius: 20px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pill-btn {
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #8e8e8e;
     transition: all 0.15s ease;
 }
 
-.language-button:hover {
-    color: #fff;
-    background: #383838;
+.pill-btn.active {
+    background: #262626;
+    color: #ffffff;
 }
 
-.language-button.active {
-    background: #424242;
-    color: #00ff66;
+.top-right-offer {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.send-button {
+.free-offer-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #ececec;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Hero Center Screen */
+.center-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 768px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+}
+
+.hero-title {
+    font-size: 30px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 28px;
+    letter-spacing: -0.01em;
+}
+
+/* Input Container Box */
+.input-box-wrapper {
+    width: 100%;
+    background: #171717;
+    border-radius: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    margin-bottom: 24px;
+}
+
+.chat-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 16px;
+    resize: none;
+    min-height: 32px;
+    max-height: 200px;
+}
+
+.chat-input::placeholder {
+    color: #8e8e8e;
+}
+
+.input-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.actions-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actions-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.round-action-btn {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #fff;
-    color: #000;
+    background: #222222;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.15s ease, background 0.15s ease;
+    color: #ececec;
+    transition: background 0.15s ease;
 }
 
-.send-button:disabled {
-    opacity: 0.2;
-    background: #fff;
-    cursor: not-allowed;
+.round-action-btn:hover {
+    background: #2c2c2c;
 }
 
-.send-button:not(:disabled):hover {
-    background: #ececec;
+.tag-btn {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 16px;
+    background: #222222;
+    color: #ececec;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.disclaimer {
-    text-align: center;
-    color: #777;
-    font-size: 12px;
-    margin-top: 8px;
+.think-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 16px;
+    background: #222222;
+    color: #ececec;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
+.voice-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #2997ff;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-/* ============================================================
-   SEARCH STATUS
-============================================================ */
-
-.search-status {
-    display: none;
-    margin: 0 auto 8px;
-    max-width: 768px;
-    color: #8e8e8e;
-    font-size: 12px;
+/* Prompt List */
+.quick-prompts-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     padding-left: 8px;
 }
 
-.search-status.visible {
-    display: block;
+.prompt-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #b4b4b4;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: color 0.15s ease;
 }
 
-
-/* ============================================================
-   MOBILE RESPONSIVENESS
-============================================================ */
-
-#sidebar-overlay {
-    display: none;
+.prompt-list-item:hover {
+    color: #ffffff;
 }
 
-@media (max-width: 768px) {
-
-    #sidebar {
-        position: fixed;
-        z-index: 100;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 260px;
-        transform: translateX(-100%);
-        box-shadow: 15px 0 40px rgba(0,0,0,0.5);
-    }
-
-    #sidebar.open {
-        transform: translateX(0);
-    }
-
-    #sidebar.collapsed {
-        width: 260px;
-    }
-
-    #sidebar-overlay.open {
-        display: block;
-        position: fixed;
-        inset: 0;
-        z-index: 90;
-        background: rgba(0,0,0,0.6);
-    }
-
-    .mobile-menu-button {
-        display: flex;
-    }
-
-    .desktop-sidebar-toggle {
-        display: none;
-    }
-
-    .header-title {
-        font-size: 14px;
-    }
-
-    #welcome-screen {
-        align-items: flex-start;
-        padding-top: 60px;
-    }
-
-    .welcome-title {
-        font-size: 26px;
-    }
-
-    .welcome-subtitle {
-        font-size: 14px;
-    }
-
-    .prompt-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .message-inner {
-        padding: 16px 14px;
-    }
-
-    .user-bubble {
-        max-width: 85%;
-    }
-
-    #composer-area {
-        padding: 0 10px 12px;
-    }
+.lang-toggle-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
 }
 
-@media (max-width: 420px) {
-
-    .welcome-content {
-        max-width: 100%;
-    }
-
-    .ore-logo-large {
-        width: 48px;
-        height: 48px;
-    }
-
-    .welcome-title {
-        font-size: 22px;
-    }
-
-    .prompt-description {
-        display: none;
-    }
-
-    .prompt-card {
-        min-height: 48px;
-        padding: 12px;
-    }
-
-    .composer-box {
-        border-radius: 20px;
-    }
+.lang-btn {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #8e8e8e;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.15s ease;
 }
 
+.lang-btn.active {
+    background: #00ff66;
+    color: #000000;
+    font-weight: 600;
+    border-color: #00ff66;
+}
 </style>
 </head>
-
 
 <body>
 
 <div id="app">
 
-    <!-- ========================================================
-         SIDEBAR
-    ========================================================= -->
-
+    <!-- SIDEBAR -->
     <aside id="sidebar">
-
         <div class="sidebar-inner">
-
-            <div class="sidebar-top">
-
-                <div class="sidebar-top-row">
-
-                    <button
-                        id="ore-home-button"
-                        class="sidebar-icon-button"
-                        title="Ore"
-                    >
-                        <svg
-                            class="ore-logo"
-                            viewBox="0 0 64 64"
-                            fill="none"
-                        >
-                            <path
-                                d="M32 3L61 32L32 61L3 32L32 3Z"
-                                stroke="#00FF66"
-                                stroke-width="5"
-                            />
-                            <path
-                                d="M32 15L49 32L32 49L15 32L32 15Z"
-                                fill="#00FF66"
-                            />
-                        </svg>
-                    </button>
-
-                    <button
-                        id="desktop-sidebar-toggle"
-                        class="sidebar-icon-button"
-                        title="Close sidebar"
-                    >
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
-                            <path
-                                d="M9 4V20"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                                stroke-linecap="round"
-                            />
-                            <path
-                                d="M15 8L11 12L15 16"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    </button>
-
+            
+            <div class="sidebar-header">
+                <div class="brand-title">
+                    <svg viewBox="0 0 64 64" class="w-6 h-6">
+                        <path d="M32 3 L61 32 L32 61 L3 32 Z" fill="none" stroke="#00ff66" stroke-width="5"/>
+                        <path d="M32 15 L49 32 L32 49 L15 32 Z" fill="#00ff66"/>
+                    </svg>
+                    Ore
                 </div>
-
-
-                <!-- New Chat -->
-
-                <button
-                    id="new-chat-button"
-                    class="new-chat"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                    >
-                        <path
-                            d="M12 5V19"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M5 12H19"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                        />
-                    </svg>
-
-                    <span>New chat</span>
-                </button>
-
-
-                <!-- Search -->
-
-                <button
-                    id="sidebar-search-button"
-                    class="sidebar-search"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                    >
-                        <circle
-                            cx="11"
-                            cy="11"
-                            r="6.5"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                        />
-                        <path
-                            d="M16 16L21 21"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                        />
-                    </svg>
-
-                    <span>Search chats</span>
-                </button>
-
+                <div class="flex items-center gap-1">
+                    <button class="icon-btn" title="Search chats">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </button>
+                    <button class="icon-btn" title="Collapse sidebar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+                    </button>
+                </div>
             </div>
 
-
-            <!-- History -->
-
-            <div class="history">
-
-                <div class="history-label">
-                    Today
+            <div class="nav-section">
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    New chat
                 </div>
-
-                <div id="history-list">
-
-                    <div
-                        id="empty-history"
-                        class="px-3 py-2 text-xs text-gray-500"
-                    >
-                        No conversations yet
+                
+                <div class="nav-item justify-between">
+                    <div class="flex items-center gap-3">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        Images
                     </div>
-
+                    <span class="badge-updated">UPDATED</span>
                 </div>
 
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 6 4 14M12 6v14M8 6l-4 14M12 2v4"/></svg>
+                    Library
+                </div>
+
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Scheduled
+                </div>
+
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l5.58-5.58c.94-.94.94-2.48 0-3.42L12 2Z"/><circle cx="7" cy="7" r="1.5"/></svg>
+                    Plugins
+                </div>
+
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L8.6 3.3A2 2 0 0 0 6.9 2.5H4a2 2 0 0 0-2 2v13.5a2 2 0 0 0 2 2h16z"/></svg>
+                    Projects
+                </div>
+
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    Codex
+                </div>
+
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    More
+                </div>
+
+                <div class="section-divider">Pinned</div>
+
+                <div class="nav-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Assignment Help
+                </div>
+
+                <div class="section-divider">
+                    <span>Recents</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
             </div>
-
-
-            <!-- Bottom -->
 
             <div class="sidebar-bottom">
-
-                <button
-                    id="account-button"
-                    class="account-button"
-                >
-                    <div class="avatar">
-                        G
-                    </div>
-
-                    <div class="flex-1 min-w-0">
-                        <div class="text-sm font-medium text-gray-200 truncate">
-                            Guest
-                        </div>
-                        <div class="text-xs text-gray-500">
-                            Free plan
-                        </div>
-                    </div>
-
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        class="text-gray-400"
-                    >
-                        <path
-                            d="M8 10L12 14L16 10"
-                            stroke="currentColor"
-                            stroke-width="1.6"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
+                <button class="claim-offer-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 5v3M7 8s0-3 2.5-3c2 0 2.5 3 2.5 3M17 8s0-3-2.5-3c-2 0-2.5 3-2.5 3"/></svg>
+                    Claim offer
                 </button>
 
+                <div class="user-profile">
+                    <div class="user-avatar">M</div>
+                    <div class="user-info">
+                        <span class="user-name">Murphy</span>
+                        <span class="user-plan">Free</span>
+                    </div>
+                </div>
             </div>
 
         </div>
-
     </aside>
 
-
-    <!-- Mobile overlay -->
-
-    <div id="sidebar-overlay"></div>
-
-
-    <!-- ========================================================
-         MAIN
-    ========================================================= -->
-
+    <!-- MAIN WORKSPACE -->
     <main id="main">
-
-        <!-- Header -->
-
-        <header id="header">
-
-            <div class="header-left">
-
-                <!-- Mobile menu -->
-
-                <button
-                    id="mobile-menu-button"
-                    class="header-button mobile-menu-button"
-                    title="Open sidebar"
-                >
-                    <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                    >
-                        <path
-                            d="M4 6H20"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M4 12H20"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M4 18H20"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                        />
-                    </svg>
+        
+        <!-- Top Nav Bar -->
+        <div class="top-nav-bar">
+            <div class="mode-pill">
+                <button class="pill-btn active">Chat</button>
+                <button class="pill-btn flex items-center gap-1">
+                    <span style="color:#00ff66;">✦</span> Work
                 </button>
-
-
-                <!-- Sidebar open button -->
-
-                <button
-                    id="open-sidebar-button"
-                    class="header-button desktop-sidebar-toggle"
-                    title="Open sidebar"
-                    style="display:none;"
-                >
-                    <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                    >
-                        <path
-                            d="M15 4V20"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                        />
-                        <path
-                            d="M9 8L13 12L9 16"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
-                </button>
-
-
-                <button
-                    class="header-button text-lg"
-                    title="Current model"
-                >
-                    <span class="header-title">
-                        Ore
-                    </span>
-
-                    <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                    >
-                        <path
-                            d="M7 10L12 15L17 10"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
-                </button>
-
             </div>
 
-        </header>
-
-
-        <!-- ====================================================
-             CHAT
-        ==================================================== -->
-
-        <div id="chat-container">
-
-            <!-- Welcome -->
-
-            <section id="welcome-screen">
-
-                <div class="welcome-content">
-
-                    <div class="flex justify-center mb-6">
-                        <svg
-                            class="ore-logo-large"
-                            viewBox="0 0 64 64"
-                            fill="none"
-                        >
-                            <path
-                                d="M32 3L61 32L32 61L3 32L32 3Z"
-                                stroke="#00FF66"
-                                stroke-width="4"
-                            />
-                            <path
-                                d="M32 15L49 32L32 49L15 32L32 15Z"
-                                fill="#00FF66"
-                            />
-                        </svg>
-                    </div>
-
-                    <h1 class="welcome-title">
-                        How can Ore help you today?
-                    </h1>
-
-                    <p class="welcome-subtitle">
-                        Your AI assistant, tailored for you.
-                    </p>
-
-                    <div class="prompt-grid">
-
-                        <button
-                            class="prompt-card"
-                            data-prompt="Tell me about Nigerian history."
-                        >
-                            <div class="prompt-title">
-                                Nigerian history
-                            </div>
-                            <div class="prompt-description">
-                                Explore Nigeria's rich culture and major events
-                            </div>
-                        </button>
-
-                        <button
-                            class="prompt-card"
-                            data-prompt="What are the six geopolitical zones in Nigeria?"
-                        >
-                            <div class="prompt-title">
-                                Geopolitical zones
-                            </div>
-                            <div class="prompt-description">
-                                Learn about regions, states, and geography
-                            </div>
-                        </button>
-
-                        <button
-                            class="prompt-card"
-                            data-prompt="Tell me about Nigerian culture."
-                        >
-                            <div class="prompt-title">
-                                Culture & traditions
-                            </div>
-                            <div class="prompt-description">
-                                Languages, music, food, and everyday life
-                            </div>
-                        </button>
-
-                        <button
-                            class="prompt-card"
-                            data-prompt="Tell me about technology in Nigeria."
-                        >
-                            <div class="prompt-title">
-                                Tech ecosystem
-                            </div>
-                            <div class="prompt-description">
-                                Discover tech hubs, startups, and innovation
-                            </div>
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- Messages -->
-
-            <section
-                id="messages"
-                class="hidden"
-            ></section>
-
-
-            <!-- Search status -->
-
-            <div
-                id="search-status"
-                class="search-status"
-            >
-                Searching the web...
+            <div class="top-right-offer">
+                <button class="free-offer-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 5v3"/></svg>
+                    Free offer
+                </button>
+                <button class="icon-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                </button>
             </div>
+        </div>
 
+        <!-- Center Main Container -->
+        <div class="center-container">
+            <h1 class="hero-title">How can I help, Murphy?</h1>
 
-            <!-- =================================================
-                 COMPOSER
-            ================================================= -->
-
-            <div id="composer-area">
-
-                <div id="composer">
-
-                    <div class="composer-box">
-
-                        <textarea
-                            id="message-input"
-                            rows="1"
-                            placeholder="Message Ore..."
-                        ></textarea>
-
-                        <div class="composer-bottom">
-
-                            <div class="composer-left">
-
-                                <!-- Attachment -->
-
-                                <button
-                                    id="attachment-button"
-                                    class="tool-button"
-                                    title="Attach file"
-                                >
-                                    <svg
-                                        width="18"
-                                        height="18"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                    >
-                                        <path
-                                            d="M21 11.5L12.5 20C10.01 22.49 6 22.49 3.5 20C1.01 17.51 1.01 13.49 3.5 11L12.5 2C14.43 0.07 17.57 0.07 19.5 2C21.43 3.93 21.43 7.07 19.5 9L10 18.5C8.9 19.6 7.1 19.6 6 18.5C4.9 17.4 4.9 15.6 6 14.5L14.5 6"
-                                            stroke="currentColor"
-                                            stroke-width="1.6"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                        />
-                                    </svg>
-                                </button>
-
-
-                                <!-- Web Search -->
-
-                                <button
-                                    id="search-button"
-                                    class="tool-button"
-                                    title="Search web"
-                                >
-                                    <svg
-                                        width="18"
-                                        height="18"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                    >
-                                        <circle
-                                            cx="11"
-                                            cy="11"
-                                            r="6.5"
-                                            stroke="currentColor"
-                                            stroke-width="1.7"
-                                        />
-                                        <path
-                                            d="M16 16L21 21"
-                                            stroke="currentColor"
-                                            stroke-width="1.7"
-                                            stroke-linecap="round"
-                                        />
-                                    </svg>
-                                </button>
-
-
-                                <!-- Language Toggles -->
-
-                                <div class="flex items-center gap-1 ml-1">
-                                    <button
-                                        id="pidgin-button"
-                                        class="language-button active"
-                                    >
-                                        Pidgin
-                                    </button>
-
-                                    <button
-                                        id="english-button"
-                                        class="language-button"
-                                    >
-                                        English
-                                    </button>
-                                </div>
-
-                            </div>
-
-
-                            <!-- Send -->
-
-                            <button
-                                id="send-button"
-                                class="send-button"
-                                disabled
-                                title="Send message"
-                            >
-                                <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                >
-                                    <path
-                                        d="M12 19V5"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                    />
-                                    <path
-                                        d="M6 11L12 5L18 11"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    />
-                                </svg>
-                            </button>
-
+            <!-- Input Box -->
+            <div class="input-box-wrapper">
+                <textarea class="chat-input" placeholder="Ask anything" rows="1"></textarea>
+                
+                <div class="input-actions-row">
+                    <div class="actions-left">
+                        <button class="round-action-btn" title="Add attachment">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                        </button>
+                        
+                        <div class="tag-btn">
+                            <span class="w-4 h-4 rounded-full bg-gray-600 flex items-center justify-center text-[9px]">iq</span>
+                            vidIQ
                         </div>
-
                     </div>
 
-                    <div class="disclaimer">
-                        Ore can make mistakes. Verify important information.
-                    </div>
+                    <div class="actions-right">
+                        <button class="think-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/></svg>
+                            Think
+                        </button>
+                        
+                        <button class="round-action-btn" title="Voice input">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                        </button>
 
+                        <button class="voice-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"/></svg>
+                        </button>
+                    </div>
                 </div>
+            </div>
 
+            <!-- Action Prompt List -->
+            <div class="quick-prompts-list">
+                <div class="prompt-list-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                    Write or edit
+                </div>
+                <div class="prompt-list-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    Search the web
+                </div>
+            </div>
+
+            <!-- Language Switcher Bar -->
+            <div class="lang-toggle-bar">
+                <button class="lang-btn active">Pidgin</button>
+                <button class="lang-btn">English</button>
             </div>
 
         </div>
