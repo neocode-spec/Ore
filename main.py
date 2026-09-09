@@ -1,34 +1,15 @@
-import torch
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from transformers import AutoTokenizer, AutoModelForCausalLM
+
+from brain import generate_response
 
 
 # ============================================================
-# ORE CONFIG
+# ORE AI CONFIG
 # ============================================================
 
-MODEL_PATH = "/content/drive/MyDrive/ore_model"
-
-MAX_NEW_TOKENS = 120
-TEMPERATURE = 0.8
-TOP_P = 0.9
-TOP_K = 50
-
-
-# ============================================================
-# DEVICE
-# ============================================================
-
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-
-print("========================================")
-print("          ORE AI STARTING")
-print("========================================")
-print(f"Device: {DEVICE}")
-print(f"Model:  {MODEL_PATH}")
+APP_VERSION = "1.0"
 
 
 # ============================================================
@@ -37,7 +18,7 @@ print(f"Model:  {MODEL_PATH}")
 
 app = FastAPI(
     title="Ore AI",
-    version="1.0"
+    version=APP_VERSION
 )
 
 
@@ -64,38 +45,6 @@ class ChatRequest(BaseModel):
 
 
 # ============================================================
-# LOAD TOKENIZER
-# ============================================================
-
-print("\nLoading tokenizer...")
-
-tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-
-if tokenizer.pad_token is None:
-    tokenizer.pad_token = tokenizer.eos_token
-
-
-# ============================================================
-# LOAD ORE
-# ============================================================
-
-print("Loading trained Ore model...")
-
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_PATH
-)
-
-model.config.pad_token_id = tokenizer.pad_token_id
-
-model = model.to(DEVICE)
-model.eval()
-
-print("\n========================================")
-print("          ORE AI IS READY")
-print("========================================")
-
-
-# ============================================================
 # HOME
 # ============================================================
 
@@ -104,7 +53,7 @@ def home():
     return {
         "status": "online",
         "name": "Ore",
-        "device": DEVICE
+        "version": APP_VERSION
     }
 
 
@@ -123,133 +72,25 @@ def chat(req: ChatRequest):
             detail="Message cannot be empty."
         )
 
-    # --------------------------------------------------------
-    # LANGUAGE
-    # --------------------------------------------------------
+    try:
 
-    if req.language.lower() == "pidgin":
-
-        language_instruction = (
-            "Respond in natural Nigerian Pidgin English."
+        response = generate_response(
+            user_message,
+            req.language
         )
 
-    else:
+        return {
+            "response": response
+        }
 
-        language_instruction = (
-            "Respond in clear Standard English."
+    except Exception as e:
+
+        print("ORE ERROR:", str(e))
+
+        raise HTTPException(
+            status_code=500,
+            detail="Ore encountered an internal error."
         )
-
-    # --------------------------------------------------------
-    # PROMPT
-    # --------------------------------------------------------
-
-    prompt = f"""System: You are Ore, a Nigerian AI assistant.
-
-You understand Nigerian history, geography, culture, languages,
-education, technology, business, government and everyday Nigerian life.
-
-{language_instruction}
-
-User: {user_message}
-Ore:"""
-
-    # --------------------------------------------------------
-    # TOKENIZE
-    # --------------------------------------------------------
-
-    inputs = tokenizer(
-        prompt,
-        return_tensors="pt",
-        truncation=True,
-        max_length=512
-    )
-
-    inputs = {
-        key: value.to(DEVICE)
-        for key, value in inputs.items()
-    }
-
-    # --------------------------------------------------------
-    # GENERATE
-    # --------------------------------------------------------
-
-    with torch.no_grad():
-
-        output = model.generate(
-            **inputs,
-            max_new_tokens=MAX_NEW_TOKENS,
-            do_sample=True,
-            temperature=TEMPERATURE,
-            top_p=TOP_P,
-            top_k=TOP_K,
-            repetition_penalty=1.1,
-            no_repeat_ngram_size=3,
-            pad_token_id=tokenizer.pad_token_id,
-            eos_token_id=tokenizer.eos_token_id
-        )
-
-    # --------------------------------------------------------
-    # DECODE
-    # --------------------------------------------------------
-
-    generated_text = tokenizer.decode(
-        output[0],
-        skip_special_tokens=True
-    )
-
-    # --------------------------------------------------------
-    # REMOVE PROMPT
-    # --------------------------------------------------------
-
-    if "Ore:" in generated_text:
-
-        response = generated_text.split(
-            "Ore:",
-            1
-        )[1].strip()
-
-    else:
-
-        response = generated_text.strip()
-
-    # --------------------------------------------------------
-    # STOP IF MODEL STARTS ANOTHER ROLE
-    # --------------------------------------------------------
-
-    for stop_text in [
-        "\nUser:",
-        "\nSystem:",
-        "\nOre:"
-    ]:
-
-        if stop_text in response:
-
-            response = response.split(
-                stop_text,
-                1
-            )[0].strip()
-
-    # --------------------------------------------------------
-    # FALLBACK
-    # --------------------------------------------------------
-
-    if not response:
-
-        if req.language.lower() == "pidgin":
-
-            response = "I no fit generate response for that one yet."
-
-        else:
-
-            response = "I couldn't generate a response to that."
-
-    # --------------------------------------------------------
-    # RETURN
-    # --------------------------------------------------------
-
-    return {
-        "response": response
-    }
 
 
 # ============================================================
