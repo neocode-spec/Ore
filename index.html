@@ -26,7 +26,7 @@ body {
     height: 100%;
     margin: 0;
     background: #212121;
-    color: #fff;
+    color: #ececec;
     font-family:
         Inter,
         ui-sans-serif,
@@ -46,7 +46,8 @@ body {
 ============================================================ */
 
 ::-webkit-scrollbar {
-    width: 7px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -54,7 +55,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #444;
+    background: #424242;
     border-radius: 999px;
 }
 
@@ -86,9 +87,7 @@ body {
     background: #171717;
     display: flex;
     flex-direction: column;
-    transition:
-        width 0.2s ease,
-        transform 0.25s ease;
+    transition: width 0.2s ease, transform 0.25s ease;
     overflow: hidden;
 }
 
@@ -120,9 +119,9 @@ body {
 }
 
 .sidebar-icon-button {
-    width: 38px;
-    height: 38px;
-    border-radius: 9px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -131,7 +130,7 @@ body {
 }
 
 .sidebar-icon-button:hover {
-    background: #2a2a2a;
+    background: #212121;
     color: #fff;
 }
 
@@ -141,59 +140,56 @@ body {
 ============================================================ */
 
 .ore-logo {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     flex-shrink: 0;
 }
 
 .ore-logo-large {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
 }
 
 
 /* ============================================================
-   NEW CHAT
+   NEW CHAT & SEARCH
 ============================================================ */
 
 .new-chat {
-    margin-top: 8px;
+    margin-top: 10px;
     width: 100%;
-    height: 42px;
-    border-radius: 9px;
+    height: 40px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 0 12px;
+    gap: 10px;
+    padding: 0 10px;
     color: #ececec;
     font-size: 14px;
+    font-weight: 500;
     transition: background 0.15s ease;
 }
 
 .new-chat:hover {
-    background: #2a2a2a;
+    background: #212121;
 }
-
-
-/* ============================================================
-   SIDEBAR SEARCH
-============================================================ */
 
 .sidebar-search {
     width: 100%;
-    height: 40px;
-    margin-top: 3px;
-    border-radius: 9px;
+    height: 38px;
+    margin-top: 2px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 0 12px;
+    gap: 10px;
+    padding: 0 10px;
     color: #b4b4b4;
     font-size: 14px;
+    transition: background 0.15s ease;
 }
 
 .sidebar-search:hover {
-    background: #2a2a2a;
+    background: #212121;
     color: #fff;
 }
 
@@ -205,19 +201,22 @@ body {
 .history {
     flex: 1;
     overflow-y: auto;
-    padding: 18px 8px;
+    padding: 12px 8px;
 }
 
 .history-label {
-    padding: 0 10px 8px;
-    font-size: 12px;
-    color: #8e8e8e;
+    padding: 8px 10px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .history-item {
     width: 100%;
-    min-height: 38px;
-    padding: 8px 10px;
+    height: 36px;
+    padding: 0 10px;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -227,14 +226,16 @@ body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    transition: background 0.15s ease;
 }
 
 .history-item:hover {
-    background: #2a2a2a;
+    background: #212121;
 }
 
 .history-item.active {
-    background: #2a2a2a;
+    background: #212121;
+    color: #fff;
 }
 
 
@@ -244,33 +245,35 @@ body {
 
 .sidebar-bottom {
     padding: 8px;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 .account-button {
     width: 100%;
-    padding: 8px 9px;
-    border-radius: 9px;
+    padding: 8px 10px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 10px;
     text-align: left;
+    transition: background 0.15s ease;
 }
 
 .account-button:hover {
-    background: #2a2a2a;
+    background: #212121;
 }
 
 .avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
-    background: #333;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #00ff66;
+    color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     flex-shrink: 0;
 }
 
@@ -300,7 +303,8 @@ body {
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    padding: 0 16px;
+    justify-content: space-between;
+    padding: 0 12px;
     position: relative;
     z-index: 10;
 }
@@ -313,16 +317,18 @@ body {
 
 .header-button {
     height: 36px;
-    padding: 0 9px;
+    padding: 0 10px;
     border-radius: 8px;
     color: #b4b4b4;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-weight: 600;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .header-button:hover {
-    background: #2a2a2a;
+    background: #2f2f2f;
     color: #fff;
 }
 
@@ -348,7 +354,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px 20px 190px;
+    padding: 40px 20px 180px;
 }
 
 .welcome-content {
@@ -358,15 +364,16 @@ body {
 }
 
 .welcome-title {
-    font-size: 30px;
-    line-height: 1.2;
+    font-size: 32px;
+    line-height: 1.25;
     font-weight: 600;
-    letter-spacing: -0.025em;
+    color: #f5f5f5;
+    letter-spacing: -0.02em;
 }
 
 .welcome-subtitle {
-    margin-top: 12px;
-    color: #9b9b9b;
+    margin-top: 10px;
+    color: #8e8e8e;
     font-size: 15px;
 }
 
@@ -376,37 +383,37 @@ body {
 ============================================================ */
 
 .prompt-grid {
-    margin-top: 32px;
+    margin-top: 36px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .prompt-card {
-    padding: 14px 15px;
-    min-height: 76px;
+    padding: 14px 16px;
+    min-height: 72px;
     text-align: left;
-    border: 1px solid #3a3a3a;
-    border-radius: 12px;
-    background: #2a2a2a;
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    background: transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    cursor: pointer;
 }
 
 .prompt-card:hover {
-    background: #303030;
-    border-color: #555;
+    background: #2f2f2f;
+    border-color: rgba(255,255,255,0.15);
 }
 
 .prompt-title {
     font-size: 14px;
+    font-weight: 500;
     color: #ececec;
 }
 
 .prompt-description {
-    margin-top: 5px;
-    color: #929292;
+    margin-top: 4px;
+    color: #8e8e8e;
     font-size: 12px;
 }
 
@@ -428,7 +435,7 @@ body {
     width: 100%;
     max-width: 768px;
     margin: 0 auto;
-    padding: 18px 20px;
+    padding: 24px 20px;
 }
 
 .user-message {
@@ -439,25 +446,32 @@ body {
 .user-bubble {
     max-width: 70%;
     background: #2f2f2f;
-    border-radius: 18px;
-    padding: 10px 15px;
+    border-radius: 20px;
+    padding: 12px 18px;
     font-size: 15px;
-    line-height: 1.55;
+    line-height: 1.6;
+    color: #f5f5f5;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
 
 .ore-message {
     display: flex;
-    gap: 13px;
+    gap: 16px;
     align-items: flex-start;
 }
 
 .ore-avatar {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #212121;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 .ore-content {
@@ -477,16 +491,16 @@ body {
 
 .typing-dots {
     display: flex;
-    gap: 4px;
-    padding-top: 7px;
+    gap: 5px;
+    padding-top: 8px;
 }
 
 .typing-dots span {
-    width: 5px;
-    height: 5px;
-    background: #aaa;
+    width: 6px;
+    height: 6px;
+    background: #8e8e8e;
     border-radius: 50%;
-    animation: typing 1.2s infinite;
+    animation: typing 1.2s infinite ease-in-out;
 }
 
 .typing-dots span:nth-child(2) {
@@ -502,10 +516,9 @@ body {
         opacity: 0.3;
         transform: translateY(0);
     }
-
     30% {
         opacity: 1;
-        transform: translateY(-2px);
+        transform: translateY(-3px);
     }
 }
 
@@ -519,15 +532,14 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 0 20px 20px;
+    padding: 0 20px 16px;
     pointer-events: none;
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(33,33,33,0),
-            rgba(33,33,33,0.92) 25%,
-            #212121 48%
-        );
+    background: linear-gradient(
+        to bottom,
+        rgba(33,33,33,0),
+        rgba(33,33,33,0.95) 30%,
+        #212121 60%
+    );
 }
 
 #composer {
@@ -539,16 +551,21 @@ body {
 
 .composer-box {
     background: #2f2f2f;
-    border: 1px solid #424242;
-    border-radius: 16px;
-    padding: 10px 12px 9px;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 12px 14px 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    transition: border-color 0.15s ease;
+}
+
+.composer-box:focus-within {
+    border-color: rgba(255,255,255,0.2);
 }
 
 #message-input {
     width: 100%;
-    max-height: 180px;
-    min-height: 26px;
+    max-height: 200px;
+    min-height: 24px;
     resize: none;
     overflow-y: auto;
     border: none;
@@ -558,7 +575,7 @@ body {
     font-family: inherit;
     font-size: 15px;
     line-height: 1.5;
-    padding: 3px 4px;
+    padding: 2px 6px;
 }
 
 #message-input::placeholder {
@@ -570,77 +587,82 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 5px;
+    margin-top: 6px;
 }
 
 .composer-left {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
 }
 
 .tool-button {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    color: #a8a8a8;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: #b4b4b4;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .tool-button:hover {
-    background: #3b3b3b;
+    background: #383838;
     color: #fff;
 }
 
 .tool-button.active {
     color: #00ff66;
+    background: rgba(0,255,102,0.1);
 }
 
 .language-button {
-    height: 32px;
-    padding: 0 9px;
-    border-radius: 8px;
-    color: #a8a8a8;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: #8e8e8e;
     font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s ease;
 }
 
 .language-button:hover {
-    background: #3b3b3b;
     color: #fff;
+    background: #383838;
 }
 
 .language-button.active {
-    background: #444;
-    color: #fff;
+    background: #424242;
+    color: #00ff66;
 }
 
 .send-button {
     width: 32px;
     height: 32px;
-    border-radius: 9px;
+    border-radius: 50%;
     background: #fff;
     color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease, background 0.15s ease;
 }
 
 .send-button:disabled {
-    opacity: 0.35;
+    opacity: 0.2;
+    background: #fff;
     cursor: not-allowed;
 }
 
 .send-button:not(:disabled):hover {
-    background: #ddd;
+    background: #ececec;
 }
 
 .disclaimer {
     text-align: center;
     color: #777;
-    font-size: 11px;
+    font-size: 12px;
     margin-top: 8px;
 }
 
@@ -655,7 +677,7 @@ body {
     max-width: 768px;
     color: #8e8e8e;
     font-size: 12px;
-    padding-left: 5px;
+    padding-left: 8px;
 }
 
 .search-status.visible {
@@ -664,7 +686,7 @@ body {
 
 
 /* ============================================================
-   MOBILE
+   MOBILE RESPONSIVENESS
 ============================================================ */
 
 #sidebar-overlay {
@@ -681,7 +703,7 @@ body {
         bottom: 0;
         width: 260px;
         transform: translateX(-100%);
-        box-shadow: 15px 0 40px rgba(0,0,0,0.4);
+        box-shadow: 15px 0 40px rgba(0,0,0,0.5);
     }
 
     #sidebar.open {
@@ -697,7 +719,7 @@ body {
         position: fixed;
         inset: 0;
         z-index: 90;
-        background: rgba(0,0,0,0.55);
+        background: rgba(0,0,0,0.6);
     }
 
     .mobile-menu-button {
@@ -714,7 +736,7 @@ body {
 
     #welcome-screen {
         align-items: flex-start;
-        padding-top: 70px;
+        padding-top: 60px;
     }
 
     .welcome-title {
@@ -730,7 +752,7 @@ body {
     }
 
     .message-inner {
-        padding: 15px 14px;
+        padding: 16px 14px;
     }
 
     .user-bubble {
@@ -738,11 +760,7 @@ body {
     }
 
     #composer-area {
-        padding: 0 10px 10px;
-    }
-
-    .language-button {
-        padding: 0 7px;
+        padding: 0 10px 12px;
     }
 }
 
@@ -753,12 +771,12 @@ body {
     }
 
     .ore-logo-large {
-        width: 52px;
-        height: 52px;
+        width: 48px;
+        height: 48px;
     }
 
     .welcome-title {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     .prompt-description {
@@ -766,11 +784,12 @@ body {
     }
 
     .prompt-card {
-        min-height: 52px;
+        min-height: 48px;
+        padding: 12px;
     }
 
     .composer-box {
-        border-radius: 15px;
+        border-radius: 20px;
     }
 }
 
@@ -799,49 +818,40 @@ body {
                         class="sidebar-icon-button"
                         title="Ore"
                     >
-
                         <svg
                             class="ore-logo"
                             viewBox="0 0 64 64"
                             fill="none"
                         >
-
                             <path
                                 d="M32 3L61 32L32 61L3 32L32 3Z"
                                 stroke="#00FF66"
                                 stroke-width="5"
                             />
-
                             <path
                                 d="M32 15L49 32L32 49L15 32L32 15Z"
                                 fill="#00FF66"
                             />
-
                         </svg>
-
                     </button>
-
 
                     <button
                         id="desktop-sidebar-toggle"
                         class="sidebar-icon-button"
                         title="Close sidebar"
                     >
-
                         <svg
                             width="20"
                             height="20"
                             viewBox="0 0 24 24"
                             fill="none"
                         >
-
                             <path
                                 d="M9 4V20"
                                 stroke="currentColor"
                                 stroke-width="1.7"
                                 stroke-linecap="round"
                             />
-
                             <path
                                 d="M15 8L11 12L15 16"
                                 stroke="currentColor"
@@ -849,9 +859,7 @@ body {
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                             />
-
                         </svg>
-
                     </button>
 
                 </div>
@@ -863,32 +871,27 @@ body {
                     id="new-chat-button"
                     class="new-chat"
                 >
-
                     <svg
-                        width="20"
-                        height="20"
+                        width="18"
+                        height="18"
                         viewBox="0 0 24 24"
                         fill="none"
                     >
-
                         <path
                             d="M12 5V19"
                             stroke="currentColor"
                             stroke-width="1.8"
                             stroke-linecap="round"
                         />
-
                         <path
                             d="M5 12H19"
                             stroke="currentColor"
                             stroke-width="1.8"
                             stroke-linecap="round"
                         />
-
                     </svg>
 
                     <span>New chat</span>
-
                 </button>
 
 
@@ -898,14 +901,12 @@ body {
                     id="sidebar-search-button"
                     class="sidebar-search"
                 >
-
                     <svg
-                        width="19"
-                        height="19"
+                        width="18"
+                        height="18"
                         viewBox="0 0 24 24"
                         fill="none"
                     >
-
                         <circle
                             cx="11"
                             cy="11"
@@ -913,18 +914,15 @@ body {
                             stroke="currentColor"
                             stroke-width="1.7"
                         />
-
                         <path
                             d="M16 16L21 21"
                             stroke="currentColor"
                             stroke-width="1.7"
                             stroke-linecap="round"
                         />
-
                     </svg>
 
                     <span>Search chats</span>
-
                 </button>
 
             </div>
@@ -960,35 +958,26 @@ body {
                     id="account-button"
                     class="account-button"
                 >
-
                     <div class="avatar">
                         G
                     </div>
 
                     <div class="flex-1 min-w-0">
-
-                        <div
-                            class="text-sm text-gray-200 truncate"
-                        >
+                        <div class="text-sm font-medium text-gray-200 truncate">
                             Guest
                         </div>
-
-                        <div
-                            class="text-xs text-gray-500"
-                        >
+                        <div class="text-xs text-gray-500">
                             Free plan
                         </div>
-
                     </div>
 
-
                     <svg
-                        width="17"
-                        height="17"
+                        width="16"
+                        height="16"
                         viewBox="0 0 24 24"
                         fill="none"
+                        class="text-gray-400"
                     >
-
                         <path
                             d="M8 10L12 14L16 10"
                             stroke="currentColor"
@@ -996,9 +985,7 @@ body {
                             stroke-linecap="round"
                             stroke-linejoin="round"
                         />
-
                     </svg>
-
                 </button>
 
             </div>
@@ -1019,7 +1006,6 @@ body {
 
     <main id="main">
 
-
         <!-- Header -->
 
         <header id="header">
@@ -1033,37 +1019,31 @@ body {
                     class="header-button mobile-menu-button"
                     title="Open sidebar"
                 >
-
                     <svg
                         width="20"
                         height="20"
                         viewBox="0 0 24 24"
                         fill="none"
                     >
-
                         <path
                             d="M4 6H20"
                             stroke="currentColor"
                             stroke-width="1.7"
                             stroke-linecap="round"
                         />
-
                         <path
                             d="M4 12H20"
                             stroke="currentColor"
                             stroke-width="1.7"
                             stroke-linecap="round"
                         />
-
                         <path
                             d="M4 18H20"
                             stroke="currentColor"
                             stroke-width="1.7"
                             stroke-linecap="round"
                         />
-
                     </svg>
-
                 </button>
 
 
@@ -1075,21 +1055,18 @@ body {
                     title="Open sidebar"
                     style="display:none;"
                 >
-
                     <svg
                         width="20"
                         height="20"
                         viewBox="0 0 24 24"
                         fill="none"
                     >
-
                         <path
                             d="M15 4V20"
                             stroke="currentColor"
                             stroke-width="1.7"
                             stroke-linecap="round"
                         />
-
                         <path
                             d="M9 8L13 12L9 16"
                             stroke="currentColor"
@@ -1097,28 +1074,24 @@ body {
                             stroke-linecap="round"
                             stroke-linejoin="round"
                         />
-
                     </svg>
-
                 </button>
 
 
                 <button
-                    class="header-button"
+                    class="header-button text-lg"
                     title="Current model"
                 >
-
                     <span class="header-title">
                         Ore
                     </span>
 
                     <svg
-                        width="15"
-                        height="15"
+                        width="14"
+                        height="14"
                         viewBox="0 0 24 24"
                         fill="none"
                     >
-
                         <path
                             d="M7 10L12 15L17 10"
                             stroke="currentColor"
@@ -1126,9 +1099,7 @@ body {
                             stroke-linecap="round"
                             stroke-linejoin="round"
                         />
-
                     </svg>
-
                 </button>
 
             </div>
@@ -1142,113 +1113,87 @@ body {
 
         <div id="chat-container">
 
-
             <!-- Welcome -->
 
             <section id="welcome-screen">
 
                 <div class="welcome-content">
 
-                    <div class="flex justify-center mb-7">
-
+                    <div class="flex justify-center mb-6">
                         <svg
                             class="ore-logo-large"
                             viewBox="0 0 64 64"
                             fill="none"
                         >
-
                             <path
                                 d="M32 3L61 32L32 61L3 32L32 3Z"
                                 stroke="#00FF66"
                                 stroke-width="4"
                             />
-
                             <path
                                 d="M32 15L49 32L32 49L15 32L32 15Z"
                                 fill="#00FF66"
                             />
-
                         </svg>
-
                     </div>
-
 
                     <h1 class="welcome-title">
                         How can Ore help you today?
                     </h1>
 
-
                     <p class="welcome-subtitle">
-                        Your Nigerian AI assistant.
+                        Your AI assistant, tailored for you.
                     </p>
 
-
                     <div class="prompt-grid">
-
 
                         <button
                             class="prompt-card"
                             data-prompt="Tell me about Nigerian history."
                         >
-
                             <div class="prompt-title">
                                 Nigerian history
                             </div>
-
                             <div class="prompt-description">
-                                Explore Nigeria's history and major events
+                                Explore Nigeria's rich culture and major events
                             </div>
-
                         </button>
-
 
                         <button
                             class="prompt-card"
                             data-prompt="What are the six geopolitical zones in Nigeria?"
                         >
-
                             <div class="prompt-title">
-                                Nigerian geography
+                                Geopolitical zones
                             </div>
-
                             <div class="prompt-description">
-                                Explore regions, states and geography
+                                Learn about regions, states, and geography
                             </div>
-
                         </button>
-
 
                         <button
                             class="prompt-card"
                             data-prompt="Tell me about Nigerian culture."
                         >
-
                             <div class="prompt-title">
-                                Culture
+                                Culture & traditions
                             </div>
-
                             <div class="prompt-description">
-                                Languages, traditions and everyday life
+                                Languages, music, food, and everyday life
                             </div>
-
                         </button>
-
 
                         <button
                             class="prompt-card"
                             data-prompt="Tell me about technology in Nigeria."
                         >
-
                             <div class="prompt-title">
-                                Technology
+                                Tech ecosystem
                             </div>
-
                             <div class="prompt-description">
-                                Explore Nigeria's technology ecosystem
+                                Discover tech hubs, startups, and innovation
                             </div>
-
                         </button>
-
 
                     </div>
 
@@ -1285,35 +1230,29 @@ body {
 
                     <div class="composer-box">
 
-
                         <textarea
                             id="message-input"
                             rows="1"
-                            placeholder="Message Ore"
+                            placeholder="Message Ore..."
                         ></textarea>
-
 
                         <div class="composer-bottom">
 
-
                             <div class="composer-left">
-
 
                                 <!-- Attachment -->
 
                                 <button
                                     id="attachment-button"
                                     class="tool-button"
-                                    title="Attach"
+                                    title="Attach file"
                                 >
-
                                     <svg
-                                        width="19"
-                                        height="19"
+                                        width="18"
+                                        height="18"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                     >
-
                                         <path
                                             d="M21 11.5L12.5 20C10.01 22.49 6 22.49 3.5 20C1.01 17.51 1.01 13.49 3.5 11L12.5 2C14.43 0.07 17.57 0.07 19.5 2C21.43 3.93 21.43 7.07 19.5 9L10 18.5C8.9 19.6 7.1 19.6 6 18.5C4.9 17.4 4.9 15.6 6 14.5L14.5 6"
                                             stroke="currentColor"
@@ -1321,9 +1260,7 @@ body {
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                         />
-
                                     </svg>
-
                                 </button>
 
 
@@ -1332,16 +1269,14 @@ body {
                                 <button
                                     id="search-button"
                                     class="tool-button"
-                                    title="Search the web"
+                                    title="Search web"
                                 >
-
                                     <svg
-                                        width="19"
-                                        height="19"
+                                        width="18"
+                                        height="18"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                     >
-
                                         <circle
                                             cx="11"
                                             cy="11"
@@ -1349,34 +1284,33 @@ body {
                                             stroke="currentColor"
                                             stroke-width="1.7"
                                         />
-
                                         <path
                                             d="M16 16L21 21"
                                             stroke="currentColor"
                                             stroke-width="1.7"
                                             stroke-linecap="round"
                                         />
-
                                     </svg>
-
                                 </button>
 
 
-                                <!-- Language -->
+                                <!-- Language Toggles -->
 
-                                <button
-                                    id="pidgin-button"
-                                    class="language-button active"
-                                >
-                                    Pidgin
-                                </button>
+                                <div class="flex items-center gap-1 ml-1">
+                                    <button
+                                        id="pidgin-button"
+                                        class="language-button active"
+                                    >
+                                        Pidgin
+                                    </button>
 
-                                <button
-                                    id="english-button"
-                                    class="language-button"
-                                >
-                                    English
-                                </button>
+                                    <button
+                                        id="english-button"
+                                        class="language-button"
+                                    >
+                                        English
+                                    </button>
+                                </div>
 
                             </div>
 
@@ -1387,23 +1321,20 @@ body {
                                 id="send-button"
                                 class="send-button"
                                 disabled
-                                title="Send"
+                                title="Send message"
                             >
-
                                 <svg
-                                    width="17"
-                                    height="17"
+                                    width="16"
+                                    height="16"
                                     viewBox="0 0 24 24"
                                     fill="none"
                                 >
-
                                     <path
                                         d="M12 19V5"
                                         stroke="currentColor"
                                         stroke-width="2"
                                         stroke-linecap="round"
                                     />
-
                                     <path
                                         d="M6 11L12 5L18 11"
                                         stroke="currentColor"
@@ -1411,18 +1342,15 @@ body {
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                     />
-
                                 </svg>
-
                             </button>
 
                         </div>
 
                     </div>
 
-
                     <div class="disclaimer">
-                        Ore can make mistakes. Check important information.
+                        Ore can make mistakes. Verify important information.
                     </div>
 
                 </div>
@@ -1435,883 +1363,5 @@ body {
 
 </div>
 
-
-<script>
-
-/* ============================================================
-   BACKEND
-============================================================ */
-
-/*
-   When Render gives you the backend URL, put it here.
-
-   Example:
-
-   const API_URL =
-       "https://ore-backend.onrender.com";
-
-*/
-
-const API_URL = "";
-
-
-/* ============================================================
-   STATE
-============================================================ */
-
-let currentLanguage = "pidgin";
-
-let searchEnabled = false;
-
-let conversationStarted = false;
-
-let isGenerating = false;
-
-
-/* ============================================================
-   ELEMENTS
-============================================================ */
-
-const sidebar =
-    document.getElementById("sidebar");
-
-const sidebarOverlay =
-    document.getElementById("sidebar-overlay");
-
-const desktopSidebarToggle =
-    document.getElementById(
-        "desktop-sidebar-toggle"
-    );
-
-const openSidebarButton =
-    document.getElementById(
-        "open-sidebar-button"
-    );
-
-const mobileMenuButton =
-    document.getElementById(
-        "mobile-menu-button"
-    );
-
-const newChatButton =
-    document.getElementById(
-        "new-chat-button"
-    );
-
-const messageInput =
-    document.getElementById(
-        "message-input"
-    );
-
-const sendButton =
-    document.getElementById(
-        "send-button"
-    );
-
-const welcomeScreen =
-    document.getElementById(
-        "welcome-screen"
-    );
-
-const messages =
-    document.getElementById(
-        "messages"
-    );
-
-const chatContainer =
-    document.getElementById(
-        "chat-container"
-    );
-
-const pidginButton =
-    document.getElementById(
-        "pidgin-button"
-    );
-
-const englishButton =
-    document.getElementById(
-        "english-button"
-    );
-
-const searchButton =
-    document.getElementById(
-        "search-button"
-    );
-
-const searchStatus =
-    document.getElementById(
-        "search-status"
-    );
-
-const historyList =
-    document.getElementById(
-        "history-list"
-    );
-
-const emptyHistory =
-    document.getElementById(
-        "empty-history"
-    );
-
-
-/* ============================================================
-   LOGO FUNCTION
-============================================================ */
-
-function createOreLogo() {
-
-    const logo =
-        document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "svg"
-        );
-
-    logo.setAttribute(
-        "viewBox",
-        "0 0 64 64"
-    );
-
-    logo.setAttribute(
-        "class",
-        "ore-avatar"
-    );
-
-    logo.innerHTML = `
-
-        <path
-            d="M32 3L61 32L32 61L3 32L32 3Z"
-            stroke="#00FF66"
-            stroke-width="5"
-            fill="none"
-        />
-
-        <path
-            d="M32 15L49 32L32 49L15 32L32 15Z"
-            fill="#00FF66"
-        />
-
-    `;
-
-    return logo;
-}
-
-
-/* ============================================================
-   SEND BUTTON
-============================================================ */
-
-function updateSendButton() {
-
-    const hasText =
-        messageInput.value.trim().length > 0;
-
-    sendButton.disabled =
-        !hasText || isGenerating;
-}
-
-
-/* ============================================================
-   AUTO GROW INPUT
-============================================================ */
-
-function resizeInput() {
-
-    messageInput.style.height = "auto";
-
-    messageInput.style.height =
-        Math.min(
-            messageInput.scrollHeight,
-            180
-        ) + "px";
-}
-
-
-messageInput.addEventListener(
-    "input",
-    () => {
-
-        resizeInput();
-
-        updateSendButton();
-
-    }
-);
-
-
-/* ============================================================
-   LANGUAGE
-============================================================ */
-
-function setLanguage(language) {
-
-    currentLanguage = language;
-
-    if (language === "pidgin") {
-
-        pidginButton.classList.add(
-            "active"
-        );
-
-        englishButton.classList.remove(
-            "active"
-        );
-
-    } else {
-
-        englishButton.classList.add(
-            "active"
-        );
-
-        pidginButton.classList.remove(
-            "active"
-        );
-
-    }
-}
-
-
-pidginButton.addEventListener(
-    "click",
-    () => setLanguage("pidgin")
-);
-
-
-englishButton.addEventListener(
-    "click",
-    () => setLanguage("english")
-);
-
-
-/* ============================================================
-   WEB SEARCH TOGGLE
-============================================================ */
-
-searchButton.addEventListener(
-    "click",
-    () => {
-
-        searchEnabled =
-            !searchEnabled;
-
-        searchButton.classList.toggle(
-            "active",
-            searchEnabled
-        );
-
-        searchStatus.textContent =
-            searchEnabled
-                ? "Web search enabled"
-                : "";
-
-        searchStatus.classList.toggle(
-            "visible",
-            searchEnabled
-        );
-
-    }
-);
-
-
-/* ============================================================
-   ADD MESSAGE
-============================================================ */
-
-function addMessage(text, role) {
-
-    if (!conversationStarted) {
-
-        conversationStarted = true;
-
-        welcomeScreen.classList.add(
-            "hidden"
-        );
-
-        messages.classList.remove(
-            "hidden"
-        );
-
-    }
-
-
-    const row =
-        document.createElement("div");
-
-    row.className =
-        "message-row";
-
-
-    const inner =
-        document.createElement("div");
-
-    inner.className =
-        "message-inner";
-
-
-    if (role === "user") {
-
-        inner.classList.add(
-            "user-message"
-        );
-
-
-        const bubble =
-            document.createElement("div");
-
-        bubble.className =
-            "user-bubble";
-
-        bubble.textContent =
-            text;
-
-        inner.appendChild(
-            bubble
-        );
-
-
-    } else {
-
-        inner.classList.add(
-            "ore-message"
-        );
-
-
-        const logo =
-            createOreLogo();
-
-
-        const content =
-            document.createElement("div");
-
-        content.className =
-            "ore-content";
-
-        content.textContent =
-            text;
-
-
-        inner.appendChild(
-            logo
-        );
-
-        inner.appendChild(
-            content
-        );
-
-    }
-
-
-    row.appendChild(
-        inner
-    );
-
-    messages.appendChild(
-        row
-    );
-
-
-    requestAnimationFrame(
-        scrollToBottom
-    );
-}
-
-
-/* ============================================================
-   TYPING
-============================================================ */
-
-function addTypingIndicator() {
-
-    const row =
-        document.createElement("div");
-
-    row.id =
-        "typing-indicator";
-
-    row.className =
-        "message-row";
-
-
-    const inner =
-        document.createElement("div");
-
-    inner.className =
-        "message-inner ore-message";
-
-
-    inner.appendChild(
-        createOreLogo()
-    );
-
-
-    const dots =
-        document.createElement("div");
-
-    dots.className =
-        "typing-dots";
-
-    dots.innerHTML = `
-        <span></span>
-        <span></span>
-        <span></span>
-    `;
-
-
-    inner.appendChild(
-        dots
-    );
-
-    row.appendChild(
-        inner
-    );
-
-    messages.appendChild(
-        row
-    );
-
-
-    scrollToBottom();
-}
-
-
-function removeTypingIndicator() {
-
-    const indicator =
-        document.getElementById(
-            "typing-indicator"
-        );
-
-    if (indicator) {
-        indicator.remove();
-    }
-}
-
-
-/* ============================================================
-   SCROLL
-============================================================ */
-
-function scrollToBottom() {
-
-    chatContainer.scrollTo({
-        top: chatContainer.scrollHeight,
-        behavior: "smooth"
-    });
-
-}
-
-
-/* ============================================================
-   HISTORY
-============================================================ */
-
-function addHistoryItem(title) {
-
-    if (emptyHistory) {
-        emptyHistory.remove();
-    }
-
-
-    const item =
-        document.createElement("button");
-
-    item.className =
-        "history-item active";
-
-    item.textContent =
-        title.length > 38
-            ? title.substring(0, 38) + "..."
-            : title;
-
-
-    historyList
-        .querySelectorAll(".history-item")
-        .forEach(
-            existing => {
-                existing.classList.remove(
-                    "active"
-                );
-            }
-        );
-
-
-    historyList.prepend(
-        item
-    );
-}
-
-
-/* ============================================================
-   SEND MESSAGE
-============================================================ */
-
-async function sendMessage() {
-
-    const userMessage =
-        messageInput.value.trim();
-
-
-    if (
-        !userMessage ||
-        isGenerating
-    ) {
-        return;
-    }
-
-
-    addHistoryItem(
-        userMessage
-    );
-
-
-    addMessage(
-        userMessage,
-        "user"
-    );
-
-
-    messageInput.value = "";
-
-    messageInput.style.height =
-        "auto";
-
-
-    updateSendButton();
-
-
-    isGenerating = true;
-
-    updateSendButton();
-
-
-    addTypingIndicator();
-
-
-    if (searchEnabled) {
-
-        searchStatus.textContent =
-            "Searching the web...";
-
-        searchStatus.classList.add(
-            "visible"
-        );
-
-    }
-
-
-    try {
-
-        if (!API_URL) {
-
-            throw new Error(
-                "Ore backend URL is not configured."
-            );
-
-        }
-
-
-        const response =
-            await fetch(
-                `${API_URL}/api/chat`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        message:
-                            userMessage,
-
-                        language:
-                            currentLanguage,
-
-                        search_enabled:
-                            searchEnabled
-
-                    })
-
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Backend returned ${response.status}`
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        removeTypingIndicator();
-
-
-        const oreResponse =
-            data.response ||
-            "Ore no return response.";
-
-
-        addMessage(
-            oreResponse,
-            "ore"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Ore backend error:",
-            error
-        );
-
-
-        removeTypingIndicator();
-
-
-        addMessage(
-            currentLanguage === "pidgin"
-                ? "I no fit connect to Ore backend right now."
-                : "I couldn't connect to the Ore backend right now.",
-            "ore"
-        );
-
-    } finally {
-
-        isGenerating = false;
-
-        updateSendButton();
-
-        if (!searchEnabled) {
-
-            searchStatus.classList.remove(
-                "visible"
-            );
-
-        }
-
-    }
-}
-
-
-/* ============================================================
-   SEND BUTTON
-============================================================ */
-
-sendButton.addEventListener(
-    "click",
-    sendMessage
-);
-
-
-/* ============================================================
-   ENTER
-============================================================ */
-
-messageInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
-
-            event.preventDefault();
-
-            sendMessage();
-
-        }
-
-    }
-);
-
-
-/* ============================================================
-   PROMPT CARDS
-============================================================ */
-
-document
-    .querySelectorAll(".prompt-card")
-    .forEach(card => {
-
-        card.addEventListener(
-            "click",
-            () => {
-
-                messageInput.value =
-                    card.dataset.prompt;
-
-                resizeInput();
-
-                updateSendButton();
-
-                messageInput.focus();
-
-            }
-        );
-
-    });
-
-
-/* ============================================================
-   NEW CHAT
-============================================================ */
-
-newChatButton.addEventListener(
-    "click",
-    () => {
-
-        conversationStarted =
-            false;
-
-        messages.innerHTML =
-            "";
-
-        messages.classList.add(
-            "hidden"
-        );
-
-        welcomeScreen.classList.remove(
-            "hidden"
-        );
-
-        messageInput.value =
-            "";
-
-        messageInput.style.height =
-            "auto";
-
-        updateSendButton();
-
-        closeMobileSidebar();
-
-    }
-);
-
-
-/* ============================================================
-   DESKTOP SIDEBAR
-============================================================ */
-
-desktopSidebarToggle.addEventListener(
-    "click",
-    () => {
-
-        sidebar.classList.add(
-            "collapsed"
-        );
-
-        openSidebarButton.style.display =
-            "flex";
-
-    }
-);
-
-
-openSidebarButton.addEventListener(
-    "click",
-    () => {
-
-        sidebar.classList.remove(
-            "collapsed"
-        );
-
-        openSidebarButton.style.display =
-            "none";
-
-    }
-);
-
-
-/* ============================================================
-   MOBILE SIDEBAR
-============================================================ */
-
-function openMobileSidebar() {
-
-    sidebar.classList.add(
-        "open"
-    );
-
-    sidebarOverlay.classList.add(
-        "open"
-    );
-
-}
-
-
-function closeMobileSidebar() {
-
-    sidebar.classList.remove(
-        "open"
-    );
-
-    sidebarOverlay.classList.remove(
-        "open"
-    );
-
-}
-
-
-mobileMenuButton.addEventListener(
-    "click",
-    openMobileSidebar
-);
-
-
-sidebarOverlay.addEventListener(
-    "click",
-    closeMobileSidebar
-);
-
-
-/* ============================================================
-   SIDEBAR SEARCH
-============================================================ */
-
-document
-    .getElementById("sidebar-search-button")
-    .addEventListener(
-        "click",
-        () => {
-
-            messageInput.focus();
-
-        }
-    );
-
-
-/* ============================================================
-   ORE HOME
-============================================================ */
-
-document
-    .getElementById("ore-home-button")
-    .addEventListener(
-        "click",
-        () => {
-
-            newChatButton.click();
-
-        }
-    );
-
-
-/* ============================================================
-   INITIAL
-============================================================ */
-
-updateSendButton();
-
-</script>
-
 </body>
 </html>
-```
