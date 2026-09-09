@@ -1,31 +1,23 @@
 # brain.py
 
 import os
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import time
+import numpy as np
+import onnxruntime as ort
+from transformers import AutoTokenizer
 
 
 # ============================================================
-# ORE MODEL CONFIGURATION
+# CONFIG
 # ============================================================
 
-MODEL_ID = os.getenv("ORE_MODEL_ID")
+MODEL_PATH = os.getenv(
+    "ORE_ONNX_MODEL_PATH",
+    "model_int8.onnx"
+)
 
-if not MODEL_ID:
-    raise RuntimeError(
-        "ORE_MODEL_ID environment variable is not set."
-    )
-
-
-# ============================================================
-# DEVICE
-# ============================================================
-
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-
-print("🧠 Loading Ore...")
-print(f"📦 Model: {MODEL_ID}")
-print(f"⚙️ Device: {DEVICE}")
+print("🧠 Loading Ore INT8 ONNX model...")
+print(f"📦 Model: {MODEL_PATH}")
 
 
 # ============================================================
@@ -33,7 +25,10 @@ print(f"⚙️ Device: {DEVICE}")
 # ============================================================
 
 tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_ID
+    os.getenv(
+        "ORE_TOKENIZER_PATH",
+        "."
+    )
 )
 
 if tokenizer.pad_token is None:
@@ -41,31 +36,28 @@ if tokenizer.pad_token is None:
 
 
 # ============================================================
-# MODEL
+# ONNX RUNTIME
 # ============================================================
 
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID
+session = ort.InferenceSession(
+    MODEL_PATH,
+    providers=["CPUExecutionProvider"]
 )
 
-model.config.pad_token_id = tokenizer.pad_token_id
-
-model = model.to(DEVICE)
-model.eval()
+print("✅ Ore INT8 model loaded")
+print("⚙️ Provider:", session.get_providers())
 
 
-print("✅ Ore loaded successfully")
+# ============================================================
+# SETTINGS
+# ============================================================
+
+MAX_NEW_TOKENS = 80
 
 
 # ============================================================
 # GENERATION
 # ============================================================
-
-MAX_NEW_TOKENS = 120
-TEMPERATURE = 0.8
-TOP_P = 0.9
-TOP_K = 50
-
 
 def generate_response(
     user_message: str,
@@ -73,14 +65,17 @@ def generate_response(
 ):
 
     if language.lower() == "pidgin":
+
         language_instruction = (
-            "Respond naturally in Nigerian Pidgin English. "
-            "Use clear, conversational Nigerian Pidgin."
+            "Respond naturally in Nigerian Pidgin English."
         )
+
     else:
+
         language_instruction = (
             "Respond in clear Standard English."
         )
+
 
     prompt = f"""System: You are Ore, a Nigerian AI assistant.
 
@@ -92,44 +87,142 @@ education, technology, business, government and everyday Nigerian life.
 User: {user_message}
 Ore:"""
 
-    inputs = tokenizer(
+
+    tokens = tokenizer(
         prompt,
-        return_tensors="pt"
+        return_tensors="np"
     )
 
-    inputs = {
-        key: value.to(DEVICE)
-        for key, value in inputs.items()
-    }
+    input_ids = tokens["input_ids"].astype(np.int64)
 
-    with torch.no_grad():
 
-        output = model.generate(
-            **inputs,
+    # ========================================================
+    # EMPTY KV CACHE
+    # ========================================================
 
-            max_new_tokens=MAX_NEW_TOKENS,
+    past = {}
 
-            do_sample=True,
+    for i in range(12):
 
-            temperature=TEMPERATURE,
-            top_p=TOP_P,
-            top_k=TOP_K,
-
-            repetition_penalty=1.1,
-            no_repeat_ngram_size=3,
-
-            pad_token_id=tokenizer.pad_token_id,
-            eos_token_id=tokenizer.eos_token_id
+        past[f"past_key_values.{i}.key"] = np.zeros(
+            (1, 12, 0, 64),
+            dtype=np.float32
         )
 
-    generated = output[0][inputs["input_ids"].shape[1]:]
+        past[f"past_key_values.{i}.value"] = np.zeros(
+            (1, 12, 0, 64),
+            dtype=np.float32
+        )
+
+
+    generated_ids = []
+
+    start_time = time.time()
+
+
+    # ========================================================
+    # AUTOREGRESSIVE GENERATION
+    # ========================================================
+
+    for step in range(MAX_NEW_TOKENS):
+
+        seq_len = input_ids.shape[1]
+
+        if step == 0:
+            past_len = 0
+        else:
+            past_len = past[
+                "past_key_values.0.key"
+            ].shape[2]
+
+
+        attention_mask = np.ones(
+            (1, past_len + seq_len),
+            dtype=np.int64
+        )
+
+
+        position_ids = np.arange(
+            past_len,
+            past_len + seq_len,
+            dtype=np.int64
+        ).reshape(1, -1)
+
+
+        ort_inputs = {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "position_ids": position_ids,
+            **past
+        }
+
+
+        outputs = session.run(
+            None,
+            ort_inputs
+        )
+
+
+        logits = outputs[0]
+
+
+        # Greedy decoding for now.
+        # Quality can be improved later.
+        next_token = int(
+            np.argmax(
+                logits[0, -1, :]
+            )
+        )
+
+
+        generated_ids.append(
+            next_token
+        )
+
+
+        if next_token == tokenizer.eos_token_id:
+            break
+
+
+        # ====================================================
+        # UPDATE KV CACHE
+        # ====================================================
+
+        new_past = {}
+
+        for i in range(12):
+
+            new_past[
+                f"past_key_values.{i}.key"
+            ] = outputs[1 + i * 2]
+
+            new_past[
+                f"past_key_values.{i}.value"
+            ] = outputs[2 + i * 2]
+
+
+        past = new_past
+
+
+        # Next iteration only needs the new token.
+        input_ids = np.array(
+            [[next_token]],
+            dtype=np.int64
+        )
+
+
+    # ========================================================
+    # DECODE
+    # ========================================================
 
     response = tokenizer.decode(
-        generated,
+        generated_ids,
         skip_special_tokens=True
     ).strip()
 
-    # Prevent Ore from continuing the conversation itself
+
+    # Remove accidental conversation markers.
+
     stop_markers = [
         "\nUser:",
         "\nSystem:",
@@ -137,10 +230,27 @@ Ore:"""
     ]
 
     for marker in stop_markers:
+
         if marker in response:
-            response = response.split(marker)[0].strip()
+
+            response = response.split(
+                marker
+            )[0].strip()
+
 
     if not response:
-        response = "I no get response for that one yet."
+
+        response = (
+            "I no get response for that one yet."
+        )
+
+
+    elapsed = time.time() - start_time
+
+    print(
+        f"🧠 Generated {len(generated_ids)} tokens "
+        f"in {elapsed:.2f}s"
+    )
+
 
     return response
