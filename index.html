@@ -1,351 +1,1005 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<title>Ore</title>
 
-    <!-- Browser tab -->
-    <title>Ore</title>
+<link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 L61 32 L32 61 L3 32 Z' fill='none' stroke='%2300ff66' stroke-width='5'/%3E%3Cpath d='M32 15 L49 32 L32 49 L15 32 Z' fill='%2300ff66'/%3E%3C/svg%3E"
+>
 
-    <!-- Ore green diamond favicon -->
-    <link
-        rel="icon"
-        type="image/svg+xml"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 3 L61 32 L32 61 L3 32 Z' fill='none' stroke='%2300ff66' stroke-width='5'/%3E%3Cpath d='M32 15 L49 32 L32 49 L15 32 Z' fill='%2300ff66'/%3E%3C/svg%3E"
-    >
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<style>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        oreGreen: "#00ff66",
-                        oreBlack: "#050505"
-                    }
-                }
-            }
-        };
-    </script>
+* {
+    box-sizing: border-box;
+}
 
-    <style>
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: #212121;
+    color: #fff;
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+body {
+    overflow: hidden;
+}
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100%;
-            background: #050505;
-            color: white;
-            font-family:
-                Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
+/* ============================================================
+   SCROLLBAR
+============================================================ */
 
-        body {
-            overflow: hidden;
-        }
+::-webkit-scrollbar {
+    width: 7px;
+}
 
-        /* Scrollbars */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 999px;
+}
 
-        ::-webkit-scrollbar-track {
-            background: #050505;
-        }
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
 
-        ::-webkit-scrollbar-thumb {
-            background: #252525;
-            border-radius: 10px;
-        }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #333333;
-        }
+/* ============================================================
+   APP
+============================================================ */
 
-        /* Ore logo */
+#app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+}
 
-        .ore-logo {
-            width: 42px;
-            height: 42px;
-            flex-shrink: 0;
-        }
 
-        .ore-logo-small {
-            width: 34px;
-            height: 34px;
-            flex-shrink: 0;
-        }
+/* ============================================================
+   SIDEBAR
+============================================================ */
 
-        /* Sidebar */
+#sidebar {
+    width: 260px;
+    height: 100%;
+    flex-shrink: 0;
+    background: #171717;
+    display: flex;
+    flex-direction: column;
+    transition:
+        width 0.2s ease,
+        transform 0.25s ease;
+    overflow: hidden;
+}
 
-        #sidebar {
-            width: 360px;
-            flex-shrink: 0;
-        }
+#sidebar.collapsed {
+    width: 0;
+}
 
-        /* Main */
+.sidebar-inner {
+    width: 260px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
 
-        #main {
-            min-width: 0;
-            min-height: 0;
-        }
 
-        /* Chat */
+/* ============================================================
+   SIDEBAR TOP
+============================================================ */
 
-        #chat-container {
-            min-height: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
+.sidebar-top {
+    padding: 12px;
+}
 
-        #messages {
-            width: 100%;
-            max-width: 950px;
-            margin: 0 auto;
-            padding: 32px 24px 180px 24px;
-        }
+.sidebar-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-        /* Welcome */
+.sidebar-icon-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b4b4b4;
+    transition: background 0.15s ease, color 0.15s ease;
+}
 
-        #welcome-screen {
-            min-height: 100%;
-            overflow-y: auto;
-        }
+.sidebar-icon-button:hover {
+    background: #2a2a2a;
+    color: #fff;
+}
 
-        /* Composer */
 
-        #composer-wrapper {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-        }
+/* ============================================================
+   ORE LOGO
+============================================================ */
 
-        #composer {
-            pointer-events: auto;
-        }
+.ore-logo {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
 
-        /* Mobile sidebar */
+.ore-logo-large {
+    width: 64px;
+    height: 64px;
+}
 
-        @media (max-width: 900px) {
 
-            #sidebar {
-                position: fixed;
-                z-index: 50;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                transform: translateX(-100%);
-                transition: transform 0.25s ease;
-                box-shadow: 20px 0 50px rgba(0,0,0,0.5);
-            }
+/* ============================================================
+   NEW CHAT
+============================================================ */
 
-            #sidebar.open {
-                transform: translateX(0);
-            }
+.new-chat {
+    margin-top: 8px;
+    width: 100%;
+    height: 42px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 12px;
+    color: #ececec;
+    font-size: 14px;
+    transition: background 0.15s ease;
+}
 
-            #sidebar-overlay {
-                display: none;
-            }
+.new-chat:hover {
+    background: #2a2a2a;
+}
 
-            #sidebar-overlay.open {
-                display: block;
-            }
-        }
 
-        /* Desktop */
+/* ============================================================
+   SIDEBAR SEARCH
+============================================================ */
 
-        @media (min-width: 901px) {
-            #mobile-menu {
-                display: none;
-            }
+.sidebar-search {
+    width: 100%;
+    height: 40px;
+    margin-top: 3px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 12px;
+    color: #b4b4b4;
+    font-size: 14px;
+}
 
-            #sidebar-overlay {
-                display: none !important;
-            }
-        }
+.sidebar-search:hover {
+    background: #2a2a2a;
+    color: #fff;
+}
 
-    </style>
+
+/* ============================================================
+   HISTORY
+============================================================ */
+
+.history {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 8px;
+}
+
+.history-label {
+    padding: 0 10px 8px;
+    font-size: 12px;
+    color: #8e8e8e;
+}
+
+.history-item {
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    color: #d1d1d1;
+    font-size: 13px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.history-item:hover {
+    background: #2a2a2a;
+}
+
+.history-item.active {
+    background: #2a2a2a;
+}
+
+
+/* ============================================================
+   SIDEBAR BOTTOM
+============================================================ */
+
+.sidebar-bottom {
+    padding: 8px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.account-button {
+    width: 100%;
+    padding: 8px 9px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
+.account-button:hover {
+    background: #2a2a2a;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+
+/* ============================================================
+   MAIN
+============================================================ */
+
+#main {
+    min-width: 0;
+    min-height: 0;
+    flex: 1;
+    height: 100%;
+    background: #212121;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+
+#header {
+    height: 52px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    position: relative;
+    z-index: 10;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.header-button {
+    height: 36px;
+    padding: 0 9px;
+    border-radius: 8px;
+    color: #b4b4b4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-button:hover {
+    background: #2a2a2a;
+    color: #fff;
+}
+
+.mobile-menu-button {
+    display: none;
+}
+
+
+/* ============================================================
+   CHAT AREA
+============================================================ */
+
+#chat-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    position: relative;
+}
+
+#welcome-screen {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px 190px;
+}
+
+.welcome-content {
+    width: 100%;
+    max-width: 768px;
+    text-align: center;
+}
+
+.welcome-title {
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+}
+
+.welcome-subtitle {
+    margin-top: 12px;
+    color: #9b9b9b;
+    font-size: 15px;
+}
+
+
+/* ============================================================
+   PROMPT CARDS
+============================================================ */
+
+.prompt-grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.prompt-card {
+    padding: 14px 15px;
+    min-height: 76px;
+    text-align: left;
+    border: 1px solid #3a3a3a;
+    border-radius: 12px;
+    background: #2a2a2a;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.prompt-card:hover {
+    background: #303030;
+    border-color: #555;
+}
+
+.prompt-title {
+    font-size: 14px;
+    color: #ececec;
+}
+
+.prompt-description {
+    margin-top: 5px;
+    color: #929292;
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   MESSAGES
+============================================================ */
+
+#messages {
+    width: 100%;
+    padding-bottom: 170px;
+}
+
+.message-row {
+    width: 100%;
+}
+
+.message-inner {
+    width: 100%;
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 18px 20px;
+}
+
+.user-message {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.user-bubble {
+    max-width: 70%;
+    background: #2f2f2f;
+    border-radius: 18px;
+    padding: 10px 15px;
+    font-size: 15px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.ore-message {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+}
+
+.ore-avatar {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.ore-content {
+    min-width: 0;
+    flex: 1;
+    color: #ececec;
+    font-size: 15px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   TYPING
+============================================================ */
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    padding-top: 7px;
+}
+
+.typing-dots span {
+    width: 5px;
+    height: 5px;
+    background: #aaa;
+    border-radius: 50%;
+    animation: typing 1.2s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+}
+
+
+/* ============================================================
+   COMPOSER
+============================================================ */
+
+#composer-area {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 20px 20px;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(33,33,33,0),
+            rgba(33,33,33,0.92) 25%,
+            #212121 48%
+        );
+}
+
+#composer {
+    width: 100%;
+    max-width: 768px;
+    margin: 0 auto;
+    pointer-events: auto;
+}
+
+.composer-box {
+    background: #2f2f2f;
+    border: 1px solid #424242;
+    border-radius: 16px;
+    padding: 10px 12px 9px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.03);
+}
+
+#message-input {
+    width: 100%;
+    max-height: 180px;
+    min-height: 26px;
+    resize: none;
+    overflow-y: auto;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 3px 4px;
+}
+
+#message-input::placeholder {
+    color: #8e8e8e;
+}
+
+.composer-bottom {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.composer-left {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.tool-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: #a8a8a8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-button:hover {
+    background: #3b3b3b;
+    color: #fff;
+}
+
+.tool-button.active {
+    color: #00ff66;
+}
+
+.language-button {
+    height: 32px;
+    padding: 0 9px;
+    border-radius: 8px;
+    color: #a8a8a8;
+    font-size: 12px;
+}
+
+.language-button:hover {
+    background: #3b3b3b;
+    color: #fff;
+}
+
+.language-button.active {
+    background: #444;
+    color: #fff;
+}
+
+.send-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: #fff;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s ease;
+}
+
+.send-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.send-button:not(:disabled):hover {
+    background: #ddd;
+}
+
+.disclaimer {
+    text-align: center;
+    color: #777;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+
+/* ============================================================
+   SEARCH STATUS
+============================================================ */
+
+.search-status {
+    display: none;
+    margin: 0 auto 8px;
+    max-width: 768px;
+    color: #8e8e8e;
+    font-size: 12px;
+    padding-left: 5px;
+}
+
+.search-status.visible {
+    display: block;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+#sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    #sidebar {
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 260px;
+        transform: translateX(-100%);
+        box-shadow: 15px 0 40px rgba(0,0,0,0.4);
+    }
+
+    #sidebar.open {
+        transform: translateX(0);
+    }
+
+    #sidebar.collapsed {
+        width: 260px;
+    }
+
+    #sidebar-overlay.open {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        background: rgba(0,0,0,0.55);
+    }
+
+    .mobile-menu-button {
+        display: flex;
+    }
+
+    .desktop-sidebar-toggle {
+        display: none;
+    }
+
+    .header-title {
+        font-size: 14px;
+    }
+
+    #welcome-screen {
+        align-items: flex-start;
+        padding-top: 70px;
+    }
+
+    .welcome-title {
+        font-size: 26px;
+    }
+
+    .welcome-subtitle {
+        font-size: 14px;
+    }
+
+    .prompt-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .message-inner {
+        padding: 15px 14px;
+    }
+
+    .user-bubble {
+        max-width: 85%;
+    }
+
+    #composer-area {
+        padding: 0 10px 10px;
+    }
+
+    .language-button {
+        padding: 0 7px;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .welcome-content {
+        max-width: 100%;
+    }
+
+    .ore-logo-large {
+        width: 52px;
+        height: 52px;
+    }
+
+    .welcome-title {
+        font-size: 24px;
+    }
+
+    .prompt-description {
+        display: none;
+    }
+
+    .prompt-card {
+        min-height: 52px;
+    }
+
+    .composer-box {
+        border-radius: 15px;
+    }
+}
+
+</style>
 </head>
+
 
 <body>
 
-<div class="h-screen w-screen bg-[#050505] flex overflow-hidden">
+<div id="app">
 
-    <!-- ========================================================= -->
-    <!-- SIDEBAR -->
-    <!-- ========================================================= -->
+    <!-- ========================================================
+         SIDEBAR
+    ========================================================= -->
 
-    <aside
-        id="sidebar"
-        class="h-full bg-[#070707] border-r border-white/[0.08] flex flex-col"
-    >
+    <aside id="sidebar">
 
-        <!-- Logo -->
+        <div class="sidebar-inner">
 
-        <div class="px-6 pt-7 pb-6">
+            <div class="sidebar-top">
 
-            <div class="flex items-center gap-3">
+                <div class="sidebar-top-row">
 
-                <svg
-                    class="ore-logo"
-                    viewBox="0 0 64 64"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        d="M32 3L61 32L32 61L3 32L32 3Z"
-                        stroke="#00FF66"
-                        stroke-width="5"
-                    />
-
-                    <path
-                        d="M32 15L49 32L32 49L15 32L32 15Z"
-                        fill="#00FF66"
-                    />
-                </svg>
-
-                <span class="text-2xl font-semibold tracking-tight">
-                    Ore
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <!-- New Chat -->
-
-        <div class="px-4">
-
-            <button
-                id="new-chat-button"
-                class="
-                    w-full
-                    h-14
-                    rounded-2xl
-                    border
-                    border-white/[0.10]
-                    bg-[#111111]
-                    hover:bg-[#171717]
-                    transition
-                    flex
-                    items-center
-                    gap-4
-                    px-5
-                    text-[16px]
-                "
-            >
-
-                <span class="text-2xl leading-none font-light">
-                    +
-                </span>
-
-                <span>
-                    New chat
-                </span>
-
-            </button>
-
-        </div>
-
-
-        <!-- Recent -->
-
-        <div class="flex-1 overflow-y-auto px-7 pt-10">
-
-            <div
-                class="
-                    text-[13px]
-                    uppercase
-                    tracking-wider
-                    text-gray-500
-                    mb-5
-                "
-            >
-                Recent
-            </div>
-
-            <div
-                id="recent-list"
-                class="text-gray-500 text-[15px]"
-            >
-                No conversations yet
-            </div>
-
-        </div>
-
-
-        <!-- User -->
-
-        <div class="border-t border-white/[0.08] p-5">
-
-            <div class="flex items-center justify-between">
-
-                <div class="flex items-center gap-3">
-
-                    <div
-                        class="
-                            w-11
-                            h-11
-                            rounded-full
-                            bg-[#202020]
-                            flex
-                            items-center
-                            justify-center
-                            text-lg
-                            font-medium
-                        "
+                    <button
+                        id="ore-home-button"
+                        class="sidebar-icon-button"
+                        title="Ore"
                     >
-                        G
-                    </div>
 
-                    <div>
+                        <svg
+                            class="ore-logo"
+                            viewBox="0 0 64 64"
+                            fill="none"
+                        >
 
-                        <div class="font-semibold">
-                            Guest
-                        </div>
+                            <path
+                                d="M32 3L61 32L32 61L3 32L32 3Z"
+                                stroke="#00FF66"
+                                stroke-width="5"
+                            />
 
-                        <div class="text-sm text-gray-500">
-                            Free
-                        </div>
+                            <path
+                                d="M32 15L49 32L32 49L15 32L32 15Z"
+                                fill="#00FF66"
+                            />
 
-                    </div>
+                        </svg>
+
+                    </button>
+
+
+                    <button
+                        id="desktop-sidebar-toggle"
+                        class="sidebar-icon-button"
+                        title="Close sidebar"
+                    >
+
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                        >
+
+                            <path
+                                d="M9 4V20"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M15 8L11 12L15 16"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+
+                        </svg>
+
+                    </button>
 
                 </div>
 
 
+                <!-- New Chat -->
+
                 <button
-                    class="
-                        text-gray-500
-                        hover:text-white
-                        transition
-                        text-xl
-                    "
-                    title="Settings"
+                    id="new-chat-button"
+                    class="new-chat"
                 >
-                    ⚙
+
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+
+                        <path
+                            d="M12 5V19"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+
+                        <path
+                            d="M5 12H19"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                        />
+
+                    </svg>
+
+                    <span>New chat</span>
+
+                </button>
+
+
+                <!-- Search -->
+
+                <button
+                    id="sidebar-search-button"
+                    class="sidebar-search"
+                >
+
+                    <svg
+                        width="19"
+                        height="19"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="6.5"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        />
+
+                        <path
+                            d="M16 16L21 21"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+
+                    </svg>
+
+                    <span>Search chats</span>
+
+                </button>
+
+            </div>
+
+
+            <!-- History -->
+
+            <div class="history">
+
+                <div class="history-label">
+                    Today
+                </div>
+
+                <div id="history-list">
+
+                    <div
+                        id="empty-history"
+                        class="px-3 py-2 text-xs text-gray-500"
+                    >
+                        No conversations yet
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Bottom -->
+
+            <div class="sidebar-bottom">
+
+                <button
+                    id="account-button"
+                    class="account-button"
+                >
+
+                    <div class="avatar">
+                        G
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <div
+                            class="text-sm text-gray-200 truncate"
+                        >
+                            Guest
+                        </div>
+
+                        <div
+                            class="text-xs text-gray-500"
+                        >
+                            Free plan
+                        </div>
+
+                    </div>
+
+
+                    <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+
+                        <path
+                            d="M8 10L12 14L16 10"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                    </svg>
+
                 </button>
 
             </div>
@@ -357,128 +1011,151 @@
 
     <!-- Mobile overlay -->
 
-    <div
-        id="sidebar-overlay"
-        class="
-            fixed
-            inset-0
-            bg-black/60
-            z-40
-        "
-    ></div>
+    <div id="sidebar-overlay"></div>
 
 
-    <!-- ========================================================= -->
-    <!-- MAIN -->
-    <!-- ========================================================= -->
+    <!-- ========================================================
+         MAIN
+    ========================================================= -->
 
-    <main
-        id="main"
-        class="flex-1 h-full flex flex-col relative min-w-0"
-    >
+    <main id="main">
+
 
         <!-- Header -->
 
-        <header
-            class="
-                h-[82px]
-                flex-shrink-0
-                border-b
-                border-white/[0.08]
-                flex
-                items-center
-                px-5
-                md:px-8
-                bg-[#050505]
-            "
-        >
+        <header id="header">
 
-            <!-- Mobile menu -->
+            <div class="header-left">
 
-            <button
-                id="mobile-menu"
-                class="
-                    mr-4
-                    text-gray-400
-                    hover:text-white
-                    text-2xl
-                "
-            >
-                ☰
-            </button>
+                <!-- Mobile menu -->
 
-
-            <div class="flex items-center gap-3">
-
-                <svg
-                    class="ore-logo-small"
-                    viewBox="0 0 64 64"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                <button
+                    id="mobile-menu-button"
+                    class="header-button mobile-menu-button"
+                    title="Open sidebar"
                 >
-                    <path
-                        d="M32 3L61 32L32 61L3 32L32 3Z"
-                        stroke="#00FF66"
-                        stroke-width="5"
-                    />
 
-                    <path
-                        d="M32 15L49 32L32 49L15 32L32 15Z"
-                        fill="#00FF66"
-                    />
-                </svg>
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
 
-                <span class="text-xl font-semibold">
-                    Ore
-                </span>
+                        <path
+                            d="M4 6H20"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+
+                        <path
+                            d="M4 12H20"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+
+                        <path
+                            d="M4 18H20"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+
+                    </svg>
+
+                </button>
+
+
+                <!-- Sidebar open button -->
+
+                <button
+                    id="open-sidebar-button"
+                    class="header-button desktop-sidebar-toggle"
+                    title="Open sidebar"
+                    style="display:none;"
+                >
+
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+
+                        <path
+                            d="M15 4V20"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+
+                        <path
+                            d="M9 8L13 12L9 16"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                    </svg>
+
+                </button>
+
+
+                <button
+                    class="header-button"
+                    title="Current model"
+                >
+
+                    <span class="header-title">
+                        Ore
+                    </span>
+
+                    <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
+
+                        <path
+                            d="M7 10L12 15L17 10"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                    </svg>
+
+                </button>
 
             </div>
 
         </header>
 
 
-        <!-- ===================================================== -->
-        <!-- CHAT -->
-        <!-- ===================================================== -->
+        <!-- ====================================================
+             CHAT
+        ==================================================== -->
 
-        <div
-            id="chat-container"
-            class="flex-1 relative"
-        >
+        <div id="chat-container">
+
 
             <!-- Welcome -->
 
-            <section
-                id="welcome-screen"
-                class="
-                    h-full
-                    overflow-y-auto
-                    flex
-                    justify-center
-                    px-5
-                "
-            >
+            <section id="welcome-screen">
 
-                <div
-                    class="
-                        w-full
-                        max-w-[900px]
-                        text-center
-                        pt-10
-                        md:pt-14
-                        pb-40
-                    "
-                >
+                <div class="welcome-content">
 
-                    <!-- Large Ore logo -->
-
-                    <div class="flex justify-center mb-8">
+                    <div class="flex justify-center mb-7">
 
                         <svg
-                            class="w-28 h-28 md:w-32 md:h-32"
+                            class="ore-logo-large"
                             viewBox="0 0 64 64"
                             fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
                         >
 
                             <path
@@ -497,62 +1174,30 @@
                     </div>
 
 
-                    <!-- Heading -->
-
-                    <h1
-                        class="
-                            text-4xl
-                            md:text-5xl
-                            font-semibold
-                            tracking-tight
-                            mb-5
-                        "
-                    >
-                        How can Ore help?
+                    <h1 class="welcome-title">
+                        How can Ore help you today?
                     </h1>
 
 
-                    <!-- Description -->
-
-                    <p
-                        class="
-                            text-lg
-                            md:text-xl
-                            text-gray-500
-                            max-w-2xl
-                            mx-auto
-                            leading-relaxed
-                        "
-                    >
-                        Ask Ore about Nigeria, history, geography,
-                        culture, technology, education, business and more.
+                    <p class="welcome-subtitle">
+                        Your Nigerian AI assistant.
                     </p>
 
 
-                    <!-- Prompt cards -->
+                    <div class="prompt-grid">
 
-                    <div
-                        class="
-                            grid
-                            grid-cols-1
-                            md:grid-cols-2
-                            gap-3
-                            mt-10
-                            text-left
-                        "
-                    >
 
                         <button
                             class="prompt-card"
                             data-prompt="Tell me about Nigerian history."
                         >
 
-                            <div class="font-semibold text-[16px]">
+                            <div class="prompt-title">
                                 Nigerian history
                             </div>
 
-                            <div class="text-gray-500 text-sm mt-2">
-                                Explore important events and people
+                            <div class="prompt-description">
+                                Explore Nigeria's history and major events
                             </div>
 
                         </button>
@@ -563,12 +1208,12 @@
                             data-prompt="What are the six geopolitical zones in Nigeria?"
                         >
 
-                            <div class="font-semibold text-[16px]">
+                            <div class="prompt-title">
                                 Nigerian geography
                             </div>
 
-                            <div class="text-gray-500 text-sm mt-2">
-                                Learn about regions and states
+                            <div class="prompt-description">
+                                Explore regions, states and geography
                             </div>
 
                         </button>
@@ -579,12 +1224,12 @@
                             data-prompt="Tell me about Nigerian culture."
                         >
 
-                            <div class="font-semibold text-[16px]">
-                                Nigerian culture
+                            <div class="prompt-title">
+                                Culture
                             </div>
 
-                            <div class="text-gray-500 text-sm mt-2">
-                                Explore Nigeria's cultures and languages
+                            <div class="prompt-description">
+                                Languages, traditions and everyday life
                             </div>
 
                         </button>
@@ -595,15 +1240,16 @@
                             data-prompt="Tell me about technology in Nigeria."
                         >
 
-                            <div class="font-semibold text-[16px]">
+                            <div class="prompt-title">
                                 Technology
                             </div>
 
-                            <div class="text-gray-500 text-sm mt-2">
-                                Explore Nigeria's digital ecosystem
+                            <div class="prompt-description">
+                                Explore Nigeria's technology ecosystem
                             </div>
 
                         </button>
+
 
                     </div>
 
@@ -620,176 +1266,166 @@
             ></section>
 
 
-            <!-- ================================================= -->
-            <!-- COMPOSER -->
-            <!-- ================================================= -->
+            <!-- Search status -->
 
             <div
-                id="composer-wrapper"
-                class="px-4 md:px-6 pb-4 md:pb-6"
+                id="search-status"
+                class="search-status"
             >
-
-                <div
-                    id="composer"
-                    class="
-                        max-w-[990px]
-                        mx-auto
-                        rounded-3xl
-                        border
-                        border-white/[0.12]
-                        bg-[#0c0c0c]
-                        shadow-[0_10px_60px_rgba(0,0,0,0.45)]
-                        px-4
-                        md:px-5
-                        pt-4
-                        pb-3
-                    "
-                >
-
-                    <!-- Input -->
-
-                    <textarea
-                        id="message-input"
-                        rows="1"
-                        placeholder="Message Ore..."
-                        class="
-                            w-full
-                            bg-transparent
-                            outline-none
-                            resize-none
-                            text-[16px]
-                            md:text-[17px]
-                            text-white
-                            placeholder:text-gray-600
-                            min-h-[42px]
-                            max-h-[180px]
-                            overflow-y-auto
-                        "
-                    ></textarea>
+                Searching the web...
+            </div>
 
 
-                    <!-- Bottom controls -->
+            <!-- =================================================
+                 COMPOSER
+            ================================================= -->
 
-                    <div
-                        class="
-                            flex
-                            items-center
-                            justify-between
-                            mt-3
-                        "
-                    >
+            <div id="composer-area">
 
-                        <!-- Language -->
+                <div id="composer">
 
-                        <div
-                            class="
-                                flex
-                                rounded-xl
-                                border
-                                border-white/[0.10]
-                                bg-[#111111]
-                                p-1
-                            "
-                        >
+                    <div class="composer-box">
+
+
+                        <textarea
+                            id="message-input"
+                            rows="1"
+                            placeholder="Message Ore"
+                        ></textarea>
+
+
+                        <div class="composer-bottom">
+
+
+                            <div class="composer-left">
+
+
+                                <!-- Attachment -->
+
+                                <button
+                                    id="attachment-button"
+                                    class="tool-button"
+                                    title="Attach"
+                                >
+
+                                    <svg
+                                        width="19"
+                                        height="19"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                    >
+
+                                        <path
+                                            d="M21 11.5L12.5 20C10.01 22.49 6 22.49 3.5 20C1.01 17.51 1.01 13.49 3.5 11L12.5 2C14.43 0.07 17.57 0.07 19.5 2C21.43 3.93 21.43 7.07 19.5 9L10 18.5C8.9 19.6 7.1 19.6 6 18.5C4.9 17.4 4.9 15.6 6 14.5L14.5 6"
+                                            stroke="currentColor"
+                                            stroke-width="1.6"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        />
+
+                                    </svg>
+
+                                </button>
+
+
+                                <!-- Web Search -->
+
+                                <button
+                                    id="search-button"
+                                    class="tool-button"
+                                    title="Search the web"
+                                >
+
+                                    <svg
+                                        width="19"
+                                        height="19"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                    >
+
+                                        <circle
+                                            cx="11"
+                                            cy="11"
+                                            r="6.5"
+                                            stroke="currentColor"
+                                            stroke-width="1.7"
+                                        />
+
+                                        <path
+                                            d="M16 16L21 21"
+                                            stroke="currentColor"
+                                            stroke-width="1.7"
+                                            stroke-linecap="round"
+                                        />
+
+                                    </svg>
+
+                                </button>
+
+
+                                <!-- Language -->
+
+                                <button
+                                    id="pidgin-button"
+                                    class="language-button active"
+                                >
+                                    Pidgin
+                                </button>
+
+                                <button
+                                    id="english-button"
+                                    class="language-button"
+                                >
+                                    English
+                                </button>
+
+                            </div>
+
+
+                            <!-- Send -->
 
                             <button
-                                id="pidgin-button"
-                                class="
-                                    px-4
-                                    py-2
-                                    rounded-lg
-                                    text-sm
-                                    font-semibold
-                                    bg-[#202020]
-                                    text-white
-                                    transition
-                                "
+                                id="send-button"
+                                class="send-button"
+                                disabled
+                                title="Send"
                             >
-                                Pidgin
-                            </button>
 
-                            <button
-                                id="english-button"
-                                class="
-                                    px-4
-                                    py-2
-                                    rounded-lg
-                                    text-sm
-                                    text-gray-500
-                                    hover:text-white
-                                    transition
-                                "
-                            >
-                                English
+                                <svg
+                                    width="17"
+                                    height="17"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                >
+
+                                    <path
+                                        d="M12 19V5"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                    />
+
+                                    <path
+                                        d="M6 11L12 5L18 11"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+
+                                </svg>
+
                             </button>
 
                         </div>
 
-
-                        <!-- Send -->
-
-                        <button
-                            id="send-button"
-                            class="
-                                w-12
-                                h-12
-                                rounded-xl
-                                bg-white
-                                text-black
-                                flex
-                                items-center
-                                justify-center
-                                hover:bg-gray-200
-                                transition
-                                disabled:opacity-40
-                                disabled:cursor-not-allowed
-                            "
-                            disabled
-                            title="Send message"
-                        >
-
-                            <svg
-                                width="23"
-                                height="23"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M21 3L10.5 13.5"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
-
-                                <path
-                                    d="M21 3L14.3 21L10.5 13.5L3 9.7L21 3Z"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
-                            </svg>
-
-                        </button>
-
                     </div>
 
-                </div>
 
+                    <div class="disclaimer">
+                        Ore can make mistakes. Check important information.
+                    </div>
 
-                <!-- Disclaimer -->
-
-                <div
-                    class="
-                        text-center
-                        text-[12px]
-                        text-gray-600
-                        mt-2
-                    "
-                >
-                    Ore can make mistakes. Verify important information.
                 </div>
 
             </div>
@@ -801,674 +1437,719 @@
 </div>
 
 
-<!-- ============================================================= -->
-<!-- JAVASCRIPT -->
-<!-- ============================================================= -->
-
 <script>
 
-    /*
-    ================================================================
-    BACKEND CONFIGURATION
-    ================================================================
+/* ============================================================
+   BACKEND
+============================================================ */
 
-    For now this is EMPTY.
+/*
+   When Render gives you the backend URL, put it here.
 
-    Later we will put the public FastAPI URL here.
+   Example:
 
-    Example:
+   const API_URL =
+       "https://ore-backend.onrender.com";
 
-    const API_URL = "https://your-ore-backend-url.com";
+*/
 
-    Do NOT put the Colab localhost address here.
-    ================================================================
-    */
-
-    const API_URL = "";
+const API_URL = "";
 
 
-    /*
-    ================================================================
-    STATE
-    ================================================================
-    */
+/* ============================================================
+   STATE
+============================================================ */
 
-    let currentLanguage = "pidgin";
+let currentLanguage = "pidgin";
 
-    let conversationStarted = false;
+let searchEnabled = false;
 
-    let isGenerating = false;
+let conversationStarted = false;
 
-
-    /*
-    ================================================================
-    ELEMENTS
-    ================================================================
-    */
-
-    const messageInput =
-        document.getElementById("message-input");
-
-    const sendButton =
-        document.getElementById("send-button");
-
-    const welcomeScreen =
-        document.getElementById("welcome-screen");
-
-    const messages =
-        document.getElementById("messages");
-
-    const chatContainer =
-        document.getElementById("chat-container");
-
-    const pidginButton =
-        document.getElementById("pidgin-button");
-
-    const englishButton =
-        document.getElementById("english-button");
-
-    const newChatButton =
-        document.getElementById("new-chat-button");
-
-    const mobileMenu =
-        document.getElementById("mobile-menu");
-
-    const sidebar =
-        document.getElementById("sidebar");
-
-    const sidebarOverlay =
-        document.getElementById("sidebar-overlay");
+let isGenerating = false;
 
 
-    /*
-    ================================================================
-    PROMPT CARD STYLING
-    ================================================================
-    */
+/* ============================================================
+   ELEMENTS
+============================================================ */
 
-    document.querySelectorAll(".prompt-card").forEach(card => {
+const sidebar =
+    document.getElementById("sidebar");
 
-        card.className = `
-            prompt-card
-            w-full
-            min-h-[94px]
-            rounded-2xl
-            border
-            border-white/[0.10]
-            bg-[#0d0d0d]
-            hover:bg-[#151515]
-            hover:border-white/[0.16]
-            transition
-            p-5
-            cursor-pointer
-        `;
+const sidebarOverlay =
+    document.getElementById("sidebar-overlay");
 
+const desktopSidebarToggle =
+    document.getElementById(
+        "desktop-sidebar-toggle"
+    );
+
+const openSidebarButton =
+    document.getElementById(
+        "open-sidebar-button"
+    );
+
+const mobileMenuButton =
+    document.getElementById(
+        "mobile-menu-button"
+    );
+
+const newChatButton =
+    document.getElementById(
+        "new-chat-button"
+    );
+
+const messageInput =
+    document.getElementById(
+        "message-input"
+    );
+
+const sendButton =
+    document.getElementById(
+        "send-button"
+    );
+
+const welcomeScreen =
+    document.getElementById(
+        "welcome-screen"
+    );
+
+const messages =
+    document.getElementById(
+        "messages"
+    );
+
+const chatContainer =
+    document.getElementById(
+        "chat-container"
+    );
+
+const pidginButton =
+    document.getElementById(
+        "pidgin-button"
+    );
+
+const englishButton =
+    document.getElementById(
+        "english-button"
+    );
+
+const searchButton =
+    document.getElementById(
+        "search-button"
+    );
+
+const searchStatus =
+    document.getElementById(
+        "search-status"
+    );
+
+const historyList =
+    document.getElementById(
+        "history-list"
+    );
+
+const emptyHistory =
+    document.getElementById(
+        "empty-history"
+    );
+
+
+/* ============================================================
+   LOGO FUNCTION
+============================================================ */
+
+function createOreLogo() {
+
+    const logo =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+    logo.setAttribute(
+        "viewBox",
+        "0 0 64 64"
+    );
+
+    logo.setAttribute(
+        "class",
+        "ore-avatar"
+    );
+
+    logo.innerHTML = `
+
+        <path
+            d="M32 3L61 32L32 61L3 32L32 3Z"
+            stroke="#00FF66"
+            stroke-width="5"
+            fill="none"
+        />
+
+        <path
+            d="M32 15L49 32L32 49L15 32L32 15Z"
+            fill="#00FF66"
+        />
+
+    `;
+
+    return logo;
+}
+
+
+/* ============================================================
+   SEND BUTTON
+============================================================ */
+
+function updateSendButton() {
+
+    const hasText =
+        messageInput.value.trim().length > 0;
+
+    sendButton.disabled =
+        !hasText || isGenerating;
+}
+
+
+/* ============================================================
+   AUTO GROW INPUT
+============================================================ */
+
+function resizeInput() {
+
+    messageInput.style.height = "auto";
+
+    messageInput.style.height =
+        Math.min(
+            messageInput.scrollHeight,
+            180
+        ) + "px";
+}
+
+
+messageInput.addEventListener(
+    "input",
+    () => {
+
+        resizeInput();
+
+        updateSendButton();
+
+    }
+);
+
+
+/* ============================================================
+   LANGUAGE
+============================================================ */
+
+function setLanguage(language) {
+
+    currentLanguage = language;
+
+    if (language === "pidgin") {
+
+        pidginButton.classList.add(
+            "active"
+        );
+
+        englishButton.classList.remove(
+            "active"
+        );
+
+    } else {
+
+        englishButton.classList.add(
+            "active"
+        );
+
+        pidginButton.classList.remove(
+            "active"
+        );
+
+    }
+}
+
+
+pidginButton.addEventListener(
+    "click",
+    () => setLanguage("pidgin")
+);
+
+
+englishButton.addEventListener(
+    "click",
+    () => setLanguage("english")
+);
+
+
+/* ============================================================
+   WEB SEARCH TOGGLE
+============================================================ */
+
+searchButton.addEventListener(
+    "click",
+    () => {
+
+        searchEnabled =
+            !searchEnabled;
+
+        searchButton.classList.toggle(
+            "active",
+            searchEnabled
+        );
+
+        searchStatus.textContent =
+            searchEnabled
+                ? "Web search enabled"
+                : "";
+
+        searchStatus.classList.toggle(
+            "visible",
+            searchEnabled
+        );
+
+    }
+);
+
+
+/* ============================================================
+   ADD MESSAGE
+============================================================ */
+
+function addMessage(text, role) {
+
+    if (!conversationStarted) {
+
+        conversationStarted = true;
+
+        welcomeScreen.classList.add(
+            "hidden"
+        );
+
+        messages.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    const row =
+        document.createElement("div");
+
+    row.className =
+        "message-row";
+
+
+    const inner =
+        document.createElement("div");
+
+    inner.className =
+        "message-inner";
+
+
+    if (role === "user") {
+
+        inner.classList.add(
+            "user-message"
+        );
+
+
+        const bubble =
+            document.createElement("div");
+
+        bubble.className =
+            "user-bubble";
+
+        bubble.textContent =
+            text;
+
+        inner.appendChild(
+            bubble
+        );
+
+
+    } else {
+
+        inner.classList.add(
+            "ore-message"
+        );
+
+
+        const logo =
+            createOreLogo();
+
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "ore-content";
+
+        content.textContent =
+            text;
+
+
+        inner.appendChild(
+            logo
+        );
+
+        inner.appendChild(
+            content
+        );
+
+    }
+
+
+    row.appendChild(
+        inner
+    );
+
+    messages.appendChild(
+        row
+    );
+
+
+    requestAnimationFrame(
+        scrollToBottom
+    );
+}
+
+
+/* ============================================================
+   TYPING
+============================================================ */
+
+function addTypingIndicator() {
+
+    const row =
+        document.createElement("div");
+
+    row.id =
+        "typing-indicator";
+
+    row.className =
+        "message-row";
+
+
+    const inner =
+        document.createElement("div");
+
+    inner.className =
+        "message-inner ore-message";
+
+
+    inner.appendChild(
+        createOreLogo()
+    );
+
+
+    const dots =
+        document.createElement("div");
+
+    dots.className =
+        "typing-dots";
+
+    dots.innerHTML = `
+        <span></span>
+        <span></span>
+        <span></span>
+    `;
+
+
+    inner.appendChild(
+        dots
+    );
+
+    row.appendChild(
+        inner
+    );
+
+    messages.appendChild(
+        row
+    );
+
+
+    scrollToBottom();
+}
+
+
+function removeTypingIndicator() {
+
+    const indicator =
+        document.getElementById(
+            "typing-indicator"
+        );
+
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+
+/* ============================================================
+   SCROLL
+============================================================ */
+
+function scrollToBottom() {
+
+    chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: "smooth"
     });
 
+}
 
-    /*
-    ================================================================
-    ENABLE / DISABLE SEND
-    ================================================================
-    */
 
-    function updateSendButton() {
+/* ============================================================
+   HISTORY
+============================================================ */
 
-        const hasText =
-            messageInput.value.trim().length > 0;
+function addHistoryItem(title) {
 
-        sendButton.disabled =
-            !hasText || isGenerating;
-
+    if (emptyHistory) {
+        emptyHistory.remove();
     }
 
 
-    messageInput.addEventListener(
-        "input",
-        () => {
+    const item =
+        document.createElement("button");
 
-            updateSendButton();
+    item.className =
+        "history-item active";
 
-            /*
-            Auto-grow textarea
-            */
-
-            messageInput.style.height = "auto";
-
-            messageInput.style.height =
-                Math.min(
-                    messageInput.scrollHeight,
-                    180
-                ) + "px";
-
-        }
-    );
+    item.textContent =
+        title.length > 38
+            ? title.substring(0, 38) + "..."
+            : title;
 
 
-    /*
-    ================================================================
-    LANGUAGE SWITCH
-    ================================================================
-    */
-
-    pidginButton.addEventListener(
-        "click",
-        () => {
-
-            currentLanguage = "pidgin";
-
-            pidginButton.classList.add(
-                "bg-[#202020]",
-                "text-white",
-                "font-semibold"
-            );
-
-            pidginButton.classList.remove(
-                "text-gray-500"
-            );
-
-            englishButton.classList.remove(
-                "bg-[#202020]",
-                "text-white",
-                "font-semibold"
-            );
-
-            englishButton.classList.add(
-                "text-gray-500"
-            );
-
-        }
-    );
-
-
-    englishButton.addEventListener(
-        "click",
-        () => {
-
-            currentLanguage = "english";
-
-            englishButton.classList.add(
-                "bg-[#202020]",
-                "text-white",
-                "font-semibold"
-            );
-
-            englishButton.classList.remove(
-                "text-gray-500"
-            );
-
-            pidginButton.classList.remove(
-                "bg-[#202020]",
-                "text-white",
-                "font-semibold"
-            );
-
-            pidginButton.classList.add(
-                "text-gray-500"
-            );
-
-        }
-    );
-
-
-    /*
-    ================================================================
-    ADD MESSAGE
-    ================================================================
-    */
-
-    function addMessage(
-        text,
-        role
-    ) {
-
-        /*
-        Start chat mode
-        */
-
-        if (!conversationStarted) {
-
-            conversationStarted = true;
-
-            welcomeScreen.classList.add(
-                "hidden"
-            );
-
-            messages.classList.remove(
-                "hidden"
-            );
-
-        }
-
-
-        const wrapper =
-            document.createElement("div");
-
-
-        wrapper.className =
-            role === "user"
-                ? "flex justify-end mb-8"
-                : "flex justify-start mb-10";
-
-
-        if (role === "user") {
-
-            const bubble =
-                document.createElement("div");
-
-            bubble.className = `
-                max-w-[80%]
-                md:max-w-[70%]
-                bg-[#1c1c1c]
-                rounded-3xl
-                px-5
-                py-3.5
-                text-[16px]
-                leading-relaxed
-            `;
-
-            /*
-            textContent prevents HTML injection
-            */
-
-            bubble.textContent = text;
-
-            wrapper.appendChild(
-                bubble
-            );
-
-        } else {
-
-            const content =
-                document.createElement("div");
-
-            content.className = `
-                flex
-                gap-4
-                max-w-[850px]
-                mx-auto
-                w-full
-            `;
-
-
-            const logo =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "svg"
+    historyList
+        .querySelectorAll(".history-item")
+        .forEach(
+            existing => {
+                existing.classList.remove(
+                    "active"
                 );
-
-            logo.setAttribute(
-                "viewBox",
-                "0 0 64 64"
-            );
-
-            logo.setAttribute(
-                "class",
-                "w-9 h-9 flex-shrink-0"
-            );
-
-
-            logo.innerHTML = `
-                <path
-                    d="M32 3L61 32L32 61L3 32L32 3Z"
-                    stroke="#00FF66"
-                    stroke-width="5"
-                    fill="none"
-                />
-
-                <path
-                    d="M32 15L49 32L32 49L15 32L32 15Z"
-                    fill="#00FF66"
-                />
-            `;
-
-
-            const textDiv =
-                document.createElement("div");
-
-            textDiv.className = `
-                flex-1
-                text-[16px]
-                leading-7
-                text-gray-200
-                whitespace-pre-wrap
-            `;
-
-            textDiv.textContent = text;
-
-
-            content.appendChild(
-                logo
-            );
-
-            content.appendChild(
-                textDiv
-            );
-
-            wrapper.appendChild(
-                content
-            );
-
-        }
-
-
-        messages.appendChild(
-            wrapper
+            }
         );
 
 
-        /*
-        Scroll to bottom
-        */
+    historyList.prepend(
+        item
+    );
+}
 
-        requestAnimationFrame(() => {
 
-            chatContainer.scrollTo({
-                top: chatContainer.scrollHeight,
-                behavior: "smooth"
-            });
+/* ============================================================
+   SEND MESSAGE
+============================================================ */
 
-        });
+async function sendMessage() {
 
+    const userMessage =
+        messageInput.value.trim();
+
+
+    if (
+        !userMessage ||
+        isGenerating
+    ) {
+        return;
     }
 
 
-    /*
-    ================================================================
-    TYPING INDICATOR
-    ================================================================
-    */
-
-    function addTypingIndicator() {
-
-        const wrapper =
-            document.createElement("div");
-
-        wrapper.id =
-            "typing-indicator";
-
-        wrapper.className = `
-            flex
-            gap-4
-            max-w-[850px]
-            mx-auto
-            w-full
-            mb-10
-        `;
+    addHistoryItem(
+        userMessage
+    );
 
 
-        wrapper.innerHTML = `
-
-            <svg
-                viewBox="0 0 64 64"
-                class="w-9 h-9 flex-shrink-0"
-            >
-
-                <path
-                    d="M32 3L61 32L32 61L3 32L32 3Z"
-                    stroke="#00FF66"
-                    stroke-width="5"
-                    fill="none"
-                />
-
-                <path
-                    d="M32 15L49 32L32 49L15 32L32 15Z"
-                    fill="#00FF66"
-                />
-
-            </svg>
-
-            <div
-                class="
-                    text-gray-500
-                    text-2xl
-                    tracking-widest
-                "
-            >
-                ···
-            </div>
-
-        `;
+    addMessage(
+        userMessage,
+        "user"
+    );
 
 
-        messages.appendChild(
-            wrapper
+    messageInput.value = "";
+
+    messageInput.style.height =
+        "auto";
+
+
+    updateSendButton();
+
+
+    isGenerating = true;
+
+    updateSendButton();
+
+
+    addTypingIndicator();
+
+
+    if (searchEnabled) {
+
+        searchStatus.textContent =
+            "Searching the web...";
+
+        searchStatus.classList.add(
+            "visible"
         );
 
-
-        chatContainer.scrollTo({
-            top: chatContainer.scrollHeight,
-            behavior: "smooth"
-        });
-
     }
 
 
-    function removeTypingIndicator() {
+    try {
 
-        const indicator =
-            document.getElementById(
-                "typing-indicator"
+        if (!API_URL) {
+
+            throw new Error(
+                "Ore backend URL is not configured."
             );
 
-        if (indicator) {
-            indicator.remove();
-        }
-
-    }
-
-
-    /*
-    ================================================================
-    SEND MESSAGE
-    ================================================================
-    */
-
-    async function sendMessage() {
-
-        const userMessage =
-            messageInput.value.trim();
-
-
-        if (
-            !userMessage ||
-            isGenerating
-        ) {
-            return;
         }
 
 
-        /*
-        Display user's message
-        */
+        const response =
+            await fetch(
+                `${API_URL}/api/chat`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        message:
+                            userMessage,
+
+                        language:
+                            currentLanguage,
+
+                        search_enabled:
+                            searchEnabled
+
+                    })
+
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Backend returned ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        removeTypingIndicator();
+
+
+        const oreResponse =
+            data.response ||
+            "Ore no return response.";
+
 
         addMessage(
-            userMessage,
-            "user"
+            oreResponse,
+            "ore"
         );
 
 
-        /*
-        Clear input
-        */
+    } catch (error) {
 
-        messageInput.value = "";
+        console.error(
+            "Ore backend error:",
+            error
+        );
 
-        messageInput.style.height =
-            "auto";
+
+        removeTypingIndicator();
+
+
+        addMessage(
+            currentLanguage === "pidgin"
+                ? "I no fit connect to Ore backend right now."
+                : "I couldn't connect to the Ore backend right now.",
+            "ore"
+        );
+
+    } finally {
+
+        isGenerating = false;
 
         updateSendButton();
 
+        if (!searchEnabled) {
 
-        isGenerating = true;
-
-        updateSendButton();
-
-        addTypingIndicator();
-
-
-        try {
-
-            /*
-            ========================================================
-            REAL BACKEND REQUEST
-            ========================================================
-
-            This is already prepared.
-
-            Once we have the public FastAPI URL,
-            API_URL will point to it.
-            ========================================================
-            */
-
-            if (!API_URL) {
-
-                throw new Error(
-                    "Backend URL has not been configured yet."
-                );
-
-            }
-
-
-            const response =
-                await fetch(
-                    `${API_URL}/api/chat`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-
-                            message:
-                                userMessage,
-
-                            language:
-                                currentLanguage
-
-                        })
-
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    `Backend returned ${response.status}`
-                );
-
-            }
-
-
-            const data =
-                await response.json();
-
-
-            removeTypingIndicator();
-
-
-            const oreResponse =
-                data.response ||
-                "Ore did not return a response.";
-
-
-            addMessage(
-                oreResponse,
-                "ore"
+            searchStatus.classList.remove(
+                "visible"
             );
-
-
-        } catch (error) {
-
-            console.error(
-                "Ore backend error:",
-                error
-            );
-
-
-            removeTypingIndicator();
-
-
-            /*
-            Development-only error.
-            */
-
-            addMessage(
-                "I couldn't connect to the Ore backend yet. The interface is ready, but the FastAPI backend still needs to be connected.",
-                "ore"
-            );
-
-        } finally {
-
-            isGenerating = false;
-
-            updateSendButton();
 
         }
 
     }
+}
 
 
-    /*
-    ================================================================
-    SEND BUTTON
-    ================================================================
-    */
+/* ============================================================
+   SEND BUTTON
+============================================================ */
 
-    sendButton.addEventListener(
-        "click",
-        sendMessage
-    );
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
 
 
-    /*
-    ================================================================
-    ENTER TO SEND
-    ================================================================
-    */
+/* ============================================================
+   ENTER
+============================================================ */
 
-    messageInput.addEventListener(
-        "keydown",
-        event => {
+messageInput.addEventListener(
+    "keydown",
+    event => {
 
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
 
-                event.preventDefault();
+            event.preventDefault();
 
-                sendMessage();
-
-            }
+            sendMessage();
 
         }
-    );
+
+    }
+);
 
 
-    /*
-    ================================================================
-    PROMPT CARDS
-    ================================================================
-    */
+/* ============================================================
+   PROMPT CARDS
+============================================================ */
 
-    document.querySelectorAll(
-        ".prompt-card"
-    ).forEach(card => {
+document
+    .querySelectorAll(".prompt-card")
+    .forEach(card => {
 
         card.addEventListener(
             "click",
             () => {
 
-                const prompt =
+                messageInput.value =
                     card.dataset.prompt;
 
-                messageInput.value =
-                    prompt;
+                resizeInput();
 
                 updateSendButton();
 
@@ -1480,97 +2161,158 @@
     });
 
 
-    /*
-    ================================================================
-    NEW CHAT
-    ================================================================
-    */
+/* ============================================================
+   NEW CHAT
+============================================================ */
 
-    newChatButton.addEventListener(
+newChatButton.addEventListener(
+    "click",
+    () => {
+
+        conversationStarted =
+            false;
+
+        messages.innerHTML =
+            "";
+
+        messages.classList.add(
+            "hidden"
+        );
+
+        welcomeScreen.classList.remove(
+            "hidden"
+        );
+
+        messageInput.value =
+            "";
+
+        messageInput.style.height =
+            "auto";
+
+        updateSendButton();
+
+        closeMobileSidebar();
+
+    }
+);
+
+
+/* ============================================================
+   DESKTOP SIDEBAR
+============================================================ */
+
+desktopSidebarToggle.addEventListener(
+    "click",
+    () => {
+
+        sidebar.classList.add(
+            "collapsed"
+        );
+
+        openSidebarButton.style.display =
+            "flex";
+
+    }
+);
+
+
+openSidebarButton.addEventListener(
+    "click",
+    () => {
+
+        sidebar.classList.remove(
+            "collapsed"
+        );
+
+        openSidebarButton.style.display =
+            "none";
+
+    }
+);
+
+
+/* ============================================================
+   MOBILE SIDEBAR
+============================================================ */
+
+function openMobileSidebar() {
+
+    sidebar.classList.add(
+        "open"
+    );
+
+    sidebarOverlay.classList.add(
+        "open"
+    );
+
+}
+
+
+function closeMobileSidebar() {
+
+    sidebar.classList.remove(
+        "open"
+    );
+
+    sidebarOverlay.classList.remove(
+        "open"
+    );
+
+}
+
+
+mobileMenuButton.addEventListener(
+    "click",
+    openMobileSidebar
+);
+
+
+sidebarOverlay.addEventListener(
+    "click",
+    closeMobileSidebar
+);
+
+
+/* ============================================================
+   SIDEBAR SEARCH
+============================================================ */
+
+document
+    .getElementById("sidebar-search-button")
+    .addEventListener(
         "click",
         () => {
 
-            conversationStarted =
-                false;
-
-            messages.innerHTML =
-                "";
-
-            messages.classList.add(
-                "hidden"
-            );
-
-            welcomeScreen.classList.remove(
-                "hidden"
-            );
-
-            messageInput.value =
-                "";
-
-            messageInput.style.height =
-                "auto";
-
-            updateSendButton();
-
-            closeSidebar();
+            messageInput.focus();
 
         }
     );
 
 
-    /*
-    ================================================================
-    MOBILE SIDEBAR
-    ================================================================
-    */
+/* ============================================================
+   ORE HOME
+============================================================ */
 
-    function openSidebar() {
-
-        sidebar.classList.add(
-            "open"
-        );
-
-        sidebarOverlay.classList.add(
-            "open"
-        );
-
-    }
-
-
-    function closeSidebar() {
-
-        sidebar.classList.remove(
-            "open"
-        );
-
-        sidebarOverlay.classList.remove(
-            "open"
-        );
-
-    }
-
-
-    mobileMenu.addEventListener(
+document
+    .getElementById("ore-home-button")
+    .addEventListener(
         "click",
-        openSidebar
+        () => {
+
+            newChatButton.click();
+
+        }
     );
 
 
-    sidebarOverlay.addEventListener(
-        "click",
-        closeSidebar
-    );
+/* ============================================================
+   INITIAL
+============================================================ */
 
-
-    /*
-    ================================================================
-    INITIAL STATE
-    ================================================================
-    */
-
-    updateSendButton();
+updateSendButton();
 
 </script>
 
 </body>
 </html>
+```
