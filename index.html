@@ -1,40 +1,50 @@
 <script>
     // =========================================================
-    // EXISTING ORE UI JAVASCRIPT
+    // ORE UI JAVASCRIPT
     // =========================================================
 
-    // Sidebar Toggle Functionality
+
+    // =========================================================
+    // SIDEBAR TOGGLE
+    // =========================================================
+
     const sidebar = document.getElementById('sidebar');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const openSidebarBtn = document.getElementById('open-sidebar-btn');
 
-    closeSidebarBtn.addEventListener('click', () => {
-        sidebar.classList.add('collapsed');
-        openSidebarBtn.style.display = 'flex';
-    });
+    if (closeSidebarBtn && sidebar && openSidebarBtn) {
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('collapsed');
+            openSidebarBtn.style.display = 'flex';
+        });
+    }
 
-    openSidebarBtn.addEventListener('click', () => {
-        sidebar.classList.remove('collapsed');
-        openSidebarBtn.style.display = 'none';
-    });
+    if (openSidebarBtn && sidebar) {
+        openSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            openSidebarBtn.style.display = 'none';
+        });
+    }
 
 
     // =========================================================
-    // CHAT / WORK MODE SWITCHER
+    // CHAT / WORK MODE
     // =========================================================
 
     const chatModeBtn = document.getElementById('chat-mode-btn');
     const workModeBtn = document.getElementById('work-mode-btn');
 
-    chatModeBtn.addEventListener('click', () => {
-        chatModeBtn.classList.add('active');
-        workModeBtn.classList.remove('active');
-    });
+    if (chatModeBtn && workModeBtn) {
+        chatModeBtn.addEventListener('click', () => {
+            chatModeBtn.classList.add('active');
+            workModeBtn.classList.remove('active');
+        });
 
-    workModeBtn.addEventListener('click', () => {
-        workModeBtn.classList.add('active');
-        chatModeBtn.classList.remove('active');
-    });
+        workModeBtn.addEventListener('click', () => {
+            workModeBtn.classList.add('active');
+            chatModeBtn.classList.remove('active');
+        });
+    }
 
 
     // =========================================================
@@ -44,21 +54,24 @@
     const langPidgin = document.getElementById('lang-pidgin');
     const langEnglish = document.getElementById('lang-english');
 
-    let selectedLanguage = "pidgin";
+    let selectedLanguage = 'pidgin';
 
-    langPidgin.addEventListener('click', () => {
-        selectedLanguage = "pidgin";
+    if (langPidgin && langEnglish) {
 
-        langPidgin.classList.add('active');
-        langEnglish.classList.remove('active');
-    });
+        langPidgin.addEventListener('click', () => {
+            selectedLanguage = 'pidgin';
 
-    langEnglish.addEventListener('click', () => {
-        selectedLanguage = "english";
+            langPidgin.classList.add('active');
+            langEnglish.classList.remove('active');
+        });
 
-        langEnglish.classList.add('active');
-        langPidgin.classList.remove('active');
-    });
+        langEnglish.addEventListener('click', () => {
+            selectedLanguage = 'english';
+
+            langEnglish.classList.add('active');
+            langPidgin.classList.remove('active');
+        });
+    }
 
 
     // =========================================================
@@ -67,9 +80,11 @@
 
     const thinkBtn = document.getElementById('think-btn');
 
-    thinkBtn.addEventListener('click', () => {
-        thinkBtn.classList.toggle('active');
-    });
+    if (thinkBtn) {
+        thinkBtn.addEventListener('click', () => {
+            thinkBtn.classList.toggle('active');
+        });
+    }
 
 
     // =========================================================
@@ -79,18 +94,28 @@
     function quickPrompt(text) {
         const chatInput = document.getElementById('chat-input');
 
+        if (!chatInput) {
+            return;
+        }
+
         chatInput.value = text;
         chatInput.focus();
     }
 
+    window.quickPrompt = quickPrompt;
+
 
     // =========================================================
-    // ORE CHAT SYSTEM
+    // CHAT ELEMENTS
     // =========================================================
 
     const chatInput = document.getElementById('chat-input');
     const centerContainer = document.querySelector('.center-container');
-    const chatBar = document.querySelector('.pixel-chat-bar');
+
+
+    // =========================================================
+    // ORE STATE
+    // =========================================================
 
     let isGenerating = false;
 
@@ -98,18 +123,30 @@
     // =========================================================
     // ORE BACKEND
     // =========================================================
+    //
+    // FRONTEND:
+    // ore-liart.vercel.app
+    //
+    // BACKEND:
+    // ore-prime.onrender.com
+    //
+    // =========================================================
 
     const ORE_BACKEND_URL = 'https://ore-prime.onrender.com';
-    const ORE_CHAT_ENDPOINT = `${ORE_BACKEND_URL}/api/chat`;
+
+    const ORE_CHAT_ENDPOINT =
+        `${ORE_BACKEND_URL}/api/chat`;
 
 
     // =========================================================
     // ORE CHAT STYLES
     // =========================================================
 
-    const oreChatStyles = document.createElement('style');
+    const oreChatStyles =
+        document.createElement('style');
 
     oreChatStyles.textContent = `
+
         #ore-conversation {
             width: 100%;
             max-width: 768px;
@@ -174,9 +211,11 @@
             padding: 0 4px;
         }
 
+
         /* =====================================================
            ORE THINKING DIAMOND
-           DO NOT CHANGE
+           ORIGINAL
+           DO NOT MODIFY
            ===================================================== */
 
         .ore-diamond {
@@ -272,28 +311,38 @@
 
 
     // =========================================================
-    // CREATE CONVERSATION AREA
+    // CREATE CONVERSATION
     // =========================================================
 
-    const conversation = document.createElement('div');
+    let conversation =
+        document.getElementById('ore-conversation');
 
-    conversation.id = 'ore-conversation';
+    if (!conversation && centerContainer) {
 
-    centerContainer.parentNode.insertBefore(
-        conversation,
-        centerContainer
-    );
+        conversation =
+            document.createElement('div');
+
+        conversation.id =
+            'ore-conversation';
+
+        centerContainer.parentNode.insertBefore(
+            conversation,
+            centerContainer
+        );
+    }
 
 
     // =========================================================
-    // CREATE ORE DIAMOND
+    // CREATE ORE THINKING DIAMOND
     // =========================================================
 
     function createOreDiamond() {
 
-        const diamond = document.createElement('div');
+        const diamond =
+            document.createElement('div');
 
-        diamond.className = 'ore-diamond';
+        diamond.className =
+            'ore-diamond';
 
         diamond.innerHTML = `
             <div class="ore-diamond-inner"></div>
@@ -309,7 +358,12 @@
 
     function showThinking() {
 
-        const thinking = document.createElement('div');
+        if (!conversation) {
+            return;
+        }
+
+        const thinking =
+            document.createElement('div');
 
         thinking.className =
             'ore-message ore-message-ore';
@@ -348,8 +402,6 @@
 
         conversation.scrollTop =
             conversation.scrollHeight;
-
-        return thinking;
     }
 
 
@@ -375,6 +427,10 @@
     // =========================================================
 
     function addUserMessage(message) {
+
+        if (!conversation) {
+            return;
+        }
 
         const wrapper =
             document.createElement('div');
@@ -419,6 +475,10 @@
 
     async function typeOreResponse(response) {
 
+        if (!conversation) {
+            return;
+        }
+
         const wrapper =
             document.createElement('div');
 
@@ -455,11 +515,14 @@
         cursor.className =
             'ore-cursor';
 
-
         responseBox.appendChild(cursor);
 
 
-        for (let i = 0; i < response.length; i++) {
+        for (
+            let i = 0;
+            i < response.length;
+            i++
+        ) {
 
             cursor.remove();
 
@@ -504,12 +567,16 @@
 
 
     // =========================================================
-    // SEND MESSAGE TO ORE BACKEND
+    // SEND MESSAGE
     // =========================================================
 
     async function sendMessage() {
 
         if (isGenerating) {
+            return;
+        }
+
+        if (!chatInput) {
             return;
         }
 
@@ -526,13 +593,21 @@
         isGenerating = true;
 
 
-        // Switch from landing screen to conversation
-        centerContainer.style.display = 'none';
+        // Hide landing screen
+        if (centerContainer) {
+            centerContainer.style.display =
+                'none';
+        }
 
-        conversation.style.display = 'flex';
+
+        // Show conversation
+        if (conversation) {
+            conversation.style.display =
+                'flex';
+        }
 
 
-        // Add user's message
+        // Add user message
         addUserMessage(message);
 
 
@@ -546,9 +621,11 @@
 
         try {
 
-            // =================================================
-            // CONNECT TO RENDER BACKEND
-            // =================================================
+            console.log(
+                'Connecting to Ore:',
+                ORE_CHAT_ENDPOINT
+            );
+
 
             const response =
                 await fetch(
@@ -563,16 +640,23 @@
 
                         body: JSON.stringify({
                             message: message,
-                            language: selectedLanguage
+                            language:
+                                selectedLanguage
                         })
                     }
                 );
 
 
+            console.log(
+                'Ore backend status:',
+                response.status
+            );
+
+
             if (!response.ok) {
 
                 throw new Error(
-                    `Ore backend returned ${response.status}`
+                    `Backend returned ${response.status}`
                 );
             }
 
@@ -581,27 +665,30 @@
                 await response.json();
 
 
+            console.log(
+                'Ore response:',
+                data
+            );
+
+
             removeThinking();
 
-
-            // Backend should return:
-            // { "response": "..." }
 
             const oreResponse =
                 data.response ||
                 data.message ||
-                "I no get response for that one yet.";
+                'I no get response for that one yet.';
 
 
-            // Type response
             await typeOreResponse(
                 String(oreResponse)
             );
 
+
         } catch (error) {
 
             console.error(
-                "ORE BACKEND ERROR:",
+                'ORE BACKEND ERROR:',
                 error
             );
 
@@ -610,7 +697,7 @@
 
 
             await typeOreResponse(
-                "I no fit connect to Ore backend right now."
+                'I no fit connect to Ore backend right now.'
             );
 
         } finally {
@@ -624,58 +711,34 @@
 
     // =========================================================
     // ENTER TO SEND
-    // SHIFT + ENTER = NEW LINE
     // =========================================================
 
-    chatInput.addEventListener(
-        'keydown',
-        (event) => {
+    if (chatInput) {
 
-            if (
-                event.key === 'Enter' &&
-                !event.shiftKey
-            ) {
+        chatInput.addEventListener(
+            'keydown',
+            (event) => {
 
-                event.preventDefault();
+                if (
+                    event.key === 'Enter' &&
+                    !event.shiftKey
+                ) {
 
-                sendMessage();
+                    event.preventDefault();
+
+                    sendMessage();
+                }
             }
-        }
-    );
+        );
 
 
-    // =========================================================
-    // AUTO-GROW TEXTAREA
-    // =========================================================
+        // =====================================================
+        // AUTO-GROW TEXTAREA
+        // =====================================================
 
-    chatInput.addEventListener(
-        'input',
-        () => {
-
-            chatInput.style.height =
-                'auto';
-
-            chatInput.style.height =
-                Math.min(
-                    chatInput.scrollHeight,
-                    180
-                ) + 'px';
-        }
-    );
-
-
-    // =========================================================
-    // SHIFT + ENTER HEIGHT UPDATE
-    // =========================================================
-
-    chatInput.addEventListener(
-        'keyup',
-        (event) => {
-
-            if (
-                event.key === 'Enter' &&
-                event.shiftKey
-            ) {
+        chatInput.addEventListener(
+            'input',
+            () => {
 
                 chatInput.style.height =
                     'auto';
@@ -686,12 +749,38 @@
                         180
                     ) + 'px';
             }
-        }
-    );
+        );
+
+
+        // =====================================================
+        // SHIFT + ENTER
+        // =====================================================
+
+        chatInput.addEventListener(
+            'keyup',
+            (event) => {
+
+                if (
+                    event.key === 'Enter' &&
+                    event.shiftKey
+                ) {
+
+                    chatInput.style.height =
+                        'auto';
+
+                    chatInput.style.height =
+                        Math.min(
+                            chatInput.scrollHeight,
+                            180
+                        ) + 'px';
+                }
+            }
+        );
+    }
 
 
     // =========================================================
-    // EXPOSE SEND FUNCTION
+    // EXPOSE FUNCTIONS
     // =========================================================
 
     window.sendMessage =
