@@ -1,5 +1,3 @@
-%%writefile /content/brain.py
-
 import os
 import time
 import numpy as np
