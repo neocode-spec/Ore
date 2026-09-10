@@ -1,4 +1,4 @@
-# brain.py
+%%writefile /content/brain.py
 
 import os
 import time
@@ -11,13 +11,11 @@ from transformers import AutoTokenizer
 # CONFIG
 # ============================================================
 
-MODEL_PATH = os.getenv(
-    "ORE_ONNX_MODEL_PATH",
-    "model_int8.onnx"
-)
+MODEL_PATH = "/content/drive/MyDrive/ore_model_onnx/model_int8.onnx"
+TOKENIZER_PATH = "/content/drive/MyDrive/ore_model_onnx"
 
 print("🧠 Loading Ore INT8 ONNX model...")
-print(f"📦 Model: {MODEL_PATH}")
+print("📦 Model:", MODEL_PATH)
 
 
 # ============================================================
@@ -25,10 +23,8 @@ print(f"📦 Model: {MODEL_PATH}")
 # ============================================================
 
 tokenizer = AutoTokenizer.from_pretrained(
-    os.getenv(
-        "ORE_TOKENIZER_PATH",
-        "."
-    )
+    TOKENIZER_PATH,
+    local_files_only=True
 )
 
 if tokenizer.pad_token is None:
@@ -166,8 +162,6 @@ Ore:"""
         logits = outputs[0]
 
 
-        # Greedy decoding for now.
-        # Quality can be improved later.
         next_token = int(
             np.argmax(
                 logits[0, -1, :]
@@ -175,9 +169,7 @@ Ore:"""
         )
 
 
-        generated_ids.append(
-            next_token
-        )
+        generated_ids.append(next_token)
 
 
         if next_token == tokenizer.eos_token_id:
@@ -204,7 +196,6 @@ Ore:"""
         past = new_past
 
 
-        # Next iteration only needs the new token.
         input_ids = np.array(
             [[next_token]],
             dtype=np.int64
@@ -220,8 +211,6 @@ Ore:"""
         skip_special_tokens=True
     ).strip()
 
-
-    # Remove accidental conversation markers.
 
     stop_markers = [
         "\nUser:",
@@ -240,9 +229,7 @@ Ore:"""
 
     if not response:
 
-        response = (
-            "I no get response for that one yet."
-        )
+        response = "I no get response for that one yet."
 
 
     elapsed = time.time() - start_time
