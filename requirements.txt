@@ -4,3 +4,4 @@ pydantic
 numpy
 onnxruntime
 transformers
+huggingface_hub
