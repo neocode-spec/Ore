@@ -1,86 +1,149 @@
 <script>
     // =========================================================
+    // ORE FRONTEND CONFIGURATION
+    // =========================================================
+
+    // Ore's brain lives on Render.
+    // The website itself lives on Vercel.
+    const ORE_BACKEND_URL = "https://ore-prime.onrender.com";
+
+    const ORE_CHAT_ENDPOINT = `${ORE_BACKEND_URL}/api/chat`;
+
+    // Maximum time we allow a request to wait.
+    // Render may need a little time to wake up.
+    const ORE_REQUEST_TIMEOUT = 120000; // 2 minutes
+
+
+    // =========================================================
     // EXISTING ORE UI JAVASCRIPT
     // =========================================================
 
-    // Sidebar Toggle Functionality
     const sidebar = document.getElementById('sidebar');
     const closeSidebarBtn = document.getElementById('close-sidebar-btn');
     const openSidebarBtn = document.getElementById('open-sidebar-btn');
 
-    closeSidebarBtn.addEventListener('click', () => {
-        sidebar.classList.add('collapsed');
-        openSidebarBtn.style.display = 'flex';
-    });
+    if (closeSidebarBtn && sidebar && openSidebarBtn) {
 
-    openSidebarBtn.addEventListener('click', () => {
-        sidebar.classList.remove('collapsed');
-        openSidebarBtn.style.display = 'none';
-    });
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('collapsed');
+            openSidebarBtn.style.display = 'flex';
+        });
 
-    // Chat / Work Mode Switcher
-    const chatModeBtn = document.getElementById('chat-mode-btn');
-    const workModeBtn = document.getElementById('work-mode-btn');
+        openSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            openSidebarBtn.style.display = 'none';
+        });
 
-    chatModeBtn.addEventListener('click', () => {
-        chatModeBtn.classList.add('active');
-        workModeBtn.classList.remove('active');
-    });
-
-    workModeBtn.addEventListener('click', () => {
-        workModeBtn.classList.add('active');
-        chatModeBtn.classList.remove('active');
-    });
-
-    // Language Switcher Toggle
-    const langPidgin = document.getElementById('lang-pidgin');
-    const langEnglish = document.getElementById('lang-english');
-
-    langPidgin.addEventListener('click', () => {
-        langPidgin.classList.add('active');
-        langEnglish.classList.remove('active');
-    });
-
-    langEnglish.addEventListener('click', () => {
-        langEnglish.classList.add('active');
-        langPidgin.classList.remove('active');
-    });
-
-    // Think Toggle Button
-    const thinkBtn = document.getElementById('think-btn');
-
-    thinkBtn.addEventListener('click', () => {
-        thinkBtn.classList.toggle('active');
-    });
-
-    // Quick Prompt Helper
-    function quickPrompt(text) {
-        const chatInput = document.getElementById('chat-input');
-        chatInput.value = text;
-        chatInput.focus();
     }
 
 
     // =========================================================
-    // ORE CHAT SYSTEM
+    // CHAT / WORK MODE SWITCHER
+    // =========================================================
+
+    const chatModeBtn = document.getElementById('chat-mode-btn');
+    const workModeBtn = document.getElementById('work-mode-btn');
+
+    if (chatModeBtn && workModeBtn) {
+
+        chatModeBtn.addEventListener('click', () => {
+            chatModeBtn.classList.add('active');
+            workModeBtn.classList.remove('active');
+        });
+
+        workModeBtn.addEventListener('click', () => {
+            workModeBtn.classList.add('active');
+            chatModeBtn.classList.remove('active');
+        });
+
+    }
+
+
+    // =========================================================
+    // LANGUAGE SWITCHER
+    // =========================================================
+
+    const langPidgin = document.getElementById('lang-pidgin');
+    const langEnglish = document.getElementById('lang-english');
+
+    let selectedLanguage = "pidgin";
+
+    if (langPidgin && langEnglish) {
+
+        langPidgin.addEventListener('click', () => {
+            selectedLanguage = "pidgin";
+
+            langPidgin.classList.add('active');
+            langEnglish.classList.remove('active');
+        });
+
+        langEnglish.addEventListener('click', () => {
+            selectedLanguage = "english";
+
+            langEnglish.classList.add('active');
+            langPidgin.classList.remove('active');
+        });
+
+    }
+
+
+    // =========================================================
+    // THINK TOGGLE
+    // =========================================================
+
+    const thinkBtn = document.getElementById('think-btn');
+
+    if (thinkBtn) {
+        thinkBtn.addEventListener('click', () => {
+            thinkBtn.classList.toggle('active');
+        });
+    }
+
+
+    // =========================================================
+    // QUICK PROMPT
+    // =========================================================
+
+    function quickPrompt(text) {
+
+        const chatInput = document.getElementById('chat-input');
+
+        if (!chatInput) {
+            return;
+        }
+
+        chatInput.value = text;
+        chatInput.focus();
+
+        // Trigger textarea resizing.
+        chatInput.dispatchEvent(new Event('input'));
+
+    }
+
+
+    // Make quickPrompt available to HTML buttons.
+    window.quickPrompt = quickPrompt;
+
+
+    // =========================================================
+    // CHAT ELEMENTS
     // =========================================================
 
     const chatInput = document.getElementById('chat-input');
     const centerContainer = document.querySelector('.center-container');
     const chatBar = document.querySelector('.pixel-chat-bar');
 
-    let selectedLanguage = "pidgin";
     let isGenerating = false;
 
 
     // =========================================================
-    // ORE DIAMOND + CHAT STYLES
-    // Added through JavaScript only.
+    // ORE CHAT STYLES
     // =========================================================
 
     const oreChatStyles = document.createElement('style');
 
     oreChatStyles.textContent = `
+
         #ore-conversation {
             width: 100%;
             max-width: 768px;
@@ -91,6 +154,7 @@
             flex-direction: column;
             gap: 24px;
             margin: 0 auto;
+            box-sizing: border-box;
         }
 
         .ore-message {
@@ -98,6 +162,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            box-sizing: border-box;
         }
 
         .ore-message-user {
@@ -125,6 +190,7 @@
             line-height: 1.5;
             white-space: pre-wrap;
             word-wrap: break-word;
+            overflow-wrap: anywhere;
         }
 
         .ore-response {
@@ -134,7 +200,9 @@
             line-height: 1.65;
             white-space: pre-wrap;
             word-wrap: break-word;
+            overflow-wrap: anywhere;
             padding: 0 4px;
+            box-sizing: border-box;
         }
 
         .ore-thinking {
@@ -151,6 +219,7 @@
             position: relative;
             transform: rotate(45deg);
             animation: oreDiamondPulse 1.1s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
         .ore-diamond-inner {
@@ -204,7 +273,12 @@
             animation: oreCursorBlink 0.8s step-end infinite;
         }
 
+        .ore-error {
+            color: #ff7777;
+        }
+
         @keyframes oreDiamondPulse {
+
             0%, 100% {
                 opacity: 0.35;
                 transform: rotate(45deg) scale(0.88);
@@ -216,9 +290,11 @@
                 transform: rotate(45deg) scale(1.08);
                 filter: brightness(1.35);
             }
+
         }
 
         @keyframes oreCursorBlink {
+
             0%, 45% {
                 opacity: 1;
             }
@@ -226,12 +302,14 @@
             46%, 100% {
                 opacity: 0;
             }
+
         }
 
         .ore-send-disabled {
             opacity: 0.5;
             pointer-events: none;
         }
+
     `;
 
     document.head.appendChild(oreChatStyles);
@@ -242,20 +320,27 @@
     // =========================================================
 
     const conversation = document.createElement('div');
+
     conversation.id = 'ore-conversation';
 
-    centerContainer.parentNode.insertBefore(
-        conversation,
-        centerContainer
-    );
+    if (centerContainer && centerContainer.parentNode) {
+
+        centerContainer.parentNode.insertBefore(
+            conversation,
+            centerContainer
+        );
+
+    }
 
 
     // =========================================================
-    // DIAMOND HTML
+    // CREATE ORE DIAMOND
     // =========================================================
 
     function createOreDiamond() {
+
         const diamond = document.createElement('div');
+
         diamond.className = 'ore-diamond';
 
         diamond.innerHTML = `
@@ -263,50 +348,74 @@
         `;
 
         return diamond;
+
     }
 
 
     // =========================================================
-    // SHOW THINKING STATE
+    // SHOW THINKING
     // =========================================================
 
     function showThinking() {
 
+        removeThinking();
+
         const thinking = document.createElement('div');
-        thinking.className = 'ore-message ore-message-ore';
-        thinking.id = 'ore-thinking-message';
 
-        const thinkingRow = document.createElement('div');
-        thinkingRow.className = 'ore-thinking';
+        thinking.className =
+            'ore-message ore-message-ore';
 
-        const diamond = createOreDiamond();
+        thinking.id =
+            'ore-thinking-message';
 
-        const text = document.createElement('span');
-        text.className = 'ore-thinking-text';
-        text.textContent = 'Ore is thinking...';
+        const thinkingRow =
+            document.createElement('div');
+
+        thinkingRow.className =
+            'ore-thinking';
+
+        const diamond =
+            createOreDiamond();
+
+        const text =
+            document.createElement('span');
+
+        text.className =
+            'ore-thinking-text';
+
+        text.textContent =
+            'Ore is thinking...';
 
         thinkingRow.appendChild(diamond);
         thinkingRow.appendChild(text);
 
         thinking.appendChild(thinkingRow);
+
         conversation.appendChild(thinking);
 
-        conversation.scrollTop = conversation.scrollHeight;
+        conversation.scrollTop =
+            conversation.scrollHeight;
 
         return thinking;
+
     }
 
 
     // =========================================================
-    // REMOVE THINKING STATE
+    // REMOVE THINKING
     // =========================================================
 
     function removeThinking() {
-        const thinking = document.getElementById('ore-thinking-message');
+
+        const thinking =
+            document.getElementById(
+                'ore-thinking-message'
+            );
 
         if (thinking) {
             thinking.remove();
         }
+
     }
 
 
@@ -316,23 +425,38 @@
 
     function addUserMessage(message) {
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'ore-message ore-message-user';
+        const wrapper =
+            document.createElement('div');
 
-        const label = document.createElement('div');
-        label.className = 'ore-message-label';
-        label.textContent = 'You';
+        wrapper.className =
+            'ore-message ore-message-user';
 
-        const bubble = document.createElement('div');
-        bubble.className = 'ore-user-bubble';
-        bubble.textContent = message;
+        const label =
+            document.createElement('div');
+
+        label.className =
+            'ore-message-label';
+
+        label.textContent =
+            'You';
+
+        const bubble =
+            document.createElement('div');
+
+        bubble.className =
+            'ore-user-bubble';
+
+        bubble.textContent =
+            message;
 
         wrapper.appendChild(label);
         wrapper.appendChild(bubble);
 
         conversation.appendChild(wrapper);
 
-        conversation.scrollTop = conversation.scrollHeight;
+        conversation.scrollTop =
+            conversation.scrollHeight;
+
     }
 
 
@@ -342,43 +466,66 @@
 
     async function typeOreResponse(response) {
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'ore-message ore-message-ore';
+        const wrapper =
+            document.createElement('div');
 
-        const label = document.createElement('div');
-        label.className = 'ore-message-label';
-        label.textContent = 'Ore';
+        wrapper.className =
+            'ore-message ore-message-ore';
 
-        const responseBox = document.createElement('div');
-        responseBox.className = 'ore-response';
+        const label =
+            document.createElement('div');
+
+        label.className =
+            'ore-message-label';
+
+        label.textContent =
+            'Ore';
+
+        const responseBox =
+            document.createElement('div');
+
+        responseBox.className =
+            'ore-response';
 
         wrapper.appendChild(label);
         wrapper.appendChild(responseBox);
 
         conversation.appendChild(wrapper);
 
-        const cursor = document.createElement('span');
-        cursor.className = 'ore-cursor';
+        const cursor =
+            document.createElement('span');
+
+        cursor.className =
+            'ore-cursor';
 
         responseBox.appendChild(cursor);
 
-        for (let i = 0; i < response.length; i++) {
+
+        for (
+            let i = 0;
+            i < response.length;
+            i++
+        ) {
 
             cursor.remove();
 
-            responseBox.textContent += response[i];
+            responseBox.textContent +=
+                response[i];
 
             responseBox.appendChild(cursor);
 
-            conversation.scrollTop = conversation.scrollHeight;
+            conversation.scrollTop =
+                conversation.scrollHeight;
 
-            // Natural typing rhythm
+
             let delay = 12;
 
-            if (response[i] === "." ||
+            if (
+                response[i] === "." ||
                 response[i] === "," ||
                 response[i] === "!" ||
-                response[i] === "?") {
+                response[i] === "?"
+            ) {
                 delay = 55;
             }
 
@@ -386,17 +533,164 @@
                 delay = 35;
             }
 
-            await new Promise(resolve => setTimeout(resolve, delay));
+            await new Promise(
+                resolve =>
+                    setTimeout(resolve, delay)
+            );
+
         }
 
         cursor.remove();
 
-        conversation.scrollTop = conversation.scrollHeight;
+        conversation.scrollTop =
+            conversation.scrollHeight;
+
     }
 
 
     // =========================================================
-    // SEND MESSAGE TO ORE BACKEND
+    // FETCH ORE BACKEND
+    // =========================================================
+
+    async function askOreBackend(message) {
+
+        const controller =
+            new AbortController();
+
+        const timeout =
+            setTimeout(() => {
+                controller.abort();
+            }, ORE_REQUEST_TIMEOUT);
+
+
+        try {
+
+            console.log(
+                "ORE → Backend:",
+                ORE_CHAT_ENDPOINT
+            );
+
+            console.log(
+                "ORE → Payload:",
+                {
+                    message: message,
+                    language: selectedLanguage
+                }
+            );
+
+
+            const response =
+                await fetch(
+                    ORE_CHAT_ENDPOINT,
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json',
+
+                            'Accept':
+                                'application/json'
+                        },
+
+                        body: JSON.stringify({
+                            message: message,
+                            language: selectedLanguage
+                        }),
+
+                        signal:
+                            controller.signal
+                    }
+                );
+
+
+            console.log(
+                "ORE ← Status:",
+                response.status
+            );
+
+
+            if (!response.ok) {
+
+                let errorText = "";
+
+                try {
+                    errorText =
+                        await response.text();
+                } catch (_) {
+                    errorText = "";
+                }
+
+                throw new Error(
+                    `Backend returned ${response.status}` +
+                    (
+                        errorText
+                            ? `: ${errorText.substring(0, 300)}`
+                            : ""
+                    )
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "ORE ← Response:",
+                data
+            );
+
+
+            /*
+             * Expected backend response:
+             *
+             * {
+             *     "response": "Ore's answer"
+             * }
+             *
+             */
+
+            if (
+                typeof data === "string"
+            ) {
+                return data;
+            }
+
+
+            if (
+                data &&
+                typeof data.response === "string"
+            ) {
+                return data.response;
+            }
+
+
+            // Some backends use "message" instead.
+            if (
+                data &&
+                typeof data.message === "string"
+            ) {
+                return data.message;
+            }
+
+
+            throw new Error(
+                "Backend responded, but no response text was found."
+            );
+
+        } finally {
+
+            clearTimeout(timeout);
+
+        }
+
+    }
+
+
+    // =========================================================
+    // SEND MESSAGE
     // =========================================================
 
     async function sendMessage() {
@@ -405,82 +699,178 @@
             return;
         }
 
-        const message = chatInput.value.trim();
+
+        if (!chatInput || !conversation) {
+            console.error(
+                "ORE: Chat elements not found."
+            );
+            return;
+        }
+
+
+        const message =
+            chatInput.value.trim();
+
 
         if (!message) {
             return;
         }
 
+
         isGenerating = true;
 
-        // Show conversation
-        centerContainer.style.display = 'none';
-        conversation.style.display = 'flex';
 
-        // Add user's message
+        // -----------------------------------------------------
+        // SHOW CHAT
+        // -----------------------------------------------------
+
+        if (centerContainer) {
+            centerContainer.style.display =
+                'none';
+        }
+
+        conversation.style.display =
+            'flex';
+
+
+        // -----------------------------------------------------
+        // USER MESSAGE
+        // -----------------------------------------------------
+
         addUserMessage(message);
 
-        // Clear input
+
+        // -----------------------------------------------------
+        // CLEAR INPUT
+        // -----------------------------------------------------
+
         chatInput.value = '';
 
-        // Show blinking Ore diamond
+        chatInput.style.height =
+            'auto';
+
+
+        // -----------------------------------------------------
+        // THINKING
+        // -----------------------------------------------------
+
         showThinking();
+
 
         try {
 
-            const response = await fetch('/api/chat', {
-                method: 'POST',
+            // -------------------------------------------------
+            // ACTUAL CONNECTION TO RENDER
+            // -------------------------------------------------
 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-                body: JSON.stringify({
-                    message: message,
-                    language: selectedLanguage
-                })
-            });
+            const oreResponse =
+                await askOreBackend(message);
 
 
-            if (!response.ok) {
-                throw new Error(
-                    `Ore backend returned ${response.status}`
-                );
-            }
-
-
-            const data = await response.json();
-
+            // -------------------------------------------------
+            // REMOVE THINKING DIAMOND
+            // -------------------------------------------------
 
             removeThinking();
 
 
-            const oreResponse =
-                data.response ||
-                "I no get response for that one yet.";
+            // -------------------------------------------------
+            // TYPE RESPONSE
+            // -------------------------------------------------
 
-
-            // Diamond disappears,
-            // Ore starts typing the answer.
-            await typeOreResponse(oreResponse);
+            await typeOreResponse(
+                oreResponse ||
+                "Ore no get response for that one yet."
+            );
 
 
         } catch (error) {
 
-            console.error("ORE ERROR:", error);
+            console.error(
+                "ORE ERROR:",
+                error
+            );
+
 
             removeThinking();
 
-            await typeOreResponse(
-                "I no fit connect to Ore backend right now."
-            );
+
+            let errorMessage =
+                "I no fit connect to Ore backend right now.";
+
+
+            if (
+                error.name ===
+                "AbortError"
+            ) {
+
+                errorMessage =
+                    "Ore backend took too long to respond. Render may still be waking up.";
+
+            } else if (
+                error.message &&
+                error.message.includes("Failed to fetch")
+            ) {
+
+                errorMessage =
+                    "Ore backend could not be reached. Check the Render service and CORS settings.";
+
+            } else if (
+                error.message
+            ) {
+
+                console.error(
+                    "ORE BACKEND DETAIL:",
+                    error.message
+                );
+
+            }
+
+
+            const wrapper =
+                document.createElement('div');
+
+            wrapper.className =
+                'ore-message ore-message-ore';
+
+
+            const label =
+                document.createElement('div');
+
+            label.className =
+                'ore-message-label';
+
+            label.textContent =
+                'Ore';
+
+
+            const responseBox =
+                document.createElement('div');
+
+            responseBox.className =
+                'ore-response ore-error';
+
+            responseBox.textContent =
+                errorMessage;
+
+
+            wrapper.appendChild(label);
+            wrapper.appendChild(responseBox);
+
+            conversation.appendChild(wrapper);
+
+
+            conversation.scrollTop =
+                conversation.scrollHeight;
 
         } finally {
 
             isGenerating = false;
 
             chatInput.focus();
+
         }
+
     }
 
 
@@ -489,62 +879,114 @@
     // SHIFT + ENTER = NEW LINE
     // =========================================================
 
-    chatInput.addEventListener('keydown', (event) => {
+    if (chatInput) {
 
-        if (event.key === 'Enter' && !event.shiftKey) {
+        chatInput.addEventListener(
+            'keydown',
+            (event) => {
 
-            event.preventDefault();
+                if (
+                    event.key === 'Enter' &&
+                    !event.shiftKey
+                ) {
 
-            sendMessage();
-        }
-    });
+                    event.preventDefault();
 
+                    sendMessage();
 
-    // =========================================================
-    // LANGUAGE STATE
-    // =========================================================
+                }
 
-    langPidgin.addEventListener('click', () => {
-        selectedLanguage = "pidgin";
-    });
-
-    langEnglish.addEventListener('click', () => {
-        selectedLanguage = "english";
-    });
+            }
+        );
 
 
-    // =========================================================
-    // AUTO-GROW TEXTAREA
-    // =========================================================
+        // -----------------------------------------------------
+        // AUTO GROW TEXTAREA
+        // -----------------------------------------------------
 
-    chatInput.addEventListener('input', () => {
+        chatInput.addEventListener(
+            'input',
+            () => {
 
-        chatInput.style.height = 'auto';
+                chatInput.style.height =
+                    'auto';
 
-        chatInput.style.height =
-            Math.min(chatInput.scrollHeight, 180) + 'px';
-    });
+                chatInput.style.height =
+                    Math.min(
+                        chatInput.scrollHeight,
+                        180
+                    ) + 'px';
+
+            }
+        );
 
 
-    // =========================================================
-    // ALLOW SEND BY CLICKING / SUBMITTING
-    // =========================================================
+        // -----------------------------------------------------
+        // SHIFT + ENTER RESIZE
+        // -----------------------------------------------------
 
-    chatInput.addEventListener('keyup', (event) => {
+        chatInput.addEventListener(
+            'keyup',
+            (event) => {
 
-        if (event.key === 'Enter' && event.shiftKey) {
+                if (
+                    event.key === 'Enter' &&
+                    event.shiftKey
+                ) {
 
-            chatInput.style.height = 'auto';
+                    chatInput.style.height =
+                        'auto';
 
-            chatInput.style.height =
-                Math.min(chatInput.scrollHeight, 180) + 'px';
-        }
-    });
+                    chatInput.style.height =
+                        Math.min(
+                            chatInput.scrollHeight,
+                            180
+                        ) + 'px';
+
+                }
+
+            }
+        );
+
+    }
 
 
     // =========================================================
     // EXPOSE SEND FUNCTION
     // =========================================================
 
-    window.sendMessage = sendMessage;
+    window.sendMessage =
+        sendMessage;
+
+
+    // =========================================================
+    // ORE CONNECTION TEST
+    // =========================================================
+
+    console.log(
+        "================================="
+    );
+
+    console.log(
+        "ORE FRONTEND INITIALIZED"
+    );
+
+    console.log(
+        "Frontend: Vercel"
+    );
+
+    console.log(
+        "Backend:",
+        ORE_BACKEND_URL
+    );
+
+    console.log(
+        "Chat endpoint:",
+        ORE_CHAT_ENDPOINT
+    );
+
+    console.log(
+        "================================="
+    );
+
 </script>
