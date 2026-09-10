@@ -2,26 +2,66 @@ import os
 import time
 import numpy as np
 import onnxruntime as ort
+
 from transformers import AutoTokenizer
+from huggingface_hub import snapshot_download
 
 
 # ============================================================
-# CONFIG
+# ORE MODEL CONFIGURATION
 # ============================================================
 
-MODEL_PATH = "/content/drive/MyDrive/ore_model_onnx/model_int8.onnx"
-TOKENIZER_PATH = "/content/drive/MyDrive/ore_model_onnx"
+HF_REPO = "Mur99/ore-int8"
 
-print("🧠 Loading Ore INT8 ONNX model...")
-print("📦 Model:", MODEL_PATH)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_DIR = os.path.join(BASE_DIR, "ore_model")
+
+MODEL_PATH = os.path.join(
+    MODEL_DIR,
+    "model_int8.onnx"
+)
 
 
 # ============================================================
-# TOKENIZER
+# DOWNLOAD MODEL FROM HUGGING FACE
 # ============================================================
+
+print("🧠 Starting Ore...")
+print("📦 Hugging Face repo:", HF_REPO)
+
+if not os.path.exists(MODEL_PATH):
+
+    print("⬇️ Ore INT8 model not found locally.")
+    print("⬇️ Downloading from Hugging Face...")
+
+    snapshot_download(
+        repo_id=HF_REPO,
+        repo_type="model",
+        local_dir=MODEL_DIR,
+        allow_patterns=[
+            "model_int8.onnx",
+            "config.json",
+            "generation_config.json",
+            "tokenizer_config.json",
+            "tokenizer.json",
+            "special_tokens_map.json",
+            "vocab.json",
+            "merges.txt"
+        ]
+    )
+
+    print("✅ Ore model downloaded")
+
+
+# ============================================================
+# LOAD TOKENIZER
+# ============================================================
+
+print("🔤 Loading tokenizer...")
 
 tokenizer = AutoTokenizer.from_pretrained(
-    TOKENIZER_PATH,
+    MODEL_DIR,
     local_files_only=True
 )
 
@@ -30,8 +70,10 @@ if tokenizer.pad_token is None:
 
 
 # ============================================================
-# ONNX RUNTIME
+# LOAD ONNX MODEL
 # ============================================================
+
+print("🧠 Loading INT8 ONNX model...")
 
 session = ort.InferenceSession(
     MODEL_PATH,
@@ -43,14 +85,14 @@ print("⚙️ Provider:", session.get_providers())
 
 
 # ============================================================
-# SETTINGS
+# GENERATION SETTINGS
 # ============================================================
 
 MAX_NEW_TOKENS = 80
 
 
 # ============================================================
-# GENERATION
+# GENERATE ORE RESPONSE
 # ============================================================
 
 def generate_response(
@@ -82,6 +124,10 @@ User: {user_message}
 Ore:"""
 
 
+    # --------------------------------------------------------
+    # TOKENIZE
+    # --------------------------------------------------------
+
     tokens = tokenizer(
         prompt,
         return_tensors="np"
@@ -90,20 +136,24 @@ Ore:"""
     input_ids = tokens["input_ids"].astype(np.int64)
 
 
-    # ========================================================
+    # --------------------------------------------------------
     # EMPTY KV CACHE
-    # ========================================================
+    # --------------------------------------------------------
 
     past = {}
 
     for i in range(12):
 
-        past[f"past_key_values.{i}.key"] = np.zeros(
+        past[
+            f"past_key_values.{i}.key"
+        ] = np.zeros(
             (1, 12, 0, 64),
             dtype=np.float32
         )
 
-        past[f"past_key_values.{i}.value"] = np.zeros(
+        past[
+            f"past_key_values.{i}.value"
+        ] = np.zeros(
             (1, 12, 0, 64),
             dtype=np.float32
         )
@@ -114,17 +164,21 @@ Ore:"""
     start_time = time.time()
 
 
-    # ========================================================
+    # --------------------------------------------------------
     # AUTOREGRESSIVE GENERATION
-    # ========================================================
+    # --------------------------------------------------------
 
     for step in range(MAX_NEW_TOKENS):
 
         seq_len = input_ids.shape[1]
 
+
         if step == 0:
+
             past_len = 0
+
         else:
+
             past_len = past[
                 "past_key_values.0.key"
             ].shape[2]
@@ -160,6 +214,7 @@ Ore:"""
         logits = outputs[0]
 
 
+        # Greedy decoding
         next_token = int(
             np.argmax(
                 logits[0, -1, :]
@@ -170,13 +225,14 @@ Ore:"""
         generated_ids.append(next_token)
 
 
+        # Stop at EOS
         if next_token == tokenizer.eos_token_id:
             break
 
 
-        # ====================================================
+        # ----------------------------------------------------
         # UPDATE KV CACHE
-        # ====================================================
+        # ----------------------------------------------------
 
         new_past = {}
 
@@ -194,6 +250,7 @@ Ore:"""
         past = new_past
 
 
+        # Next iteration only needs the new token
         input_ids = np.array(
             [[next_token]],
             dtype=np.int64
@@ -201,7 +258,7 @@ Ore:"""
 
 
     # ========================================================
-    # DECODE
+    # DECODE RESPONSE
     # ========================================================
 
     response = tokenizer.decode(
@@ -210,11 +267,16 @@ Ore:"""
     ).strip()
 
 
+    # ========================================================
+    # STOP MARKERS
+    # ========================================================
+
     stop_markers = [
         "\nUser:",
         "\nSystem:",
         "\nOre:"
     ]
+
 
     for marker in stop_markers:
 
@@ -225,9 +287,15 @@ Ore:"""
             )[0].strip()
 
 
+    # ========================================================
+    # FALLBACK
+    # ========================================================
+
     if not response:
 
-        response = "I no get response for that one yet."
+        response = (
+            "I no get response for that one yet."
+        )
 
 
     elapsed = time.time() - start_time
