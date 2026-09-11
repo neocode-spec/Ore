@@ -335,4 +335,3 @@ Ore:"""
 
 
     return response
-```
