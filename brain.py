@@ -1,3 +1,4 @@
+```python
 import os
 import time
 
@@ -19,7 +20,7 @@ MODEL_DIR = os.path.join(
 
 MODEL_PATH = os.path.join(
     MODEL_DIR,
-    "model_int8.onnx"
+    "model_int4.onnx"
 )
 
 
@@ -36,14 +37,14 @@ print("📦 Model path:", MODEL_PATH)
 
 
 if not os.path.exists(MODEL_PATH):
-
     raise RuntimeError(
-        "Ore model not found. "
-        "The model must be downloaded during the Render build phase."
+        "Ore INT4 model not found. "
+        "The model must be available in the ore_model "
+        "directory during the Render build."
     )
 
 
-print("✅ Ore model found locally")
+print("✅ Ore INT4 model found locally")
 
 
 # ============================================================
@@ -64,17 +65,29 @@ print("✅ Tokenizer loaded")
 
 
 # ============================================================
-# LOAD ONNX MODEL
+# ONNX RUNTIME SETTINGS
 # ============================================================
 
-print("🧠 Loading INT8 ONNX model...")
+session_options = ort.SessionOptions()
+
+# Reduce unnecessary memory usage on the small Render instance.
+session_options.enable_cpu_mem_arena = False
+session_options.enable_mem_pattern = False
+
+
+# ============================================================
+# LOAD INT4 ONNX MODEL
+# ============================================================
+
+print("🧠 Loading INT4 ONNX model...")
 
 session = ort.InferenceSession(
     MODEL_PATH,
+    sess_options=session_options,
     providers=["CPUExecutionProvider"]
 )
 
-print("✅ Ore INT8 ONNX model loaded")
+print("✅ Ore INT4 ONNX model loaded")
 print("⚙️ Provider:", session.get_providers())
 
 
@@ -82,7 +95,8 @@ print("⚙️ Provider:", session.get_providers())
 # GENERATION SETTINGS
 # ============================================================
 
-MAX_NEW_TOKENS = 80
+# Keep this low because Render currently has only 512 MB RAM.
+MAX_NEW_TOKENS = 16
 
 
 # ============================================================
@@ -323,3 +337,4 @@ Ore:"""
 
 
     return response
+```
