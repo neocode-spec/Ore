@@ -1,21 +1,21 @@
 import os
 import time
+
 import numpy as np
 import onnxruntime as ort
-
 from transformers import AutoTokenizer
-from huggingface_hub import snapshot_download
 
 
 # ============================================================
 # ORE MODEL CONFIGURATION
 # ============================================================
 
-HF_REPO = "Mur99/ore-int8"
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-MODEL_DIR = os.path.join(BASE_DIR, "ore_model")
+MODEL_DIR = os.path.join(
+    BASE_DIR,
+    "ore_model"
+)
 
 MODEL_PATH = os.path.join(
     MODEL_DIR,
@@ -24,34 +24,26 @@ MODEL_PATH = os.path.join(
 
 
 # ============================================================
-# DOWNLOAD MODEL FROM HUGGING FACE
+# STARTUP CHECK
 # ============================================================
 
-print("🧠 Starting Ore...")
-print("📦 Hugging Face repo:", HF_REPO)
+print("====================================")
+print("🧠 Starting Ore AI")
+print("====================================")
+
+print("📁 Model directory:", MODEL_DIR)
+print("📦 Model path:", MODEL_PATH)
+
 
 if not os.path.exists(MODEL_PATH):
 
-    print("⬇️ Ore INT8 model not found locally.")
-    print("⬇️ Downloading from Hugging Face...")
-
-    snapshot_download(
-        repo_id=HF_REPO,
-        repo_type="model",
-        local_dir=MODEL_DIR,
-        allow_patterns=[
-            "model_int8.onnx",
-            "config.json",
-            "generation_config.json",
-            "tokenizer_config.json",
-            "tokenizer.json",
-            "special_tokens_map.json",
-            "vocab.json",
-            "merges.txt"
-        ]
+    raise RuntimeError(
+        "Ore model not found. "
+        "The model must be downloaded during the Render build phase."
     )
 
-    print("✅ Ore model downloaded")
+
+print("✅ Ore model found locally")
 
 
 # ============================================================
@@ -68,6 +60,8 @@ tokenizer = AutoTokenizer.from_pretrained(
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
+print("✅ Tokenizer loaded")
+
 
 # ============================================================
 # LOAD ONNX MODEL
@@ -80,7 +74,7 @@ session = ort.InferenceSession(
     providers=["CPUExecutionProvider"]
 )
 
-print("✅ Ore INT8 model loaded")
+print("✅ Ore INT8 ONNX model loaded")
 print("⚙️ Provider:", session.get_providers())
 
 
@@ -124,21 +118,23 @@ User: {user_message}
 Ore:"""
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # TOKENIZE
-    # --------------------------------------------------------
+    # ========================================================
 
     tokens = tokenizer(
         prompt,
         return_tensors="np"
     )
 
-    input_ids = tokens["input_ids"].astype(np.int64)
+    input_ids = tokens["input_ids"].astype(
+        np.int64
+    )
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # EMPTY KV CACHE
-    # --------------------------------------------------------
+    # ========================================================
 
     past = {}
 
@@ -164,9 +160,9 @@ Ore:"""
     start_time = time.time()
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # AUTOREGRESSIVE GENERATION
-    # --------------------------------------------------------
+    # ========================================================
 
     for step in range(MAX_NEW_TOKENS):
 
@@ -194,7 +190,10 @@ Ore:"""
             past_len,
             past_len + seq_len,
             dtype=np.int64
-        ).reshape(1, -1)
+        ).reshape(
+            1,
+            -1
+        )
 
 
         ort_inputs = {
@@ -214,7 +213,10 @@ Ore:"""
         logits = outputs[0]
 
 
-        # Greedy decoding
+        # ----------------------------------------------------
+        # GREEDY DECODING
+        # ----------------------------------------------------
+
         next_token = int(
             np.argmax(
                 logits[0, -1, :]
@@ -222,11 +224,17 @@ Ore:"""
         )
 
 
-        generated_ids.append(next_token)
+        generated_ids.append(
+            next_token
+        )
 
 
-        # Stop at EOS
+        # ----------------------------------------------------
+        # STOP AT EOS
+        # ----------------------------------------------------
+
         if next_token == tokenizer.eos_token_id:
+
             break
 
 
@@ -240,17 +248,24 @@ Ore:"""
 
             new_past[
                 f"past_key_values.{i}.key"
-            ] = outputs[1 + i * 2]
+            ] = outputs[
+                1 + i * 2
+            ]
 
             new_past[
                 f"past_key_values.{i}.value"
-            ] = outputs[2 + i * 2]
+            ] = outputs[
+                2 + i * 2
+            ]
 
 
         past = new_past
 
 
-        # Next iteration only needs the new token
+        # ----------------------------------------------------
+        # NEXT TOKEN
+        # ----------------------------------------------------
+
         input_ids = np.array(
             [[next_token]],
             dtype=np.int64
@@ -258,7 +273,7 @@ Ore:"""
 
 
     # ========================================================
-    # DECODE RESPONSE
+    # DECODE
     # ========================================================
 
     response = tokenizer.decode(
@@ -299,6 +314,7 @@ Ore:"""
 
 
     elapsed = time.time() - start_time
+
 
     print(
         f"🧠 Generated {len(generated_ids)} tokens "
