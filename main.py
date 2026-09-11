@@ -11,11 +11,6 @@ from brain import generate_response
 
 APP_VERSION = "1.0"
 
-
-# ============================================================
-# FASTAPI
-# ============================================================
-
 app = FastAPI(
     title="Ore AI",
     version=APP_VERSION
@@ -28,19 +23,21 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
+
     allow_origins=[
         "https://ore-liart.vercel.app",
         "http://localhost:3000",
-        "*"
+        "http://127.0.0.1:3000",
     ],
+
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
 
 
 # ============================================================
-# REQUEST FORMAT
+# REQUEST MODEL
 # ============================================================
 
 class ChatRequest(BaseModel):
@@ -49,7 +46,7 @@ class ChatRequest(BaseModel):
 
 
 # ============================================================
-# HOME
+# HOME / HEALTH
 # ============================================================
 
 @app.get("/")
@@ -58,6 +55,14 @@ def home():
         "status": "online",
         "name": "Ore",
         "version": APP_VERSION
+    }
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy",
+        "service": "Ore AI"
     }
 
 
@@ -89,7 +94,10 @@ def chat(req: ChatRequest):
 
     except Exception as e:
 
-        print("ORE ERROR:", str(e))
+        print("====================================")
+        print("ORE ERROR")
+        print(str(e))
+        print("====================================")
 
         raise HTTPException(
             status_code=500,
@@ -98,7 +106,7 @@ def chat(req: ChatRequest):
 
 
 # ============================================================
-# LOCAL RUN
+# LOCAL DEVELOPMENT
 # ============================================================
 
 if __name__ == "__main__":
