@@ -1,7 +1,5 @@
-```python
 import os
 import time
-
 import numpy as np
 import onnxruntime as ort
 from transformers import AutoTokenizer
@@ -1116,4 +1114,3 @@ print("✅ BACKEND GENERATION TEST FINISHED")
 print("====================================")
 ```
 
-**Do not deploy to Render until this passes.** The previous test proved the model can perform one inference step. This one proves the actual `generate_response()` function can perform the autoregressive KV-cache loop that your FastAPI endpoint will use.
