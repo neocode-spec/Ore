@@ -1,42 +1,71 @@
 ```python
 import os
 import time
+
 import numpy as np
 import onnxruntime as ort
 from transformers import AutoTokenizer
 
 
 # ============================================================
-# ORE AI PRODUCTION BRAIN
+# ORE AI
+# Production inference engine
 # ============================================================
 #
-# Production model:
-#   ore_model.onnx
+# Expected directory:
 #
-# Model:
-#   GPT-2 Small
-#   INT4 transformer weights
-#   Packed INT4 token embedding
+# backend/
+# ├── brain.py
+# ├── main.py
+# ├── ore_model.onnx
+# ├── tokenizer_config.json
+# ├── tokenizer.json
+# ├── vocab.json
+# ├── merges.txt
+# └── other tokenizer files...
+#
+# The production ONNX model is:
+#
+#     ore_model.onnx
+#
+# It contains:
+#     - GPT-2 Small
+#     - INT4 transformer weights
+#     - packed INT4 token embedding
 #
 # Runtime:
-#   ONNX Runtime
-#   CPUExecutionProvider
+#     ONNX Runtime
+#     CPUExecutionProvider
 #
 # ============================================================
 
 
 # ============================================================
-# PATH CONFIGURATION
+# PATHS
 # ============================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
 
 MODEL_PATH = os.path.join(
     BASE_DIR,
     "ore_model.onnx"
 )
 
-TOKENIZER_DIR = BASE_DIR
+TOKENIZER_PATH = BASE_DIR
+
+
+# ============================================================
+# MODEL CONFIGURATION
+# ============================================================
+
+NUM_LAYERS = 12
+NUM_HEADS = 12
+HEAD_DIM = 64
+
+MAX_INPUT_TOKENS = 512
+MAX_NEW_TOKENS = 32
 
 
 # ============================================================
@@ -50,37 +79,37 @@ print("====================================")
 print("📁 Base directory:")
 print(BASE_DIR)
 
-print("📦 Model:")
+print("📦 Model path:")
 print(MODEL_PATH)
 
 
 # ============================================================
-# MODEL CHECK
+# CHECK MODEL
 # ============================================================
 
 if not os.path.isfile(MODEL_PATH):
 
     raise RuntimeError(
-        "Ore production model not found.\n"
-        f"Expected:\n{MODEL_PATH}\n\n"
+        "Ore production model was not found.\n\n"
+        f"Expected model:\n{MODEL_PATH}\n\n"
         "Make sure ore_model.onnx is in the same "
         "directory as brain.py."
     )
 
 
-model_size_mb = (
+MODEL_SIZE_MB = (
     os.path.getsize(MODEL_PATH)
     / (1024 * 1024)
 )
 
 print(
-    f"✅ Ore production model found "
-    f"({model_size_mb:.2f} MB)"
+    f"✅ Production model found: "
+    f"{MODEL_SIZE_MB:.2f} MB"
 )
 
 
 # ============================================================
-# TOKENIZER
+# LOAD TOKENIZER
 # ============================================================
 
 print("\n🔤 Loading tokenizer...")
@@ -88,21 +117,22 @@ print("\n🔤 Loading tokenizer...")
 try:
 
     tokenizer = AutoTokenizer.from_pretrained(
-        TOKENIZER_DIR,
+        TOKENIZER_PATH,
         local_files_only=True
     )
 
 except Exception as exc:
 
     raise RuntimeError(
-        "Ore tokenizer could not be loaded.\n"
-        "Make sure the GPT-2 tokenizer files are "
-        "inside the backend directory.\n\n"
-        f"Original error: {exc}"
-    )
+        "Ore tokenizer could not be loaded.\n\n"
+        "Make sure the tokenizer files are present "
+        "in the same backend directory as brain.py.\n\n"
+        f"Original error:\n{exc}"
+    ) from exc
 
 
-# GPT-2 normally has no pad token.
+# GPT-2 does not normally have a separate PAD token.
+# EOS is safe to use as PAD for inference.
 if tokenizer.pad_token is None:
 
     tokenizer.pad_token = tokenizer.eos_token
@@ -110,23 +140,34 @@ if tokenizer.pad_token is None:
 
 print("✅ Tokenizer loaded")
 
+print(
+    "   EOS token ID:",
+    tokenizer.eos_token_id
+)
+
+print(
+    "   PAD token ID:",
+    tokenizer.pad_token_id
+)
+
 
 # ============================================================
-# ONNX RUNTIME SETTINGS
+# ONNX SESSION SETTINGS
 # ============================================================
 
 session_options = ort.SessionOptions()
 
-# Render has limited RAM.
+# Reduce unnecessary memory overhead on small Render
+# instances.
 session_options.enable_cpu_mem_arena = False
 session_options.enable_mem_pattern = False
 
-# Keep logging quiet.
+# Only show serious ONNX Runtime messages.
 session_options.log_severity_level = 3
 
 
 # ============================================================
-# LOAD MODEL
+# LOAD ONNX MODEL
 # ============================================================
 
 print("\n🧠 Loading Ore ONNX model...")
@@ -145,16 +186,21 @@ except Exception as exc:
 
     raise RuntimeError(
         "Ore ONNX model failed to load.\n\n"
-        f"Original error: {exc}"
-    )
+        f"Model:\n{MODEL_PATH}\n\n"
+        f"Original error:\n{exc}"
+    ) from exc
 
 
 print("✅ Ore ONNX model loaded")
-print("⚙️ Providers:", session.get_providers())
+
+print(
+    "⚙️ Providers:",
+    session.get_providers()
+)
 
 
 # ============================================================
-# INSPECT MODEL INPUTS
+# MODEL INPUT / OUTPUT INFORMATION
 # ============================================================
 
 MODEL_INPUTS = {
@@ -168,50 +214,44 @@ MODEL_OUTPUTS = {
 }
 
 
-print("\n🔎 Model inputs:")
+print("\n🔎 ONNX inputs:")
 
 for name in MODEL_INPUTS:
 
-    print("   •", name)
+    print(
+        "   •",
+        name
+    )
 
 
-print("\n🔎 Model outputs:")
+print("\n🔎 ONNX outputs:")
 
 for name in MODEL_OUTPUTS:
 
-    print("   •", name)
+    print(
+        "   •",
+        name
+    )
 
 
 # ============================================================
-# MODEL CONFIGURATION
+# VERIFY REQUIRED INPUTS
 # ============================================================
 
-NUM_LAYERS = 12
-NUM_HEADS = 12
-HEAD_DIM = 64
-
-EOS_TOKEN_ID = tokenizer.eos_token_id
-
-# Keep generation deliberately small for Render.
-MAX_NEW_TOKENS = 32
-
-
-# ============================================================
-# VERIFY REQUIRED MODEL INPUTS
-# ============================================================
-
-required_inputs = [
+REQUIRED_INPUTS = [
     "input_ids",
     "attention_mask",
     "position_ids"
 ]
 
-for name in required_inputs:
 
-    if name not in MODEL_INPUTS:
+for input_name in REQUIRED_INPUTS:
+
+    if input_name not in MODEL_INPUTS:
 
         raise RuntimeError(
-            f"Ore model is missing required input: {name}"
+            "Production Ore model is missing "
+            f"required input: {input_name}"
         )
 
 
@@ -228,32 +268,200 @@ for layer in range(NUM_LAYERS):
     if key_name not in MODEL_INPUTS:
 
         raise RuntimeError(
-            f"Ore model is missing: {key_name}"
+            "Production Ore model is missing "
+            f"required input: {key_name}"
         )
 
     if value_name not in MODEL_INPUTS:
 
         raise RuntimeError(
-            f"Ore model is missing: {value_name}"
+            "Production Ore model is missing "
+            f"required input: {value_name}"
         )
 
 
-print("\n✅ Model input structure verified")
+print(
+    "\n✅ Required ONNX inputs verified"
+)
 
 
 # ============================================================
-# BUILD EMPTY KV CACHE
+# FIND KV OUTPUTS
+# ============================================================
+#
+# The model inputs are:
+#
+# past_key_values.0.key
+# past_key_values.0.value
+# ...
+#
+# The outputs are normally:
+#
+# present.0.key
+# present.0.value
+# ...
+#
+# We detect the actual names instead of assuming that
+# output ordering is always identical.
+#
 # ============================================================
 
-def create_empty_past(batch_size=1):
+OUTPUT_NAMES = [
+    output.name
+    for output in session.get_outputs()
+]
+
+
+def find_kv_output_name(
+    layer: int,
+    kind: str
+):
+    """
+    Find the ONNX output corresponding to a
+    layer's key/value cache.
+
+    Supports common GPT-2 ONNX naming conventions.
+    """
+
+    candidates = [
+
+        f"present.{layer}.{kind}",
+
+        f"present.{layer}.{kind}_output",
+
+        f"present_key_values.{layer}.{kind}",
+
+        f"past_key_values.{layer}.{kind}",
+
+        f"past_key_values.{layer}.{kind}_output",
+
+    ]
+
+    for candidate in candidates:
+
+        if candidate in MODEL_OUTPUTS:
+
+            return candidate
+
+
+    # --------------------------------------------------------
+    # Fallback:
+    # search by layer number and key/value name.
+    # --------------------------------------------------------
+
+    layer_text = str(layer)
+
+    kind_text = kind.lower()
+
+    for name in OUTPUT_NAMES:
+
+        lower_name = name.lower()
+
+        if (
+            layer_text in lower_name
+            and kind_text in lower_name
+            and (
+                "present" in lower_name
+                or "past" in lower_name
+                or "key_values" in lower_name
+            )
+        ):
+
+            return name
+
+
+    return None
+
+
+KV_OUTPUT_NAMES = {}
+
+
+for layer in range(NUM_LAYERS):
+
+    key_output = find_kv_output_name(
+        layer,
+        "key"
+    )
+
+    value_output = find_kv_output_name(
+        layer,
+        "value"
+    )
+
+    if key_output is not None:
+
+        KV_OUTPUT_NAMES[
+            f"past_key_values.{layer}.key"
+        ] = key_output
+
+    if value_output is not None:
+
+        KV_OUTPUT_NAMES[
+            f"past_key_values.{layer}.value"
+        ] = value_output
+
+
+# ============================================================
+# KV OUTPUT VALIDATION
+# ============================================================
+
+if len(KV_OUTPUT_NAMES) != NUM_LAYERS * 2:
+
+    print(
+        "\n⚠️ Could not resolve all KV output names "
+        "from their names."
+    )
+
+    print(
+        "   Falling back to the verified GPT-2 "
+        "output ordering."
+    )
+
+    KV_OUTPUT_NAMES = None
+
+else:
+
+    print(
+        "\n✅ KV-cache output names verified"
+    )
+
+
+# ============================================================
+# CREATE EMPTY KV CACHE
+# ============================================================
+
+def create_empty_past(
+    batch_size: int
+):
+    """
+    Create the initial empty GPT-2 KV cache.
+
+    Shape:
+
+        (batch, heads, sequence_length, head_dim)
+
+    At the beginning:
+
+        sequence_length = 0
+
+    Therefore:
+
+        (1, 12, 0, 64)
+    """
 
     past = {}
 
     for layer in range(NUM_LAYERS):
 
-        past[
+        key_name = (
             f"past_key_values.{layer}.key"
-        ] = np.zeros(
+        )
+
+        value_name = (
+            f"past_key_values.{layer}.value"
+        )
+
+        past[key_name] = np.zeros(
             (
                 batch_size,
                 NUM_HEADS,
@@ -263,9 +471,7 @@ def create_empty_past(batch_size=1):
             dtype=np.float32
         )
 
-        past[
-            f"past_key_values.{layer}.value"
-        ] = np.zeros(
+        past[value_name] = np.zeros(
             (
                 batch_size,
                 NUM_HEADS,
@@ -279,42 +485,117 @@ def create_empty_past(batch_size=1):
 
 
 # ============================================================
-# UPDATE KV CACHE
+# EXTRACT NEW KV CACHE
 # ============================================================
 
-def extract_new_past(outputs):
-
+def extract_new_past(
+    outputs
+):
     """
-    Extract the 12 key/value cache tensors from
-    the ONNX model outputs.
+    Extract the newly generated KV cache from
+    ONNX Runtime outputs.
 
-    The production ONNX graph returns:
+    Output 0 is expected to be logits.
 
-        logits
-        present.0.key
-        present.0.value
+    If the model exposes named present.* outputs,
+    those names are used.
+
+    Otherwise, the verified GPT-2 ordering is used:
+
+        output 0 = logits
+
+        output 1 = layer 0 key
+        output 2 = layer 0 value
+
+        output 3 = layer 1 key
+        output 4 = layer 1 value
+
         ...
-        present.11.key
-        present.11.value
 
-    We use output names when available instead of relying
-    entirely on output ordering.
+        output 23 = layer 11 key
+        output 24 = layer 11 value
     """
 
     new_past = {}
 
     # --------------------------------------------------------
-    # First try output names
+    # Build name -> tensor mapping
     # --------------------------------------------------------
 
-    output_name_to_value = {
+    output_name_to_tensor = {
         output.name: outputs[index]
         for index, output in enumerate(
             session.get_outputs()
         )
     }
 
+
+    # --------------------------------------------------------
+    # Named output route
+    # --------------------------------------------------------
+
+    if KV_OUTPUT_NAMES is not None:
+
+        for layer in range(NUM_LAYERS):
+
+            key_input_name = (
+                f"past_key_values.{layer}.key"
+            )
+
+            value_input_name = (
+                f"past_key_values.{layer}.value"
+            )
+
+            key_output_name = (
+                KV_OUTPUT_NAMES[key_input_name]
+            )
+
+            value_output_name = (
+                KV_OUTPUT_NAMES[value_input_name]
+            )
+
+            new_past[key_input_name] = (
+                output_name_to_tensor[
+                    key_output_name
+                ]
+            )
+
+            new_past[value_input_name] = (
+                output_name_to_tensor[
+                    value_output_name
+                ]
+            )
+
+        return new_past
+
+
+    # --------------------------------------------------------
+    # Verified positional output route
+    # --------------------------------------------------------
+
+    expected_output_count = (
+        1 + NUM_LAYERS * 2
+    )
+
+    if len(outputs) < expected_output_count:
+
+        raise RuntimeError(
+            "Ore ONNX model returned fewer outputs "
+            "than required for GPT-2 KV-cache generation.\n\n"
+            f"Expected at least: {expected_output_count}\n"
+            f"Received: {len(outputs)}"
+        )
+
+
     for layer in range(NUM_LAYERS):
+
+        key_index = (
+            1 + layer * 2
+        )
+
+        value_index = (
+            2 + layer * 2
+        )
 
         key_name = (
             f"past_key_values.{layer}.key"
@@ -324,73 +605,14 @@ def extract_new_past(outputs):
             f"past_key_values.{layer}.value"
         )
 
-        possible_key_names = [
-            key_name,
-            f"present.{layer}.key",
-            f"present.{layer}.key_output",
-            f"present_key_values.{layer}.key"
-        ]
+        new_past[key_name] = (
+            outputs[key_index]
+        )
 
-        possible_value_names = [
-            value_name,
-            f"present.{layer}.value",
-            f"present.{layer}.value_output",
-            f"present_key_values.{layer}.value"
-        ]
+        new_past[value_name] = (
+            outputs[value_index]
+        )
 
-        key_tensor = None
-        value_tensor = None
-
-        for name in possible_key_names:
-
-            if name in output_name_to_value:
-
-                key_tensor = output_name_to_value[name]
-                break
-
-        for name in possible_value_names:
-
-            if name in output_name_to_value:
-
-                value_tensor = output_name_to_value[name]
-                break
-
-        # ----------------------------------------------------
-        # If names aren't usable, use standard GPT-2 order.
-        # ----------------------------------------------------
-
-        if key_tensor is None:
-
-            key_index = 1 + layer * 2
-
-            if key_index < len(outputs):
-
-                key_tensor = outputs[key_index]
-
-        if value_tensor is None:
-
-            value_index = 2 + layer * 2
-
-            if value_index < len(outputs):
-
-                value_tensor = outputs[value_index]
-
-        if key_tensor is None:
-
-            raise RuntimeError(
-                f"Could not find KV key output "
-                f"for layer {layer}"
-            )
-
-        if value_tensor is None:
-
-            raise RuntimeError(
-                f"Could not find KV value output "
-                f"for layer {layer}"
-            )
-
-        new_past[key_name] = key_tensor
-        new_past[value_name] = value_tensor
 
     return new_past
 
@@ -403,10 +625,27 @@ def generate_response(
     user_message: str,
     language: str = "pidgin"
 ):
+    """
+    Generate an Ore response.
 
-    # --------------------------------------------------------
-    # Validate input
-    # --------------------------------------------------------
+    Parameters
+    ----------
+    user_message:
+        User's message.
+
+    language:
+        "pidgin" for Nigerian Pidgin.
+        Anything else uses Standard English.
+
+    Returns
+    -------
+    str
+        Generated Ore response.
+    """
+
+    # ========================================================
+    # CLEAN INPUT
+    # ========================================================
 
     if user_message is None:
 
@@ -416,25 +655,29 @@ def generate_response(
         user_message
     ).strip()
 
+
     if not user_message:
 
+        if language.lower() == "pidgin":
+
+            return (
+                "Abeg tell me wetin you wan know."
+            )
+
         return (
-            "Abeg tell me wetin you wan know."
-            if language.lower() == "pidgin"
-            else
             "Please tell me what you would like to know."
         )
 
 
-    # --------------------------------------------------------
-    # Language instruction
-    # --------------------------------------------------------
+    # ========================================================
+    # LANGUAGE INSTRUCTION
+    # ========================================================
 
     if language.lower() == "pidgin":
 
         language_instruction = (
             "Respond naturally in Nigerian Pidgin English. "
-            "Use clear, natural Nigerian Pidgin."
+            "Use clear and natural Nigerian Pidgin."
         )
 
     else:
@@ -444,9 +687,9 @@ def generate_response(
         )
 
 
-    # --------------------------------------------------------
-    # Ore prompt
-    # --------------------------------------------------------
+    # ========================================================
+    # ORE PROMPT
+    # ========================================================
 
     prompt = f"""System: You are Ore, a Nigerian AI assistant.
 
@@ -467,32 +710,37 @@ Ore:"""
         prompt,
         return_tensors="np",
         truncation=True,
-        max_length=512
+        max_length=MAX_INPUT_TOKENS
     )
+
 
     input_ids = tokens[
         "input_ids"
-    ].astype(np.int64)
+    ].astype(
+        np.int64
+    )
 
 
-    batch_size = input_ids.shape[0]
-    seq_len = input_ids.shape[1]
-
-
-    # ========================================================
-    # INITIAL KV CACHE
-    # ========================================================
-
-    past = create_empty_past(
-        batch_size=batch_size
+    batch_size = (
+        input_ids.shape[0]
     )
 
 
     # ========================================================
-    # GENERATION STATE
+    # INITIAL EMPTY KV CACHE
+    # ========================================================
+
+    past = create_empty_past(
+        batch_size
+    )
+
+
+    # ========================================================
+    # GENERATED TOKEN STORAGE
     # ========================================================
 
     generated_ids = []
+
 
     start_time = time.time()
 
@@ -506,7 +754,7 @@ Ore:"""
     ):
 
         # ----------------------------------------------------
-        # Current sequence length
+        # Current number of tokens being sent to the model
         # ----------------------------------------------------
 
         current_seq_len = (
@@ -515,22 +763,36 @@ Ore:"""
 
 
         # ----------------------------------------------------
-        # Existing KV cache length
+        # Number of tokens already stored in KV cache
         # ----------------------------------------------------
 
-        past_len = past[
-            "past_key_values.0.key"
-        ].shape[2]
+        past_len = int(
+            past[
+                "past_key_values.0.key"
+            ].shape[2]
+        )
 
 
         # ----------------------------------------------------
         # Attention mask
         #
-        # Must cover:
+        # The mask covers:
         #
-        #   previous cached tokens
+        #   cached tokens
         #   +
-        #   current tokens
+        #   current input tokens
+        #
+        # Example:
+        #
+        # first pass:
+        #   past_len = 0
+        #   seq_len  = 8
+        #   mask     = (1, 8)
+        #
+        # next pass:
+        #   past_len = 8
+        #   seq_len  = 1
+        #   mask     = (1, 9)
         # ----------------------------------------------------
 
         attention_mask = np.ones(
@@ -544,6 +806,15 @@ Ore:"""
 
         # ----------------------------------------------------
         # Position IDs
+        #
+        # First pass:
+        #
+        #   0,1,2,3,...
+        #
+        # Later:
+        #
+        #   previous_cache_length
+        #
         # ----------------------------------------------------
 
         position_ids = np.arange(
@@ -551,39 +822,81 @@ Ore:"""
             past_len + current_seq_len,
             dtype=np.int64
         ).reshape(
-            1,
-            -1
+            batch_size,
+            current_seq_len
         )
 
 
-        # ----------------------------------------------------
-        # ONNX INPUTS
-        # ----------------------------------------------------
+        # ====================================================
+        # BUILD ONNX INPUT
+        # ====================================================
 
         ort_inputs = {
+
             "input_ids": input_ids,
+
             "attention_mask": attention_mask,
+
             "position_ids": position_ids,
+
             **past
         }
 
 
-        # ----------------------------------------------------
-        # INFERENCE
-        # ----------------------------------------------------
+        # ====================================================
+        # RUN MODEL
+        # ====================================================
 
-        outputs = session.run(
-            None,
-            ort_inputs
-        )
+        try:
 
+            outputs = session.run(
+                None,
+                ort_inputs
+            )
+
+        except Exception as exc:
+
+            raise RuntimeError(
+                "Ore inference failed during "
+                f"generation step {step}.\n\n"
+                f"Input token shape: "
+                f"{input_ids.shape}\n"
+                f"Past length: {past_len}\n"
+                f"Current sequence length: "
+                f"{current_seq_len}\n\n"
+                f"Original error:\n{exc}"
+            ) from exc
+
+
+        # ====================================================
+        # LOGITS
+        # ====================================================
 
         logits = outputs[0]
 
 
-        # ----------------------------------------------------
+        if logits.ndim != 3:
+
+            raise RuntimeError(
+                "Ore model returned an unexpected "
+                f"logits shape: {logits.shape}"
+            )
+
+
+        # ====================================================
         # GREEDY DECODING
-        # ----------------------------------------------------
+        # ====================================================
+        #
+        # Select the highest-probability token.
+        #
+        # This is deliberately simple for the first
+        # production version.
+        #
+        # No sampling randomness.
+        # No external API.
+        # No hidden model.
+        #
+        # ====================================================
 
         next_token_id = int(
             np.argmax(
@@ -601,36 +914,43 @@ Ore:"""
         )
 
 
-        # ----------------------------------------------------
-        # STOP CONDITIONS
-        # ----------------------------------------------------
+        # ====================================================
+        # EOS CHECK
+        # ====================================================
 
         if (
-            EOS_TOKEN_ID is not None
-            and next_token_id == EOS_TOKEN_ID
+            tokenizer.eos_token_id is not None
+            and next_token_id
+            == tokenizer.eos_token_id
         ):
 
             break
 
 
-        # ----------------------------------------------------
+        # ====================================================
         # UPDATE KV CACHE
-        # ----------------------------------------------------
+        # ====================================================
 
         past = extract_new_past(
             outputs
         )
 
 
-        # ----------------------------------------------------
-        # NEXT STEP
+        # ====================================================
+        # NEXT INPUT
+        # ====================================================
         #
-        # After the first pass we only feed the newly
-        # generated token.
-        # ----------------------------------------------------
+        # After the first pass, only the newly generated
+        # token is sent into the model.
+        #
+        # The previous tokens remain inside the KV cache.
+        #
+        # ====================================================
 
         input_ids = np.array(
-            [[next_token_id]],
+            [
+                [next_token_id]
+            ],
             dtype=np.int64
         )
 
@@ -646,7 +966,7 @@ Ore:"""
 
 
     # ========================================================
-    # CLEAN RESPONSE
+    # REMOVE ACCIDENTAL PROMPT MARKERS
     # ========================================================
 
     stop_markers = [
@@ -688,7 +1008,7 @@ Ore:"""
 
 
     # ========================================================
-    # PERFORMANCE LOG
+    # PERFORMANCE
     # ========================================================
 
     elapsed = (
@@ -696,15 +1016,22 @@ Ore:"""
         - start_time
     )
 
+
     token_count = len(
         generated_ids
     )
 
-    tokens_per_second = (
-        token_count / elapsed
-        if elapsed > 0
-        else 0
-    )
+
+    if elapsed > 0:
+
+        tokens_per_second = (
+            token_count
+            / elapsed
+        )
+
+    else:
+
+        tokens_per_second = 0.0
 
 
     print(
@@ -715,52 +1042,78 @@ Ore:"""
     )
 
 
+    # ========================================================
+    # RETURN
+    # ========================================================
+
     return response
 ```
 
-### One important correction to your folder structure
+### One correction I deliberately made
 
-Your **old** code expected:
+I **did not** use the earlier simplistic:
 
-```text
-ore_model/
-└── model_int4.onnx
+```python
+new_past[f"..."] = outputs[1 + i * 2]
 ```
 
-The **new** code expects:
+as the only mechanism.
+
+Your actual model has already proven that it returns the expected logits shape, but production code should identify the KV outputs by their names when possible and only fall back to the verified ordering if necessary. That's the difference between "it worked once in Colab" and code you can reasonably hand to Render without crossing your fingers.
+
+### Your backend must now look like this
 
 ```text
-backend/
-├── brain.py
+ore-backend/
+│
 ├── main.py
+├── brain.py
 ├── ore_model.onnx
-├── tokenizer_config.json
+│
 ├── tokenizer.json
+├── tokenizer_config.json
 ├── vocab.json
 ├── merges.txt
-└── ...
+├── special_tokens_map.json
+│
+└── requirements.txt
 ```
 
-That matches the production model we just tested.
+Most importantly:
 
-### Before Render, run one local/Colab backend test
+```text
+❌ ore_model/model_int4.onnx
+❌ ore_model/model_4bit.onnx
+❌ /content/drive/MyDrive/...
+❌ model_int4.onnx
 
-Because the frontend previously showed **"I couldn't connect to the Ore backend yet"**, we should test the actual `generate_response()` function before blaming Render for humanity's sins.
+✅ ore_model.onnx
+```
 
-Run:
+The new model is **65.85 MB and has already passed the actual ONNX Runtime inference test with the required `position_ids` and KV inputs**, so we leave that model alone and make the Python conform to it.
 
-`python
+### Before pushing to GitHub
+
+Run this exact backend test in the environment containing `brain.py`:
+
+```python
 from brain import generate_response
+
+print("\n====================================")
+print("ORE BACKEND GENERATION TEST")
+print("====================================")
 
 response = generate_response(
     "How many states are in Nigeria?",
     "pidgin"
 )
 
-print("\nORE:")
+print("\nORE RESPONSE:")
 print(response)
 
+print("\n====================================")
+print("✅ BACKEND GENERATION TEST FINISHED")
+print("====================================")
+```
 
-The important thing is that it **doesn't crash while generating multiple tokens**. Our earlier test only proved one inference pass. This test proves the KV-cache loop works repeatedly.
-
-If that passes, then the backend code is ready to connect to your FastAPI `/api/chat` endpoint and deploy.
+**Do not deploy to Render until this passes.** The previous test proved the model can perform one inference step. This one proves the actual `generate_response()` function can perform the autoregressive KV-cache loop that your FastAPI endpoint will use.
