@@ -1,1234 +1,955 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ore</title>
-
-<!-- =========================================================
-     FIREBASE
-========================================================= -->
-
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
-
-<!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Emerald Faceted Gem Favicon -->
-<link
-    rel="icon"
-    type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='8,3 16,3 14,8 10,8' fill='%23ccffdd'/%3E%3Cpolygon points='6,3 8,3 10,8 2,9' fill='%2352ff94'/%3E%3Cpolygon points='16,3 18,3 22,9 14,8' fill='%2300e65c'/%3E%3Cpolygon points='10,8 14,8 12,21' fill='%2300ff66'/%3E%3Cpolygon points='2,9 10,8 12,21' fill='%2300b347'/%3E%3Cpolygon points='22,9 14,8 12,21' fill='%23008033'/%3E%3C/svg%3E"
->
-
-<style>
-
-* {
-    box-sizing: border-box;
-}
-
-html,
-body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    background: #000000;
-    color: #ececec;
-    font-family: Söhne, ui-sans-serif, system-ui, -apple-system,
-        "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif;
-}
-
-body {
-    overflow: hidden;
-}
-
-/* =========================================================
-   TEXT SELECTION
-========================================================= */
-
-.chat-input,
-.ore-response,
-.ore-user-bubble,
-.auth-message,
-.auth-title,
-.auth-subtitle,
-.chat-history-title {
-    user-select: text;
-}
-
-button,
-.nav-item,
-.user-profile,
-.brand-title,
-.chat-history-item {
-    user-select: none;
-}
-
-/* =========================================================
-   SCROLLBAR
-========================================================= */
-
-::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #2a2a2a;
-    border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #3e3e3e;
-}
-
-/* =========================================================
-   APP
-========================================================= */
-
-#app {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    overflow: hidden;
-    background: #000000;
-    position: relative;
-}
-
-/* =========================================================
-   LOGIN HEADER
-========================================================= */
-
-#auth-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 22px;
-    background: rgba(0, 0, 0, 0.82);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-
-.auth-header-brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #ffffff;
-    font-size: 17px;
-    font-weight: 600;
-}
-
-.auth-header-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.auth-header-text {
-    color: #8e8e8e;
-    font-size: 13px;
-}
-
-.auth-login-btn {
-    height: 34px;
-    padding: 0 15px;
-    border-radius: 17px;
-    background: #ffffff;
-    color: #000000;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
-}
-
-.auth-login-btn:hover {
-    background: #e9e9e9;
-    transform: translateY(-1px);
-}
-
-/* =========================================================
-   AUTH MODAL
-========================================================= */
-
-#auth-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.72);
-    backdrop-filter: blur(12px);
-}
-
-#auth-modal.visible {
-    display: flex;
-}
-
-.auth-card {
-    width: min(420px, calc(100% - 32px));
-    background: #111111;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 25px 80px rgba(0,0,0,0.65);
-}
-
-.auth-close {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #1d1d1d;
-    color: #888888;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin-left: auto;
-    border: none;
-}
-
-.auth-close:hover {
-    background: #292929;
-    color: #ffffff;
-}
-
-.auth-logo {
-    width: 48px;
-    height: 48px;
-    margin: 8px auto 18px;
-    display: block;
-}
-
-.auth-title {
-    text-align: center;
-    font-size: 25px;
-    font-weight: 600;
-    color: #ffffff;
-    margin: 0 0 8px;
-}
-
-.auth-subtitle {
-    text-align: center;
-    color: #8e8e8e;
-    font-size: 14px;
-    line-height: 1.5;
-    margin: 0 0 25px;
-}
-
-.google-login-btn {
-    width: 100%;
-    height: 48px;
-    border-radius: 12px;
-    background: #ffffff;
-    color: #111111;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    border: none;
-}
-
-.google-login-btn:hover {
-    background: #eeeeee;
-}
-
-.google-icon {
-    width: 18px;
-    height: 18px;
-}
-
-.auth-message {
-    min-height: 20px;
-    text-align: center;
-    margin-top: 14px;
-    font-size: 12px;
-    color: #777777;
-}
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-#sidebar {
-    width: 260px;
-    height: 100%;
-    flex-shrink: 0;
-    background: #000000;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid rgba(255,255,255,0.05);
-    transition: margin-left 0.25s cubic-bezier(0.4,0,0.2,1);
-    z-index: 200;
-}
-
-#sidebar.collapsed {
-    margin-left: -260px;
-}
-
-.sidebar-inner {
-    width: 260px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 12px 8px;
-}
-
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 8px 12px;
-}
-
-.brand-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.icon-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #9b9b9b;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-.icon-btn:hover {
-    background: #171717;
-    color: #ffffff;
-}
-
-.nav-section {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.nav-item {
-    width: 100%;
-    min-height: 36px;
-    padding: 0 10px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #ececec;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.nav-item:hover {
-    background: #171717;
-}
-
-.badge-updated {
-    background: #262626;
-    color: #b4b4b4;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 1px 5px;
-    border-radius: 4px;
-}
-
-.section-divider {
-    padding: 16px 10px 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #666666;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* =========================================================
-   CHAT HISTORY
-========================================================= */
-
-#chat-history {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: 2px;
-}
-
-.chat-history-item {
-    position: relative;
-    width: 100%;
-    min-height: 38px;
-    padding: 8px 34px 8px 10px;
-    border-radius: 8px;
-    color: #bdbdbd;
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    transition: background 0.15s ease, color 0.15s ease;
-}
-
-.chat-history-item:hover {
-    background: #171717;
-    color: #ffffff;
-}
-
-.chat-history-item.active {
-    background: #1b1b1b;
-    color: #ffffff;
-}
-
-.chat-history-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-}
-
-.chat-history-menu-btn {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    background: transparent;
-    color: #777777;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.chat-history-menu-btn:hover {
-    background: #292929;
-    color: #ffffff;
-}
-
-.chat-history-dropdown {
-    position: fixed;
-    z-index: 999;
-    width: 150px;
-    background: #181818;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
-    padding: 5px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    display: none;
-}
-
-.chat-history-dropdown.visible {
-    display: block;
-}
-
-.history-menu-item {
-    width: 100%;
-    height: 34px;
-    border: none;
-    background: transparent;
-    color: #eeeeee;
-    text-align: left;
-    padding: 0 10px;
-    border-radius: 7px;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.history-menu-item:hover {
-    background: #282828;
-}
-
-.history-menu-item.delete {
-    color: #ff6b6b;
-}
-
-/* =========================================================
-   SIDEBAR BOTTOM
-========================================================= */
-
-.sidebar-bottom {
-    padding-top: 8px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.claim-offer-btn {
-    width: 100%;
-    height: 36px;
-    border-radius: 18px;
-    background: #171717;
-    color: #ececec;
-    font-size: 13px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    border: 1px solid rgba(255,255,255,0.08);
-    cursor: pointer;
-}
-
-.claim-offer-btn:hover {
-    background: #222222;
-}
-
-.user-profile {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 8px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.user-profile:hover {
-    background: #171717;
-}
-
-.user-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #ab47bc;
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.user-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-    min-width: 0;
-}
-
-.user-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: #ffffff;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.user-plan {
-    font-size: 11px;
-    color: #8e8e8e;
-}
-
-#user-menu {
-    position: absolute;
-    left: 8px;
-    bottom: 62px;
-    width: 220px;
-    background: #181818;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 6px;
-    display: none;
-    z-index: 300;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-}
-
-#user-menu.visible {
-    display: block;
-}
-
-.user-menu-email {
-    padding: 9px 10px;
-    color: #777777;
-    font-size: 11px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.logout-btn {
-    width: 100%;
-    height: 36px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: #eeeeee;
-    text-align: left;
-    padding: 0 10px;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.logout-btn:hover {
-    background: #272727;
-}
-
-/* =========================================================
-   MAIN
-========================================================= */
-
-#main {
-    flex: 1;
-    height: 100%;
-    background: #000000;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-}
-
-#open-sidebar-btn {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    z-index: 250;
-    display: none;
-    background: #171717;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* =========================================================
-   TOP NAV
-========================================================= */
-
-.top-nav-bar {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 0 16px;
-    flex-shrink: 0;
-}
-
-.mode-pill {
-    background: #171717;
-    border-radius: 20px;
-    padding: 3px;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.pill-btn {
-    padding: 6px 16px;
-    border-radius: 16px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #8e8e8e;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-.pill-btn.active {
-    background: #262626;
-    color: #ffffff;
-}
-
-.top-right-offer {
-    position: absolute;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.free-offer-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #ececec;
-    background: transparent;
-    border: none;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-/* =========================================================
-   CENTER
-========================================================= */
-
-.center-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 768px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 20px 40px;
-}
-
-.hero-title {
-    font-size: 30px;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 28px;
-    letter-spacing: -0.01em;
-    text-align: center;
-}
-
-/* =========================================================
-   CHAT BAR
-========================================================= */
-
-.pixel-chat-bar {
-    width: 100%;
-    background: #1c1c1e;
-    border-radius: 32px;
-    padding: 12px 18px;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.pixel-chat-bar:focus-within {
-    border-color: rgba(255,255,255,0.22);
-}
-
-.chat-input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    font-size: 16px;
-    resize: none;
-    min-height: 28px;
-    max-height: 180px;
-}
-
-.chat-input::placeholder {
-    color: #8e8e8e;
-}
-
-.pixel-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 4px;
-}
-
-.toolbar-left,
-.toolbar-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.pixel-icon-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #2c2c2e;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #e3e3e3;
-    border: none;
-    cursor: pointer;
-}
-
-.pixel-icon-btn:hover {
-    background: #3a3a3c;
-    transform: scale(1.04);
-}
-
-.pixel-pill-btn {
-    height: 36px;
-    padding: 0 14px;
-    border-radius: 18px;
-    background: #2c2c2e;
-    color: #e3e3e3;
-    font-size: 13px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    border: 1px solid transparent;
-}
-
-.pixel-pill-btn:hover {
-    background: #3a3a3c;
-}
-
-.pixel-pill-btn.active {
-    background: #3a3a3c;
-    border-color: #00ff66;
-    color: #ffffff;
-}
-
-.search-star {
-    color: #00ff66;
-    font-size: 13px;
-    line-height: 1;
-    margin-left: -2px;
-}
-
-.voice-sphere-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #2997ff;
-    color: #ffffff;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
-.lang-toggle-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 24px;
-}
-
-.lang-btn {
-    font-size: 12px;
-    padding: 4px 14px;
-    border-radius: 14px;
-    color: #8e8e8e;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
-    cursor: pointer;
-}
-
-.lang-btn:hover {
-    color: #ffffff;
-}
-
-.lang-btn.active {
-    background: #00ff66;
-    color: #000000;
-    font-weight: 600;
-    border-color: #00ff66;
-}
-
-/* =========================================================
-   CHAT ACTIVE
-========================================================= */
-
-body.chat-active .hero-title,
-body.chat-active .lang-toggle-bar {
-    display: none;
-}
-
-body.chat-active .center-container {
-    flex: none;
-    padding-bottom: 20px;
-    justify-content: flex-end;
-}
-
-/* =========================================================
-   CONVERSATION
-========================================================= */
-
-#ore-conversation {
-    width: 100%;
-    max-width: 768px;
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: none;
-    flex-direction: column;
-    gap: 24px;
-    margin: 0 auto;
-}
-
-.ore-message {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ore-message-user {
-    align-items: flex-end;
-}
-
-.ore-message-ore {
-    align-items: flex-start;
-}
-
-.ore-message-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 4px;
-}
-
-.ore-message-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #00ff66;
-}
-
-.ore-message-label-user {
-    font-size: 12px;
-    color: #777777;
-    padding: 0 4px;
-}
-
-.ore-user-bubble {
-    max-width: 80%;
-    background: #1c1c1e;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 18px;
-    padding: 11px 15px;
-    color: #ffffff;
-    font-size: 15px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.ore-response {
-    width: 100%;
-    color: #ececec;
-    font-size: 15px;
-    line-height: 1.65;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    padding: 0 4px;
-}
-
-/* =========================================================
-   KEEPING YOUR DIAMOND
-========================================================= */
-
-.ore-diamond-gem {
-    width: 18px;
-    height: 18px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    filter: drop-shadow(0 0 6px rgba(0,255,102,0.7));
-    animation: oreGemPulse 1.2s ease-in-out infinite;
-}
-
-.ore-diamond-gem svg {
-    width: 100%;
-    height: 100%;
-}
-
-/* =========================================================
-   NEW THINKING DOTS
-========================================================= */
-
-.ore-thinking-area {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 2px 4px;
-}
-
-.ore-thinking-text {
-    color: #8e8e8e;
-    font-size: 14px;
-}
-
-.ore-thinking-dots {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    height: 20px;
-}
-
-.ore-thinking-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #00ff66;
-    box-shadow: 0 0 7px rgba(0,255,102,0.55);
-    animation: oreDotPulse 1.2s ease-in-out infinite;
-}
-
-.ore-thinking-dot:nth-child(2) {
-    animation-delay: 0.18s;
-}
-
-.ore-thinking-dot:nth-child(3) {
-    animation-delay: 0.36s;
-}
-
-/* =========================================================
-   GREEN RESPONSE GLOW
-========================================================= */
-
-.ore-message-ore.generating {
-    animation: oreResponseGlow 1.8s ease-in-out infinite;
-}
-
-@keyframes oreResponseGlow {
-    0%, 100% {
-        filter: drop-shadow(0 0 0 rgba(0,255,102,0));
-    }
-
-    50% {
-        filter: drop-shadow(0 0 10px rgba(0,255,102,0.16));
-    }
-}
-
-@keyframes oreDotPulse {
-    0%, 100% {
-        transform: scale(0.65);
-        opacity: 0.35;
-    }
-
-    50% {
-        transform: scale(1.15);
-        opacity: 1;
-    }
-}
-
-@keyframes oreGemPulse {
-    0%, 100% {
-        transform: scale(0.92);
-        filter: drop-shadow(0 0 4px rgba(0,255,102,0.5));
-        opacity: 0.7;
-    }
-
-    50% {
-        transform: scale(1.12);
-        filter: drop-shadow(0 0 10px rgba(0,255,102,0.9));
-        opacity: 1;
-    }
-}
-
-.ore-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 17px;
-    margin-left: 3px;
-    vertical-align: -3px;
-    background: #00ff66;
-    animation: oreCursorBlink 0.8s step-end infinite;
-}
-
-@keyframes oreCursorBlink {
-    0%, 45% {
-        opacity: 1;
-    }
-
-    46%, 100% {
-        opacity: 0;
-    }
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 700px) {
-
-    #sidebar {
-        position: absolute;
-        box-shadow: 20px 0 50px rgba(0,0,0,0.7);
-    }
-
-    #sidebar.collapsed {
-        margin-left: -260px;
-    }
-
-    #open-sidebar-btn {
-        display: flex;
-    }
-
-    .top-right-offer {
-        right: 10px;
-    }
-
-    .free-offer-btn {
-        display: none;
-    }
-
-    .mode-pill {
-        margin-left: 30px;
-    }
-
-    .hero-title {
-        font-size: 25px;
-    }
-
-    .toolbar-right {
-        gap: 5px;
-    }
-
-    .pixel-pill-btn {
-        padding: 0 10px;
-    }
-
-    .pixel-pill-btn#think-btn {
-        display: none;
-    }
-
-    .auth-header-text {
-        display: none;
-    }
-
-    .ore-user-bubble {
-        max-width: 90%;
-    }
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ore</title>
+
+    <!-- Emerald Faceted Gem Favicon -->
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpolygon points='8,3 16,3 14,8 10,8' fill='%23ccffdd'/%3E%3Cpolygon points='6,3 8,3 10,8 2,9' fill='%2352ff94'/%3E%3Cpolygon points='16,3 18,3 22,9 14,8' fill='%2300e65c'/%3E%3Cpolygon points='10,8 14,8 12,21' fill='%2300ff66'/%3E%3Cpolygon points='2,9 10,8 12,21' fill='%2300b347'/%3E%3Cpolygon points='22,9 14,8 12,21' fill='%23008033'/%3E%3C/svg%3E"
+    >
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            background: #000000;
+            color: #ececec;
+            font-family:
+                Söhne,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                "Segoe UI",
+                Roboto,
+                Ubuntu,
+                Cantarell,
+                sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Allow selecting actual chat content */
+        textarea,
+        input,
+        .ore-response,
+        .ore-user-bubble,
+        .user-name,
+        .user-plan,
+        .chat-history-title {
+            user-select: text;
+        }
+
+        button {
+            border: none;
+            font-family: inherit;
+        }
+
+        /* ==============================
+           SCROLLBAR
+        ============================== */
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3e3e3e;
+        }
+
+        /* ==============================
+           APP
+        ============================== */
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            overflow: hidden;
+            background: #000000;
+            position: relative;
+        }
+
+        /* ==============================
+           SIDEBAR
+        ============================== */
+
+        #sidebar {
+            width: 260px;
+            height: 100%;
+            flex-shrink: 0;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition:
+                margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+
+        #sidebar.collapsed {
+            margin-left: -260px;
+        }
+
+        .sidebar-inner {
+            width: 260px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 8px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 8px 12px;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9b9b9b;
+            transition:
+                background 0.15s ease,
+                color 0.15s ease;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .icon-btn:hover {
+            background: #171717;
+            color: #ffffff;
+        }
+
+        .nav-section {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-item {
+            width: 100%;
+            min-height: 36px;
+            padding: 0 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ececec;
+            font-size: 14px;
+            font-weight: 400;
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #171717;
+        }
+
+        .badge-updated {
+            background: #262626;
+            color: #b4b4b4;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 1px 5px;
+            border-radius: 4px;
+            letter-spacing: 0.02em;
+        }
+
+        .section-divider {
+            padding: 16px 10px 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666666;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ==============================
+           CHAT HISTORY
+        ============================== */
+
+        #chat-history {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 2px;
+        }
+
+        .chat-history-item {
+            width: 100%;
+            min-height: 36px;
+            padding: 0 8px 0 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            color: #cfcfcf;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .chat-history-item:hover {
+            background: #171717;
+            color: #ffffff;
+        }
+
+        .chat-history-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .chat-history-menu-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: #777777;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .chat-history-menu-btn:hover {
+            background: #292929;
+            color: #ffffff;
+        }
+
+        .chat-empty {
+            color: #555555;
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        /* ==============================
+           SIDEBAR BOTTOM
+        ============================== */
+
+        .sidebar-bottom {
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .claim-offer-btn {
+            width: 100%;
+            height: 36px;
+            border-radius: 18px;
+            background: #171717;
+            color: #ececec;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .claim-offer-btn:hover {
+            background: #222222;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .user-profile:hover {
+            background: #171717;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #ab47bc;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .user-plan {
+            font-size: 11px;
+            color: #8e8e8e;
+        }
+
+        /* ==============================
+           MAIN
+        ============================== */
+
+        #main {
+            flex: 1;
+            height: 100%;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #open-sidebar-btn {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            z-index: 50;
+            display: none;
+            background: #171717;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ==============================
+           TOP NAV
+        ============================== */
+
+        .top-nav-bar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0 16px;
+            flex-shrink: 0;
+        }
+
+        .mode-pill {
+            background: #171717;
+            border-radius: 20px;
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .pill-btn {
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #8e8e8e;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .pill-btn.active {
+            background: #262626;
+            color: #ffffff;
+        }
+
+        .top-right-offer {
+            position: absolute;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .free-offer-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #ececec;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        /* ==============================
+           CENTER
+        ============================== */
+
+        .center-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 768px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+
+        .hero-title {
+            font-size: 30px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 28px;
+            letter-spacing: -0.01em;
+        }
+
+        /* ==============================
+           CHAT INPUT
+        ============================== */
+
+        .pixel-chat-bar {
+            width: 100%;
+            background: #1c1c1e;
+            border-radius: 32px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: border-color 0.2s ease;
+        }
+
+        .pixel-chat-bar:focus-within {
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        .chat-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 16px;
+            resize: none;
+            min-height: 28px;
+            max-height: 180px;
+            line-height: 1.5;
+            user-select: text;
+        }
+
+        .chat-input::placeholder {
+            color: #8e8e8e;
+        }
+
+        .pixel-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 4px;
+        }
+
+        .toolbar-left,
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pixel-icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #2c2c2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e3e3e3;
+            cursor: pointer;
+            transition:
+                background 0.15s ease,
+                transform 0.15s ease;
+        }
+
+        .pixel-icon-btn:hover {
+            background: #3a3a3c;
+            transform: scale(1.04);
+        }
+
+        .pixel-pill-btn {
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 18px;
+            background: #2c2c2e;
+            color: #e3e3e3;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease;
+            border: 1px solid transparent;
+        }
+
+        .pixel-pill-btn:hover {
+            background: #3a3a3c;
+        }
+
+        .pixel-pill-btn.active {
+            background: #3a3a3c;
+            border-color: #00ff66;
+            color: #ffffff;
+        }
+
+        /* ==============================
+           SEND BUTTON
+        ============================== */
+
+        .send-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #00ff66;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition:
+                transform 0.15s ease,
+                background 0.15s ease,
+                box-shadow 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover {
+            background: #24ff7b;
+            transform: scale(1.05);
+            box-shadow: 0 0 14px rgba(0, 255, 102, 0.22);
+        }
+
+        .send-btn:active {
+            transform: scale(0.94);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .send-arrow {
+            font-size: 21px;
+            line-height: 1;
+            font-weight: 700;
+            transform: translateY(-1px);
+        }
+
+        /* ==============================
+           LANGUAGE
+        ============================== */
+
+        .lang-toggle-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 24px;
+        }
+
+        .lang-btn {
+            font-size: 12px;
+            padding: 4px 14px;
+            border-radius: 14px;
+            color: #8e8e8e;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .lang-btn.active {
+            background: #00ff66;
+            color: #000000;
+            font-weight: 600;
+            border-color: #00ff66;
+        }
+
+        /* ==============================
+           CONVERSATION
+        ============================== */
+
+        #ore-conversation {
+            width: 100%;
+            max-width: 768px;
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 20px 20px;
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            margin: 0 auto;
+        }
+
+        .ore-message {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ore-message-user {
+            align-items: flex-end;
+        }
+
+        .ore-message-ore {
+            align-items: flex-start;
+        }
+
+        .ore-message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 4px;
+        }
+
+        .ore-message-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #00ff66;
+        }
+
+        .ore-message-label-user {
+            font-size: 12px;
+            color: #777777;
+            padding: 0 4px;
+        }
+
+        .ore-user-bubble {
+            max-width: 80%;
+            background: #1c1c1e;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 11px 15px;
+            color: #ffffff;
+            font-size: 15px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .ore-response {
+            width: 100%;
+            color: #ececec;
+            font-size: 15px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            padding: 0 4px;
+            user-select: text;
+        }
+
+        /* ==============================
+           DIAMOND
+           DO NOT TOUCH THE GEM
+        ============================== */
+
+        .ore-diamond-gem {
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 6px rgba(0, 255, 102, 0.7));
+            animation: oreGemPulse 1.2s ease-in-out infinite;
+        }
+
+        .ore-diamond-gem svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ==============================
+           THINKING
+        ============================== */
+
+        .ore-thinking-area {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 2px 4px;
+        }
+
+        .ore-thinking-text {
+            color: #8e8e8e;
+            font-size: 14px;
+            font-style: normal;
+        }
+
+        .ore-thinking-dots {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            height: 20px;
+        }
+
+        .ore-thinking-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #00ff66;
+            box-shadow: 0 0 7px rgba(0,255,102,0.55);
+            animation: oreDotPulse 1.2s ease-in-out infinite;
+        }
+
+        .ore-thinking-dot:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .ore-thinking-dot:nth-child(3) {
+            animation-delay: 0.30s;
+        }
+
+        /* ==============================
+           RESPONSE GLOW
+        ============================== */
+
+        .ore-message-ore.generating {
+            animation: oreResponseGlow 1.8s ease-in-out infinite;
+        }
+
+        @keyframes oreResponseGlow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 0 rgba(0,255,102,0));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 8px rgba(0,255,102,0.08));
+            }
+        }
+
+        @keyframes oreGemPulse {
+
+            0%,
+            100% {
+                transform: scale(0.92);
+                filter: drop-shadow(0 0 4px rgba(0, 255, 102, 0.5));
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: scale(1.12);
+                filter: drop-shadow(0 0 10px rgba(0, 255, 102, 0.9));
+                opacity: 1;
+            }
+        }
+
+        @keyframes oreDotPulse {
+
+            0%,
+            100% {
+                opacity: 0.25;
+                transform: translateY(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-2px);
+            }
+        }
+
+        .ore-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 17px;
+            margin-left: 3px;
+            vertical-align: -3px;
+            background: #00ff66;
+            animation: oreCursorBlink 0.8s step-end infinite;
+        }
+
+        @keyframes oreCursorBlink {
+
+            0%,
+            45% {
+                opacity: 1;
+            }
+
+            46%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* ==============================
+           ACTIVE CHAT
+        ============================== */
+
+        body.chat-active .hero-title,
+        body.chat-active .lang-toggle-bar {
+            display: none;
+        }
+
+        body.chat-active .center-container {
+            flex: none;
+            padding-bottom: 20px;
+            justify-content: flex-end;
+        }
+
+        body.chat-active .pixel-chat-bar {
+            margin-top: 0;
+        }
+
+        /* ==============================
+           TOAST
+        ============================== */
+
+        #ore-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(15px);
+            background: #1c1c1e;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #eeeeee;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            opacity: 0;
+            pointer-events: none;
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease;
+            z-index: 500;
+        }
+
+        #ore-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ==============================
+           MOBILE
+        ============================== */
+
+        @media (max-width: 700px) {
+
+            #sidebar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 200;
+                box-shadow: 15px 0 40px rgba(0,0,0,0.5);
+            }
+
+            #sidebar.collapsed {
+                margin-left: -260px;
+            }
+
+            .top-right-offer {
+                right: 10px;
+            }
+
+            .free-offer-btn {
+                display: none;
+            }
+
+            .center-container {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .hero-title {
+                font-size: 25px;
+            }
+
+            .toolbar-right {
+                gap: 6px;
+            }
+
+            .pixel-pill-btn {
+                padding: 0 9px;
+            }
+
+            #ore-conversation {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .ore-user-bubble {
+                max-width: 90%;
+            }
+
+            .camera-search-btn {
+                display: none;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
 
-<!-- =========================================================
-     LOGIN HEADER
-========================================================= -->
-
-<div id="auth-header">
-
-    <div class="auth-header-brand">
-
-        <svg viewBox="0 0 24 24" width="21" height="21">
-            <polygon points="8,3 16,3 14,8 10,8" fill="#ccffdd"/>
-            <polygon points="6,3 8,3 10,8 2,9" fill="#52ff94"/>
-            <polygon points="16,3 18,3 22,9 14,8" fill="#00e65c"/>
-            <polygon points="10,8 14,8 12,21" fill="#00ff66"/>
-            <polygon points="2,9 10,8 12,21" fill="#00b347"/>
-            <polygon points="22,9 14,8 12,21" fill="#008033"/>
-        </svg>
-
-        Ore
-
-    </div>
-
-    <div class="auth-header-right">
-
-        <span class="auth-header-text" id="auth-header-message">
-            Login or sign up to enter Ore
-        </span>
-
-        <button
-            class="auth-login-btn"
-            id="auth-login-header-btn"
-            onclick="openAuthModal()"
-        >
-            Log in / Sign up
-        </button>
-
-    </div>
-
-</div>
-
-<!-- =========================================================
-     AUTH MODAL
-========================================================= -->
-
-<div id="auth-modal">
-
-    <div class="auth-card">
-
-        <button
-            class="auth-close"
-            onclick="closeAuthModal()"
-        >
-            ×
-        </button>
-
-        <svg class="auth-logo" viewBox="0 0 24 24">
-            <polygon points="8,3 16,3 14,8 10,8" fill="#ccffdd"/>
-            <polygon points="6,3 8,3 10,8 2,9" fill="#52ff94"/>
-            <polygon points="16,3 18,3 22,9 14,8" fill="#00e65c"/>
-            <polygon points="10,8 14,8 12,21" fill="#00ff66"/>
-            <polygon points="2,9 10,8 12,21" fill="#00b347"/>
-            <polygon points="22,9 14,8 12,21" fill="#008033"/>
-        </svg>
-
-        <h2 class="auth-title">
-            Enter Ore
-        </h2>
-
-        <p class="auth-subtitle">
-            Sign in with Google to start talking with Ore.
-        </p>
-
-        <button
-            class="google-login-btn"
-            id="google-login-btn"
-            onclick="loginWithGoogle()"
-        >
-
-            <svg class="google-icon" viewBox="0 0 24 24">
-                <path fill="#4285F4"
-                    d="M21.35 12.23c0-.79-.07-1.55-.2-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.41z"/>
-                <path fill="#34A853"
-                    d="M12 21.6c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.74 9.74 0 0 0 12 21.6z"/>
-                <path fill="#FBBC05"
-                    d="M6.54 13.7A5.85 5.85 0 0 1 6.23 12c0-.59.11-1.16.31-1.7V7.78H3.3A9.74 9.74 0 0 0 2.27 12c0 1.57.38 3.05 1.03 4.22l3.24-2.52z"/>
-                <path fill="#EA4335"
-                    d="M12 6.27c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.35 14.63 2.4 12 2.4a9.74 9.74 0 0 0-8.7 5.38l3.24 2.52C7.31 7.99 9.46 6.27 12 6.27z"/>
-            </svg>
-
-            Continue with Google
-
-        </button>
-
-        <div class="auth-message" id="auth-message"></div>
-
-    </div>
-
-</div>
-
-<!-- =========================================================
-     APP
-========================================================= -->
-
 <div id="app">
 
-    <!-- SIDEBAR -->
+    <!-- ==============================
+         SIDEBAR
+    ============================== -->
 
     <aside id="sidebar">
 
@@ -1238,9 +959,8 @@ body.chat-active .center-container {
 
                 <div class="brand-title">
 
-                    <!-- DIAMOND LEFT UNTOUCHED -->
-
-                    <svg viewBox="0 0 24 24" width="20" height="20">
+                    <!-- ORIGINAL EMERALD DIAMOND -->
+                    <svg viewBox="0 0 24 24" class="w-5 h-5">
                         <polygon points="8,3 16,3 14,8 10,8" fill="#ccffdd"/>
                         <polygon points="6,3 8,3 10,8 2,9" fill="#52ff94"/>
                         <polygon points="16,3 18,3 22,9 14,8" fill="#00e65c"/>
@@ -1255,14 +975,21 @@ body.chat-active .center-container {
 
                 <div class="flex items-center gap-1">
 
-                    <button class="icon-btn" title="Search chats">
-
-                        <svg width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2">
+                    <button
+                        class="icon-btn"
+                        title="Search chats"
+                    >
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
                             <circle cx="11" cy="11" r="8"/>
                             <path d="m21 21-4.3-4.3"/>
                         </svg>
-
                     </button>
 
                     <button
@@ -1270,13 +997,23 @@ body.chat-active .center-container {
                         id="close-sidebar-btn"
                         title="Close sidebar"
                     >
-
-                        <svg width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2">
-                            <rect width="18" height="18" x="3" y="3" rx="2"/>
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <rect
+                                width="18"
+                                height="18"
+                                x="3"
+                                y="3"
+                                rx="2"
+                            />
                             <path d="M9 3v18"/>
                         </svg>
-
                     </button>
 
                 </div>
@@ -1289,23 +1026,40 @@ body.chat-active .center-container {
                     class="nav-item"
                     id="new-chat-btn"
                 >
-
-                    <svg width="18" height="18" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2">
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M12 5v14M5 12h14"/>
                     </svg>
 
                     New chat
-
                 </div>
 
                 <div class="nav-item justify-between">
 
                     <div class="flex items-center gap-3">
 
-                        <svg width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2">
-                            <rect width="18" height="18" x="3" y="3" rx="2"/>
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <rect
+                                width="18"
+                                height="18"
+                                x="3"
+                                y="3"
+                                rx="2"
+                                ry="2"
+                            />
                             <circle cx="9" cy="9" r="2"/>
                             <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
                         </svg>
@@ -1314,38 +1068,117 @@ body.chat-active .center-container {
 
                     </div>
 
-                    <span class="badge-updated">UPDATED</span>
+                    <span class="badge-updated">
+                        UPDATED
+                    </span>
 
                 </div>
 
                 <div class="nav-item">
-                    📚
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="m16 6 4 14M12 6v14M8 6l-4 14M12 2v4"/>
+                    </svg>
+
                     Library
+
                 </div>
 
                 <div class="nav-item">
-                    🕒
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+
                     Scheduled
+
                 </div>
 
                 <div class="nav-item">
-                    🏷️
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l5.58-5.58c.94-.94 0-2.48 0-3.42L12 2Z"/>
+                        <circle cx="7" cy="7" r="1.5"/>
+                    </svg>
+
                     Plugins
+
                 </div>
 
                 <div class="nav-item">
-                    📁
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L8.6 3.3A2 2 0 0 0 6.9 2.5H4a2 2 0 0 0-2 2v13.5a2 2 0 0 0 2 2h16z"/>
+                    </svg>
+
                     Projects
+
                 </div>
 
                 <div class="nav-item">
-                    &lt;/&gt;
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+
                     Codex
+
                 </div>
 
                 <div class="nav-item">
-                    •••
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle cx="12" cy="12" r="1"/>
+                        <circle cx="19" cy="12" r="1"/>
+                        <circle cx="5" cy="12" r="1"/>
+                    </svg>
+
                     More
+
                 </div>
 
                 <div class="section-divider">
@@ -1353,23 +1186,48 @@ body.chat-active .center-container {
                 </div>
 
                 <div class="nav-item">
-                    💬
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+
                     Assignment Help
+
                 </div>
 
                 <div class="section-divider">
 
-                    <span>Recents</span>
-
-                    <span id="history-loading"
-                          style="font-size:10px;color:#555;">
+                    <span>
+                        Recents
                     </span>
+
+                    <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
 
                 </div>
 
-                <!-- FIRESTORE CHAT HISTORY -->
+                <div id="chat-history">
 
-                <div id="chat-history"></div>
+                    <div class="chat-empty">
+                        No recent chats
+                    </div>
+
+                </div>
 
             </div>
 
@@ -1377,48 +1235,43 @@ body.chat-active .center-container {
 
                 <button class="claim-offer-btn">
 
-                    🎁
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <rect
+                            x="3"
+                            y="8"
+                            width="18"
+                            height="12"
+                            rx="2"
+                        />
+                        <path d="M12 5v3M7 8s0-3 2.5-3c2 0 2.5 3 2.5 3M17 8s0-3-2.5-3c-2 0-2.5 3-2.5 3"/>
+                    </svg>
+
                     Claim offer
 
                 </button>
 
-                <div
-                    class="user-profile"
-                    id="user-profile"
-                    onclick="toggleUserMenu()"
-                >
+                <div class="user-profile">
 
-                    <div class="user-avatar" id="user-avatar">
+                    <div class="user-avatar">
                         M
                     </div>
 
                     <div class="user-info">
 
-                        <span class="user-name" id="user-name">
-                            Guest
+                        <span class="user-name">
+                            Murphy
                         </span>
 
                         <span class="user-plan">
                             Free
                         </span>
-
-                    </div>
-
-                    <div id="user-menu">
-
-                        <div
-                            class="user-menu-email"
-                            id="user-menu-email"
-                        >
-                            Not signed in
-                        </div>
-
-                        <button
-                            class="logout-btn"
-                            onclick="logout(event)"
-                        >
-                            Log out
-                        </button>
 
                     </div>
 
@@ -1430,7 +1283,9 @@ body.chat-active .center-container {
 
     </aside>
 
-    <!-- MAIN -->
+    <!-- ==============================
+         MAIN WORKSPACE
+    ============================== -->
 
     <main id="main">
 
@@ -1439,14 +1294,26 @@ body.chat-active .center-container {
             class="icon-btn"
             title="Open sidebar"
         >
-
-            <svg width="18" height="18" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2">
-                <rect width="18" height="18" x="3" y="3" rx="2"/>
+            <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+                <rect
+                    width="18"
+                    height="18"
+                    x="3"
+                    y="3"
+                    rx="2"
+                />
                 <path d="M9 3v18"/>
             </svg>
-
         </button>
+
+        <!-- TOP NAV -->
 
         <div class="top-nav-bar">
 
@@ -1460,10 +1327,13 @@ body.chat-active .center-container {
                 </button>
 
                 <button
-                    class="pill-btn"
+                    class="pill-btn flex items-center gap-1"
                     id="work-mode-btn"
                 >
-                    <span style="color:#00ff66;">✦</span>
+                    <span style="color:#00ff66;">
+                        ✦
+                    </span>
+
                     Work
                 </button>
 
@@ -1472,13 +1342,39 @@ body.chat-active .center-container {
             <div class="top-right-offer">
 
                 <button class="free-offer-btn">
+
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <rect
+                            x="3"
+                            y="8"
+                            width="18"
+                            height="12"
+                            rx="2"
+                        />
+                        <path d="M12 5v3"/>
+                    </svg>
+
                     Free offer
+
                 </button>
 
                 <button class="icon-btn">
 
-                    <svg width="18" height="18" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2">
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
                         <path d="M21 3v5h-5"/>
                     </svg>
@@ -1489,15 +1385,20 @@ body.chat-active .center-container {
 
         </div>
 
+        <!-- ==============================
+             ORE CONVERSATION
+        ============================== -->
+
         <div id="ore-conversation"></div>
+
+        <!-- ==============================
+             CENTER
+        ============================== -->
 
         <div class="center-container">
 
-            <h1
-                class="hero-title"
-                id="hero-title"
-            >
-                Put Ore for talk.
+            <h1 class="hero-title">
+                How can I help, Murphy?
             </h1>
 
             <div class="pixel-chat-bar">
@@ -1507,6 +1408,7 @@ body.chat-active .center-container {
                     id="chat-input"
                     placeholder="Ask anything"
                     rows="1"
+                    autocomplete="off"
                 ></textarea>
 
                 <div class="pixel-toolbar">
@@ -1516,8 +1418,18 @@ body.chat-active .center-container {
                         <button
                             class="pixel-icon-btn"
                             title="Add attachment"
+                            type="button"
                         >
-                            +
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
                         </button>
 
                     </div>
@@ -1527,15 +1439,23 @@ body.chat-active .center-container {
                         <button
                             class="pixel-pill-btn"
                             id="search-web-btn"
+                            type="button"
                             onclick="quickPrompt('Search the web for ')"
                         >
 
-                            🔎
-
-                            <span
-                                class="search-star"
-                                style="position:relative;top:-5px;right:4px;"
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
                             >
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.3-4.3"/>
+                            </svg>
+
+                            <span style="color:#00ff66;">
                                 ✦
                             </span>
 
@@ -1546,30 +1466,86 @@ body.chat-active .center-container {
                         <button
                             class="pixel-pill-btn"
                             id="think-btn"
+                            type="button"
                         >
-                            🧠
+
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"/>
+                                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"/>
+                            </svg>
+
                             Think
+
                         </button>
 
                         <button
                             class="pixel-icon-btn"
                             title="Voice Input"
+                            type="button"
                         >
-                            🎙
+
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                <line
+                                    x1="12"
+                                    y1="19"
+                                    x2="12"
+                                    y2="22"
+                                />
+                            </svg>
+
                         </button>
 
                         <button
-                            class="pixel-icon-btn"
+                            class="pixel-icon-btn camera-search-btn"
                             title="Camera Search"
+                            type="button"
                         >
-                            📷
+
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle
+                                    cx="12"
+                                    cy="13"
+                                    r="4"
+                                />
+                            </svg>
+
                         </button>
 
+                        <!-- ACTUAL SEND BUTTON -->
+
                         <button
-                            class="voice-sphere-btn"
-                            title="Live Voice Mode"
+                            class="send-btn"
+                            id="send-btn"
+                            title="Send message"
+                            type="button"
                         >
-                            〽
+                            <span class="send-arrow">
+                                ↑
+                            </span>
                         </button>
 
                     </div>
@@ -1578,11 +1554,14 @@ body.chat-active .center-container {
 
             </div>
 
+            <!-- LANGUAGE -->
+
             <div class="lang-toggle-bar">
 
                 <button
                     class="lang-btn active"
                     id="lang-pidgin"
+                    type="button"
                 >
                     Pidgin
                 </button>
@@ -1590,6 +1569,7 @@ body.chat-active .center-container {
                 <button
                     class="lang-btn"
                     id="lang-english"
+                    type="button"
                 >
                     English
                 </button>
@@ -1602,741 +1582,316 @@ body.chat-active .center-container {
 
 </div>
 
-<!-- =========================================================
-     FIREBASE + ORE LOGIC
-========================================================= -->
+<div id="ore-toast"></div>
 
 <script>
 
-/* =========================================================
-   FIREBASE CONFIG
-========================================================= */
+    /* =========================================================
+       BASIC UI
+    ========================================================= */
 
-const firebaseConfig = {
-    apiKey: "AIzaSyARMIYCtFrFT9_SaAsPyqxREKPjdtJ1Ank",
-    authDomain: "ore-322.firebaseapp.com",
-    projectId: "ore-322",
-    storageBucket: "ore-322.firebasestorage.app",
-    messagingSenderId: "369871943092",
-    appId: "1:369871943092:web:923d61817ba70461ecaee1",
-    measurementId: "G-ZQFHPTNVL9"
-};
+    const sidebar =
+        document.getElementById("sidebar");
 
-firebase.initializeApp(firebaseConfig);
+    const closeSidebarBtn =
+        document.getElementById("close-sidebar-btn");
 
-const oreAuth = firebase.auth();
+    const openSidebarBtn =
+        document.getElementById("open-sidebar-btn");
 
-/* NEW: FIRESTORE */
+    const chatModeBtn =
+        document.getElementById("chat-mode-btn");
 
-const db = firebase.firestore();
+    const workModeBtn =
+        document.getElementById("work-mode-btn");
 
-const googleProvider =
-    new firebase.auth.GoogleAuthProvider();
+    const thinkBtn =
+        document.getElementById("think-btn");
 
+    const chatInput =
+        document.getElementById("chat-input");
 
-/* =========================================================
-   BACKEND
-========================================================= */
+    const sendBtn =
+        document.getElementById("send-btn");
 
-const BACKEND_URL =
-    "https://isotope-headed-refusal.ngrok-free.dev";
+    const centerContainer =
+        document.querySelector(".center-container");
 
-const CHAT_ENDPOINT =
-    `${BACKEND_URL}/api/chat`;
+    const mainWorkspace =
+        document.getElementById("main");
 
+    const langPidgin =
+        document.getElementById("lang-pidgin");
 
-/* =========================================================
-   STATE
-========================================================= */
+    const langEnglish =
+        document.getElementById("lang-english");
 
-let selectedLanguage = "pidgin";
+    const conversation =
+        document.getElementById("ore-conversation");
 
-let isGenerating = false;
+    const chatHistory =
+        document.getElementById("chat-history");
 
-let currentUser = null;
+    let selectedLanguage = "pidgin";
 
-let currentChatId = null;
+    let isGenerating = false;
 
+    /* =========================================================
+       SIDEBAR
+    ========================================================= */
 
-/* =========================================================
-   DOM
-========================================================= */
+    closeSidebarBtn.addEventListener(
+        "click",
+        () => {
 
-const sidebar =
-    document.getElementById("sidebar");
-
-const closeSidebarBtn =
-    document.getElementById("close-sidebar-btn");
-
-const openSidebarBtn =
-    document.getElementById("open-sidebar-btn");
-
-const chatInput =
-    document.getElementById("chat-input");
-
-const conversation =
-    document.getElementById("ore-conversation");
-
-const heroTitle =
-    document.getElementById("hero-title");
-
-const langPidgin =
-    document.getElementById("lang-pidgin");
-
-const langEnglish =
-    document.getElementById("lang-english");
-
-const authModal =
-    document.getElementById("auth-modal");
-
-const authMessage =
-    document.getElementById("auth-message");
-
-const authHeaderMessage =
-    document.getElementById("auth-header-message");
-
-const authLoginHeaderBtn =
-    document.getElementById("auth-login-header-btn");
-
-const userName =
-    document.getElementById("user-name");
-
-const userAvatar =
-    document.getElementById("user-avatar");
-
-const userMenu =
-    document.getElementById("user-menu");
-
-const userMenuEmail =
-    document.getElementById("user-menu-email");
-
-const chatHistory =
-    document.getElementById("chat-history");
-
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-closeSidebarBtn.addEventListener("click", () => {
-
-    sidebar.classList.add("collapsed");
-
-    openSidebarBtn.style.display = "flex";
-
-});
-
-openSidebarBtn.addEventListener("click", () => {
-
-    sidebar.classList.remove("collapsed");
-
-    openSidebarBtn.style.display = "none";
-
-});
-
-
-/* =========================================================
-   MODE
-========================================================= */
-
-document
-    .getElementById("chat-mode-btn")
-    .addEventListener("click", () => {
-
-        document
-            .getElementById("chat-mode-btn")
-            .classList.add("active");
-
-        document
-            .getElementById("work-mode-btn")
-            .classList.remove("active");
-
-    });
-
-
-document
-    .getElementById("work-mode-btn")
-    .addEventListener("click", () => {
-
-        document
-            .getElementById("work-mode-btn")
-            .classList.add("active");
-
-        document
-            .getElementById("chat-mode-btn")
-            .classList.remove("active");
-
-    });
-
-
-/* =========================================================
-   THINK BUTTON
-========================================================= */
-
-document
-    .getElementById("think-btn")
-    .addEventListener("click", function () {
-
-        this.classList.toggle("active");
-
-    });
-
-
-/* =========================================================
-   QUICK PROMPT
-========================================================= */
-
-function quickPrompt(text) {
-
-    if (!currentUser) {
-
-        openAuthModal();
-
-        return;
-
-    }
-
-    chatInput.value = text;
-
-    chatInput.focus();
-
-}
-
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
-langPidgin.addEventListener("click", () => {
-
-    selectedLanguage = "pidgin";
-
-    langPidgin.classList.add("active");
-
-    langEnglish.classList.remove("active");
-
-});
-
-
-langEnglish.addEventListener("click", () => {
-
-    selectedLanguage = "english";
-
-    langEnglish.classList.add("active");
-
-    langPidgin.classList.remove("active");
-
-});
-
-
-/* =========================================================
-   AUTH MODAL
-========================================================= */
-
-function openAuthModal() {
-
-    authModal.classList.add("visible");
-
-    authMessage.textContent = "";
-
-}
-
-
-function closeAuthModal() {
-
-    authModal.classList.remove("visible");
-
-}
-
-
-authModal.addEventListener("click", event => {
-
-    if (event.target === authModal) {
-
-        closeAuthModal();
-
-    }
-
-});
-
-
-/* =========================================================
-   GOOGLE LOGIN
-========================================================= */
-
-async function loginWithGoogle() {
-
-    const button =
-        document.getElementById("google-login-btn");
-
-    button.disabled = true;
-
-    button.style.opacity = "0.6";
-
-    authMessage.textContent =
-        "Connecting to Google...";
-
-    try {
-
-        await oreAuth.signInWithPopup(
-            googleProvider
-        );
-
-        closeAuthModal();
-
-    } catch (error) {
-
-        console.error(
-            "Google login error:",
-            error
-        );
-
-        authMessage.textContent =
-            error.message ||
-            "Could not sign in with Google.";
-
-    } finally {
-
-        button.disabled = false;
-
-        button.style.opacity = "1";
-
-    }
-
-}
-
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-oreAuth.onAuthStateChanged(async user => {
-
-    currentUser = user;
-
-    if (user) {
-
-        enterAuthenticatedExperience(user);
-
-        await loadChatHistory();
-
-    } else {
-
-        enterLoggedOutExperience();
-
-    }
-
-});
-
-
-/* =========================================================
-   AUTHENTICATED EXPERIENCE
-========================================================= */
-
-function enterAuthenticatedExperience(user) {
-
-    const displayName =
-        user.displayName ||
-        user.email?.split("@")[0] ||
-        "there";
-
-    const firstName =
-        displayName.split(" ")[0];
-
-    const hour =
-        new Date().getHours();
-
-    let greeting;
-
-    if (hour >= 5 && hour < 12) {
-
-        greeting =
-            `Good morning, ${firstName}. Put Ore for talk. Wetin you wan do today?`;
-
-    } else if (hour >= 12 && hour < 18) {
-
-        greeting =
-            `Good afternoon, ${firstName}. Put Ore for talk. Wetin you wan do today?`;
-
-    } else {
-
-        greeting =
-            `Good evening, ${firstName}. Put Ore for talk. Wetin you wan do today?`;
-
-    }
-
-    heroTitle.textContent = greeting;
-
-    authHeaderMessage.textContent =
-        `Welcome back, ${firstName}.`;
-
-    authLoginHeaderBtn.textContent =
-        "You're in";
-
-    authLoginHeaderBtn.onclick =
-        toggleUserMenu;
-
-    userName.textContent =
-        displayName;
-
-    userMenuEmail.textContent =
-        user.email || "Signed in with Google";
-
-    if (user.photoURL) {
-
-        userAvatar.innerHTML = `
-            <img
-                src="${escapeHtml(user.photoURL)}"
-                alt="${escapeHtml(displayName)}"
-            >
-        `;
-
-    } else {
-
-        userAvatar.textContent =
-            displayName.charAt(0).toUpperCase();
-
-    }
-
-}
-
-
-/* =========================================================
-   LOGGED OUT
-========================================================= */
-
-function enterLoggedOutExperience() {
-
-    currentUser = null;
-
-    currentChatId = null;
-
-    heroTitle.textContent =
-        "Put Ore for talk.";
-
-    authHeaderMessage.textContent =
-        "Login or sign up to enter Ore";
-
-    authLoginHeaderBtn.textContent =
-        "Log in / Sign up";
-
-    authLoginHeaderBtn.onclick =
-        openAuthModal;
-
-    userName.textContent =
-        "Guest";
-
-    userMenuEmail.textContent =
-        "Not signed in";
-
-    userAvatar.innerHTML =
-        "G";
-
-    conversation.style.display =
-        "none";
-
-    conversation.innerHTML = "";
-
-    chatHistory.innerHTML = "";
-
-    chatInput.value = "";
-
-}
-
-
-/* =========================================================
-   USER MENU
-========================================================= */
-
-function toggleUserMenu() {
-
-    userMenu.classList.toggle("visible");
-
-}
-
-
-document.addEventListener("click", event => {
-
-    const profile =
-        document.getElementById("user-profile");
-
-    if (
-        profile &&
-        !profile.contains(event.target)
-    ) {
-
-        userMenu.classList.remove("visible");
-
-    }
-
-});
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function logout(event) {
-
-    if (event) {
-        event.stopPropagation();
-    }
-
-    userMenu.classList.remove("visible");
-
-    try {
-
-        await oreAuth.signOut();
-
-    } catch (error) {
-
-        console.error(
-            "Logout failed:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(value) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent = value;
-
-    return div.innerHTML;
-
-}
-
-
-/* =========================================================
-   ORE DIAMOND
-   DO NOT TOUCH
-========================================================= */
-
-function createOreDiamond() {
-
-    const gem =
-        document.createElement("div");
-
-    gem.className =
-        "ore-diamond-gem";
-
-    gem.innerHTML = `
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <polygon points="8,3 16,3 14,8 10,8" fill="#ccffdd"/>
-            <polygon points="6,3 8,3 10,8 2,9" fill="#52ff94"/>
-            <polygon points="16,3 18,3 22,9 14,8" fill="#00e65c"/>
-            <polygon points="10,8 14,8 12,21" fill="#00ff66"/>
-            <polygon points="2,9 10,8 12,21" fill="#00b347"/>
-            <polygon points="22,9 14,8 12,21" fill="#008033"/>
-        </svg>
-    `;
-
-    return gem;
-
-}
-
-
-/* =========================================================
-   THINKING INDICATOR
-========================================================= */
-
-function showThinking() {
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "ore-message ore-message-ore generating";
-
-    wrapper.id =
-        "ore-current-response";
-
-
-    const header =
-        document.createElement("div");
-
-    header.className =
-        "ore-message-header";
-
-
-    const gem =
-        createOreDiamond();
-
-
-    const label =
-        document.createElement("span");
-
-    label.className =
-        "ore-message-label";
-
-    label.textContent =
-        "Ore";
-
-
-    header.appendChild(gem);
-
-    header.appendChild(label);
-
-
-    const thinkingArea =
-        document.createElement("div");
-
-    thinkingArea.className =
-        "ore-thinking-area";
-
-
-    const thinkingText =
-        document.createElement("span");
-
-    thinkingText.className =
-        "ore-thinking-text";
-
-    thinkingText.textContent =
-        "thinking";
-
-
-    const dots =
-        document.createElement("div");
-
-    dots.className =
-        "ore-thinking-dots";
-
-
-    for (let i = 0; i < 3; i++) {
-
-        const dot =
-            document.createElement("span");
-
-        dot.className =
-            "ore-thinking-dot";
-
-        dots.appendChild(dot);
-
-    }
-
-
-    thinkingArea.appendChild(
-        thinkingText
-    );
-
-    thinkingArea.appendChild(
-        dots
-    );
-
-
-    wrapper.appendChild(header);
-
-    wrapper.appendChild(thinkingArea);
-
-    conversation.appendChild(wrapper);
-
-    conversation.scrollTop =
-        conversation.scrollHeight;
-
-    return wrapper;
-
-}
-
-
-/* =========================================================
-   USER MESSAGE
-========================================================= */
-
-function addUserMessage(message) {
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "ore-message ore-message-user";
-
-
-    const label =
-        document.createElement("div");
-
-    label.className =
-        "ore-message-label-user";
-
-    label.textContent =
-        "You";
-
-
-    const bubble =
-        document.createElement("div");
-
-    bubble.className =
-        "ore-user-bubble";
-
-    bubble.textContent =
-        message;
-
-
-    wrapper.appendChild(label);
-
-    wrapper.appendChild(bubble);
-
-    conversation.appendChild(wrapper);
-
-    conversation.scrollTop =
-        conversation.scrollHeight;
-
-}
-
-
-/* =========================================================
-   ORE RESPONSE
-========================================================= */
-
-async function typeOreResponse(response) {
-
-    const currentMsg =
-        document.getElementById(
-            "ore-current-response"
-        );
-
-    let responseBox;
-
-    let wrapper;
-
-
-    if (currentMsg) {
-
-        wrapper = currentMsg;
-
-        responseBox =
-            currentMsg.querySelector(
-                ".ore-response"
+            sidebar.classList.add(
+                "collapsed"
             );
 
-        currentMsg.innerHTML = "";
+            openSidebarBtn.style.display =
+                "flex";
+        }
+    );
 
-        currentMsg.removeAttribute("id");
+    openSidebarBtn.addEventListener(
+        "click",
+        () => {
 
-        currentMsg.classList.add(
-            "generating"
+            sidebar.classList.remove(
+                "collapsed"
+            );
+
+            openSidebarBtn.style.display =
+                "none";
+        }
+    );
+
+    /* =========================================================
+       MODES
+    ========================================================= */
+
+    chatModeBtn.addEventListener(
+        "click",
+        () => {
+
+            chatModeBtn.classList.add(
+                "active"
+            );
+
+            workModeBtn.classList.remove(
+                "active"
+            );
+        }
+    );
+
+    workModeBtn.addEventListener(
+        "click",
+        () => {
+
+            workModeBtn.classList.add(
+                "active"
+            );
+
+            chatModeBtn.classList.remove(
+                "active"
+            );
+        }
+    );
+
+    thinkBtn.addEventListener(
+        "click",
+        () => {
+
+            thinkBtn.classList.toggle(
+                "active"
+            );
+        }
+    );
+
+    /* =========================================================
+       LANGUAGE
+    ========================================================= */
+
+    langPidgin.addEventListener(
+        "click",
+        () => {
+
+            selectedLanguage = "pidgin";
+
+            langPidgin.classList.add(
+                "active"
+            );
+
+            langEnglish.classList.remove(
+                "active"
+            );
+        }
+    );
+
+    langEnglish.addEventListener(
+        "click",
+        () => {
+
+            selectedLanguage = "english";
+
+            langEnglish.classList.add(
+                "active"
+            );
+
+            langPidgin.classList.remove(
+                "active"
+            );
+        }
+    );
+
+    /* =========================================================
+       QUICK PROMPT
+    ========================================================= */
+
+    function quickPrompt(text) {
+
+        chatInput.value = text;
+
+        chatInput.focus();
+
+        chatInput.dispatchEvent(
+            new Event("input")
+        );
+    }
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    function showToast(message) {
+
+        const toast =
+            document.getElementById(
+                "ore-toast"
+            );
+
+        toast.textContent = message;
+
+        toast.classList.add("show");
+
+        setTimeout(
+            () => {
+                toast.classList.remove(
+                    "show"
+                );
+            },
+            2200
+        );
+    }
+
+    /* =========================================================
+       NEW CHAT
+    ========================================================= */
+
+    document
+        .getElementById("new-chat-btn")
+        .addEventListener(
+            "click",
+            () => {
+
+                conversation.innerHTML = "";
+
+                conversation.style.display =
+                    "none";
+
+                document.body.classList.remove(
+                    "chat-active"
+                );
+
+                chatInput.value = "";
+
+                chatInput.style.height =
+                    "auto";
+
+                isGenerating = false;
+
+                chatInput.focus();
+
+            }
         );
 
-    } else {
+    /* =========================================================
+       GEM
+       ORIGINAL GEM PRESERVED
+    ========================================================= */
 
-        wrapper =
+    function createOreDiamond() {
+
+        const gem =
+            document.createElement("div");
+
+        gem.className =
+            "ore-diamond-gem";
+
+        gem.innerHTML = `
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <polygon
+                    points="8,3 16,3 14,8 10,8"
+                    fill="#ccffdd"
+                />
+
+                <polygon
+                    points="6,3 8,3 10,8 2,9"
+                    fill="#52ff94"
+                />
+
+                <polygon
+                    points="16,3 18,3 22,9 14,8"
+                    fill="#00e65c"
+                />
+
+                <polygon
+                    points="10,8 14,8 12,21"
+                    fill="#00ff66"
+                />
+
+                <polygon
+                    points="2,9 10,8 12,21"
+                    fill="#00b347"
+                />
+
+                <polygon
+                    points="22,9 14,8 12,21"
+                    fill="#008033"
+                />
+            </svg>
+        `;
+
+        return gem;
+    }
+
+    /* =========================================================
+       THINKING INDICATOR
+    ========================================================= */
+
+    function showThinking() {
+
+        const oldThinking =
+            document.getElementById(
+                "ore-current-response"
+            );
+
+        if (oldThinking) {
+            oldThinking.remove();
+        }
+
+        const wrapper =
             document.createElement("div");
 
         wrapper.className =
             "ore-message ore-message-ore generating";
 
+        wrapper.id =
+            "ore-current-response";
 
         const header =
             document.createElement("div");
@@ -2344,10 +1899,8 @@ async function typeOreResponse(response) {
         header.className =
             "ore-message-header";
 
-
         const gem =
             createOreDiamond();
-
 
         const label =
             document.createElement("span");
@@ -2358,1143 +1911,484 @@ async function typeOreResponse(response) {
         label.textContent =
             "Ore";
 
-
         header.appendChild(gem);
-
         header.appendChild(label);
 
-
-        responseBox =
+        const thinkingArea =
             document.createElement("div");
 
-        responseBox.className =
-            "ore-response";
+        thinkingArea.className =
+            "ore-thinking-area";
 
+        const thinkingText =
+            document.createElement("span");
+
+        thinkingText.className =
+            "ore-thinking-text";
+
+        thinkingText.textContent =
+            "thinking";
+
+        const dots =
+            document.createElement("div");
+
+        dots.className =
+            "ore-thinking-dots";
+
+        for (
+            let i = 0;
+            i < 3;
+            i++
+        ) {
+
+            const dot =
+                document.createElement("span");
+
+            dot.className =
+                "ore-thinking-dot";
+
+            dots.appendChild(dot);
+        }
+
+        thinkingArea.appendChild(
+            thinkingText
+        );
+
+        thinkingArea.appendChild(
+            dots
+        );
 
         wrapper.appendChild(header);
 
-        wrapper.appendChild(responseBox);
+        wrapper.appendChild(
+            thinkingArea
+        );
 
-        conversation.appendChild(wrapper);
-
-    }
-
-
-    const cursor =
-        document.createElement("span");
-
-    cursor.className =
-        "ore-cursor";
-
-    responseBox.appendChild(cursor);
-
-
-    for (
-        let i = 0;
-        i < response.length;
-        i++
-    ) {
-
-        cursor.remove();
-
-        responseBox.textContent +=
-            response[i];
-
-        responseBox.appendChild(cursor);
+        conversation.appendChild(
+            wrapper
+        );
 
         conversation.scrollTop =
             conversation.scrollHeight;
 
+        return wrapper;
+    }
 
-        let delay = 12;
+    /* =========================================================
+       USER MESSAGE
+    ========================================================= */
 
-        if (
-            [".", ",", "!", "?"]
-                .includes(response[i])
-        ) {
+    function addUserMessage(message) {
 
-            delay = 55;
+        const wrapper =
+            document.createElement("div");
 
-        } else if (
-            response[i] === "\n"
-        ) {
+        wrapper.className =
+            "ore-message ore-message-user";
 
-            delay = 35;
+        const label =
+            document.createElement("div");
 
-        }
+        label.className =
+            "ore-message-label-user";
 
-        await new Promise(
-            resolve =>
-                setTimeout(resolve, delay)
+        label.textContent =
+            "You";
+
+        const bubble =
+            document.createElement("div");
+
+        bubble.className =
+            "ore-user-bubble";
+
+        bubble.textContent =
+            message;
+
+        wrapper.appendChild(label);
+
+        wrapper.appendChild(bubble);
+
+        conversation.appendChild(
+            wrapper
         );
 
+        conversation.scrollTop =
+            conversation.scrollHeight;
     }
 
+    /* =========================================================
+       ORE RESPONSE
+       THIS IS THE IMPORTANT FIX
+    ========================================================= */
 
-    cursor.remove();
+    async function typeOreResponse(response) {
 
-    wrapper.classList.remove(
-        "generating"
-    );
-
-    conversation.scrollTop =
-        conversation.scrollHeight;
-
-}
-
-
-/* =========================================================
-   FIRESTORE CHAT REFERENCE
-========================================================= */
-
-function userChatsRef() {
-
-    if (!currentUser) {
-        return null;
-    }
-
-    return db
-        .collection("users")
-        .doc(currentUser.uid)
-        .collection("chats");
-
-}
-
-
-/* =========================================================
-   CREATE CHAT
-========================================================= */
-
-async function createChat(firstMessage) {
-
-    const chats =
-        userChatsRef();
-
-    if (!chats) {
-        return null;
-    }
-
-    const title =
-        firstMessage
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, 60) ||
-        "New chat";
-
-
-    const chatRef =
-        chats.doc();
-
-
-    await chatRef.set({
-
-        title: title,
-
-        language: selectedLanguage,
-
-        createdAt:
-            firebase.firestore.FieldValue.serverTimestamp(),
-
-        updatedAt:
-            firebase.firestore.FieldValue.serverTimestamp()
-
-    });
-
-
-    currentChatId =
-        chatRef.id;
-
-
-    return currentChatId;
-
-}
-
-
-/* =========================================================
-   SAVE MESSAGE
-========================================================= */
-
-async function saveMessage(
-    chatId,
-    role,
-    content
-) {
-
-    if (
-        !currentUser ||
-        !chatId
-    ) {
-        return;
-    }
-
-
-    const chatRef =
-        userChatsRef()
-            .doc(chatId);
-
-
-    await chatRef
-        .collection("messages")
-        .add({
-
-            role: role,
-
-            content: content,
-
-            language: selectedLanguage,
-
-            createdAt:
-                firebase.firestore.FieldValue.serverTimestamp()
-
-        });
-
-
-    await chatRef.update({
-
-        updatedAt:
-            firebase.firestore.FieldValue.serverTimestamp()
-
-    });
-
-}
-
-
-/* =========================================================
-   LOAD CHAT HISTORY
-========================================================= */
-
-async function loadChatHistory() {
-
-    if (!currentUser) {
-        return;
-    }
-
-
-    chatHistory.innerHTML = "";
-
-
-    try {
-
-        const snapshot =
-            await userChatsRef()
-                .orderBy(
-                    "updatedAt",
-                    "desc"
-                )
-                .limit(30)
-                .get();
-
-
-        snapshot.forEach(doc => {
-
-            renderHistoryItem(
-                doc.id,
-                doc.data()
+        let wrapper =
+            document.getElementById(
+                "ore-current-response"
             );
 
-        });
-
-
-    } catch (error) {
-
-        console.error(
-            "Could not load chat history:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   RENDER HISTORY ITEM
-========================================================= */
-
-function renderHistoryItem(
-    chatId,
-    data
-) {
-
-    const item =
-        document.createElement("div");
-
-    item.className =
-        "chat-history-item";
-
-    item.dataset.chatId =
-        chatId;
-
-
-    const title =
-        document.createElement("span");
-
-    title.className =
-        "chat-history-title";
-
-    title.textContent =
-        data.title || "New chat";
-
-
-    const menuButton =
-        document.createElement("button");
-
-    menuButton.className =
-        "chat-history-menu-btn";
-
-    menuButton.innerHTML =
-        "⋮";
-
-    menuButton.title =
-        "Chat options";
-
-
-    menuButton.addEventListener(
-        "click",
-        event => {
-
-            event.stopPropagation();
-
-            openChatMenu(
-                chatId,
-                menuButton
-            );
-
-        }
-    );
-
-
-    item.appendChild(title);
-
-    item.appendChild(menuButton);
-
-
-    item.addEventListener(
-        "click",
-        () => {
-
-            loadChat(
-                chatId
-            );
-
-        }
-    );
-
-
-    chatHistory.appendChild(item);
-
-}
-
-
-/* =========================================================
-   CHAT MENU
-========================================================= */
-
-let activeChatMenu = null;
-
-
-function openChatMenu(
-    chatId,
-    button
-) {
-
-    closeChatMenu();
-
-
-    const menu =
-        document.createElement("div");
-
-    menu.className =
-        "chat-history-dropdown visible";
-
-
-    const rename =
-        document.createElement("button");
-
-    rename.className =
-        "history-menu-item";
-
-    rename.textContent =
-        "Rename";
-
-
-    rename.onclick = () => {
-
-        closeChatMenu();
-
-        renameChat(chatId);
-
-    };
-
-
-    const deleteButton =
-        document.createElement("button");
-
-    deleteButton.className =
-        "history-menu-item delete";
-
-    deleteButton.textContent =
-        "Delete";
-
-
-    deleteButton.onclick = () => {
-
-        closeChatMenu();
-
-        deleteChat(chatId);
-
-    };
-
-
-    menu.appendChild(rename);
-
-    menu.appendChild(deleteButton);
-
-    document.body.appendChild(menu);
-
-    activeChatMenu =
-        menu;
-
-
-    const rect =
-        button.getBoundingClientRect();
-
-    menu.style.left =
-        `${rect.right - 150}px`;
-
-    menu.style.top =
-        `${rect.bottom + 5}px`;
-
-}
-
-
-function closeChatMenu() {
-
-    if (activeChatMenu) {
-
-        activeChatMenu.remove();
-
-        activeChatMenu = null;
-
-    }
-
-}
-
-
-document.addEventListener(
-    "click",
-    () => {
-
-        closeChatMenu();
-
-    }
-);
-
-
-/* =========================================================
-   RENAME CHAT
-========================================================= */
-
-async function renameChat(chatId) {
-
-    if (!currentUser) {
-        return;
-    }
-
-
-    const chatRef =
-        userChatsRef()
-            .doc(chatId);
-
-
-    const snapshot =
-        await chatRef.get();
-
-
-    if (!snapshot.exists) {
-        return;
-    }
-
-
-    const currentTitle =
-        snapshot.data().title ||
-        "New chat";
-
-
-    const newTitle =
-        prompt(
-            "Rename chat:",
-            currentTitle
-        );
-
-
-    if (
-        !newTitle ||
-        !newTitle.trim()
-    ) {
-        return;
-    }
-
-
-    await chatRef.update({
-
-        title:
-            newTitle
-                .trim()
-                .slice(0, 80),
-
-        updatedAt:
-            firebase.firestore.FieldValue.serverTimestamp()
-
-    });
-
-
-    await loadChatHistory();
-
-}
-
-
-/* =========================================================
-   DELETE CHAT
-========================================================= */
-
-async function deleteChat(chatId) {
-
-    if (!currentUser) {
-        return;
-    }
-
-
-    const confirmed =
-        confirm(
-            "Delete this chat?"
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    const chatRef =
-        userChatsRef()
-            .doc(chatId);
-
-
-    try {
-
-        const messages =
-            await chatRef
-                .collection("messages")
-                .get();
-
-
-        const batch =
-            db.batch();
-
-
-        messages.forEach(doc => {
-
-            batch.delete(doc.ref);
-
-        });
-
-
-        batch.delete(chatRef);
-
-
-        await batch.commit();
-
-
-        if (
-            currentChatId === chatId
-        ) {
-
-            startNewChat();
-
-        }
-
-
-        await loadChatHistory();
-
-
-    } catch (error) {
-
-        console.error(
-            "Delete chat failed:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   LOAD ONE CHAT
-========================================================= */
-
-async function loadChat(chatId) {
-
-    if (
-        !currentUser ||
-        isGenerating
-    ) {
-        return;
-    }
-
-
-    try {
-
-        const chatRef =
-            userChatsRef()
-                .doc(chatId);
-
-
-        const chatSnapshot =
-            await chatRef.get();
-
-
-        if (!chatSnapshot.exists) {
-            return;
-        }
-
-
-        const chatData =
-            chatSnapshot.data();
-
-
-        currentChatId =
-            chatId;
-
-
-        conversation.innerHTML = "";
-
-        conversation.style.display =
-            "flex";
-
-        document.body.classList.add(
-            "chat-active"
-        );
-
-
-        const messages =
-            await chatRef
-                .collection("messages")
-                .orderBy(
-                    "createdAt",
-                    "asc"
-                )
-                .get();
-
-
-        messages.forEach(doc => {
-
-            const message =
-                doc.data();
-
-
-            if (
-                message.role === "user"
-            ) {
-
-                addUserMessage(
-                    message.content
+        if (wrapper) {
+
+            /*
+             * IMPORTANT:
+             *
+             * We do NOT clear wrapper.innerHTML.
+             * That used to delete the responseBox
+             * from the DOM while JavaScript was
+             * still trying to type into it.
+             *
+             * Humanity survived another JavaScript bug.
+             */
+
+            const oldThinking =
+                wrapper.querySelector(
+                    ".ore-thinking-area"
                 );
 
-            } else {
-
-                addLoadedOreMessage(
-                    message.content
-                );
-
+            if (oldThinking) {
+                oldThinking.remove();
             }
 
-        });
+            wrapper.removeAttribute("id");
 
-
-        document
-            .querySelectorAll(
-                ".chat-history-item"
-            )
-            .forEach(item => {
-
-                item.classList.toggle(
-                    "active",
-                    item.dataset.chatId === chatId
-                );
-
-            });
-
-
-        conversation.scrollTop =
-            conversation.scrollHeight;
-
-
-    } catch (error) {
-
-        console.error(
-            "Could not load chat:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   LOADED ORE MESSAGE
-========================================================= */
-
-function addLoadedOreMessage(
-    response
-) {
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "ore-message ore-message-ore";
-
-
-    const header =
-        document.createElement("div");
-
-    header.className =
-        "ore-message-header";
-
-
-    const gem =
-        createOreDiamond();
-
-
-    const label =
-        document.createElement("span");
-
-    label.className =
-        "ore-message-label";
-
-    label.textContent =
-        "Ore";
-
-
-    header.appendChild(gem);
-
-    header.appendChild(label);
-
-
-    const responseBox =
-        document.createElement("div");
-
-    responseBox.className =
-        "ore-response";
-
-    responseBox.textContent =
-        response;
-
-
-    wrapper.appendChild(header);
-
-    wrapper.appendChild(responseBox);
-
-    conversation.appendChild(wrapper);
-
-}
-
-
-/* =========================================================
-   NEW CHAT
-========================================================= */
-
-function startNewChat() {
-
-    if (isGenerating) {
-        return;
-    }
-
-
-    currentChatId =
-        null;
-
-
-    conversation.innerHTML = "";
-
-    conversation.style.display =
-        "none";
-
-    document.body.classList.remove(
-        "chat-active"
-    );
-
-
-    chatInput.value = "";
-
-    chatInput.style.height =
-        "auto";
-
-
-    document
-        .querySelectorAll(
-            ".chat-history-item"
-        )
-        .forEach(item => {
-
-            item.classList.remove(
-                "active"
+            wrapper.classList.add(
+                "generating"
             );
-
-        });
-
-
-    if (currentUser) {
-
-        const displayName =
-            currentUser.displayName ||
-            currentUser.email
-                ?.split("@")[0] ||
-            "there";
-
-        const firstName =
-            displayName.split(" ")[0];
-
-        const hour =
-            new Date().getHours();
-
-
-        if (
-            hour >= 5 &&
-            hour < 12
-        ) {
-
-            heroTitle.textContent =
-                `Good morning, ${firstName}. Put Ore for talk. Wetin you wan do today?`;
-
-        } else if (
-            hour >= 12 &&
-            hour < 18
-        ) {
-
-            heroTitle.textContent =
-                `Good afternoon, ${firstName}. Put Ore for talk. Wetin you wan do today?`;
 
         } else {
 
-            heroTitle.textContent =
-                `Good evening, ${firstName}. Put Ore for talk. Wetin you wan do today?`;
+            wrapper =
+                document.createElement(
+                    "div"
+                );
+
+            wrapper.className =
+                "ore-message ore-message-ore generating";
+
+            const header =
+                document.createElement(
+                    "div"
+                );
+
+            header.className =
+                "ore-message-header";
+
+            const gem =
+                createOreDiamond();
+
+            const label =
+                document.createElement(
+                    "span"
+                );
+
+            label.className =
+                "ore-message-label";
+
+            label.textContent =
+                "Ore";
+
+            header.appendChild(gem);
+            header.appendChild(label);
+
+            wrapper.appendChild(header);
+
+            conversation.appendChild(
+                wrapper
+            );
+        }
+
+        let responseBox =
+            wrapper.querySelector(
+                ".ore-response"
+            );
+
+        if (!responseBox) {
+
+            responseBox =
+                document.createElement(
+                    "div"
+                );
+
+            responseBox.className =
+                "ore-response";
+
+            wrapper.appendChild(
+                responseBox
+            );
+
+        } else {
+
+            responseBox.innerHTML =
+                "";
 
         }
 
-    }
-
-}
-
-
-document
-    .getElementById("new-chat-btn")
-    .addEventListener(
-        "click",
-        startNewChat
-    );
-
-
-/* =========================================================
-   SEND MESSAGE
-========================================================= */
-
-async function sendMessage() {
-
-    if (!currentUser) {
-
-        openAuthModal();
-
-        return;
-
-    }
-
-
-    if (isGenerating) {
-        return;
-    }
-
-
-    const message =
-        chatInput.value.trim();
-
-
-    if (!message) {
-        return;
-    }
-
-
-    isGenerating = true;
-
-
-    document.body.classList.add(
-        "chat-active"
-    );
-
-
-    conversation.style.display =
-        "flex";
-
-
-    /*
-       Create Firestore chat only
-       when the first message is sent.
-    */
-
-    if (!currentChatId) {
-
-        try {
-
-            await createChat(
-                message
+        const cursor =
+            document.createElement(
+                "span"
             );
 
-            await loadChatHistory();
+        cursor.className =
+            "ore-cursor";
 
-        } catch (error) {
+        responseBox.appendChild(
+            cursor
+        );
 
-            console.error(
-                "Could not create chat:",
-                error
+        conversation.scrollTop =
+            conversation.scrollHeight;
+
+        const safeResponse =
+            String(
+                response ||
+                "I no get response for that one yet."
             );
 
+        for (
+            let i = 0;
+            i < safeResponse.length;
+            i++
+        ) {
+
+            cursor.remove();
+
+            responseBox.textContent +=
+                safeResponse[i];
+
+            responseBox.appendChild(
+                cursor
+            );
+
+            conversation.scrollTop =
+                conversation.scrollHeight;
+
+            let delay = 12;
+
+            if (
+                [".", ",", "!", "?"]
+                    .includes(
+                        safeResponse[i]
+                    )
+            ) {
+
+                delay = 55;
+
+            } else if (
+                safeResponse[i] === "\n"
+            ) {
+
+                delay = 35;
+            }
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        delay
+                    )
+            );
         }
 
-    }
+        cursor.remove();
 
-
-    addUserMessage(message);
-
-
-    /*
-       Save user's message.
-    */
-
-    try {
-
-        await saveMessage(
-            currentChatId,
-            "user",
-            message
+        wrapper.classList.remove(
+            "generating"
         );
 
-    } catch (error) {
-
-        console.error(
-            "Could not save user message:",
-            error
-        );
-
+        conversation.scrollTop =
+            conversation.scrollHeight;
     }
 
+    /* =========================================================
+       BACKEND REQUEST
+    ========================================================= */
 
-    chatInput.value = "";
-
-    chatInput.style.height =
-        "auto";
-
-
-    /*
-       NEW THINKING ANIMATION
-    */
-
-    showThinking();
-
-
-    try {
+    async function askOre(message) {
 
         const response =
             await fetch(
-                CHAT_ENDPOINT,
+                "https://isotope-headed-refusal.ngrok-free.dev/api/chat",
                 {
                     method: "POST",
 
                     headers: {
                         "Content-Type":
-                            "application/json",
-
-                        "ngrok-skip-browser-warning":
-                            "true"
+                            "application/json"
                     },
 
                     body: JSON.stringify({
-
                         message: message,
-
                         language:
                             selectedLanguage
-
                     })
-
                 }
             );
-
 
         if (!response.ok) {
 
             throw new Error(
                 `Ore backend returned ${response.status}`
             );
-
         }
-
 
         const data =
             await response.json();
 
+        if (
+            !data ||
+            typeof data.response !==
+                "string"
+        ) {
 
-        const oreResponse =
-            data.response ||
-            "I no get response for that one yet.";
+            throw new Error(
+                "Ore backend returned an invalid response."
+            );
+        }
 
+        return data.response;
+    }
 
-        /*
-           Display response.
-        */
+    /* =========================================================
+       SEND MESSAGE
+    ========================================================= */
 
-        await typeOreResponse(
-            oreResponse
+    async function sendMessage() {
+
+        if (isGenerating) {
+            return;
+        }
+
+        const message =
+            chatInput.value.trim();
+
+        if (!message) {
+            return;
+        }
+
+        isGenerating = true;
+
+        sendBtn.disabled = true;
+
+        document.body.classList.add(
+            "chat-active"
         );
 
+        conversation.style.display =
+            "flex";
 
         /*
-           Save Ore response.
-        */
+         * Show the user's message immediately.
+         * No waiting for Firebase.
+         * No waiting for backend.
+         */
+
+        addUserMessage(message);
+
+        chatInput.value = "";
+
+        chatInput.style.height =
+            "auto";
+
+        showThinking();
 
         try {
 
-            await saveMessage(
-                currentChatId,
-                "ore",
+            const oreResponse =
+                await askOre(message);
+
+            await typeOreResponse(
                 oreResponse
             );
 
         } catch (error) {
 
             console.error(
-                "Could not save Ore response:",
+                "ORE ERROR:",
                 error
             );
 
-        }
-
-
-        await loadChatHistory();
-
-
-    } catch (error) {
-
-        console.error(
-            "ORE ERROR:",
-            error
-        );
-
-
-        const errorResponse =
-            "I no fit connect to Ore backend right now.";
-
-
-        await typeOreResponse(
-            errorResponse
-        );
-
-
-        try {
-
-            await saveMessage(
-                currentChatId,
-                "ore",
-                errorResponse
+            await typeOreResponse(
+                "I no fit connect to Ore backend right now. Check whether the Ore backend is still running."
             );
 
-        } catch (saveError) {
-
-            console.error(
-                "Could not save error response:",
-                saveError
+            showToast(
+                "Ore backend connection failed"
             );
 
+        } finally {
+
+            isGenerating = false;
+
+            sendBtn.disabled = false;
+
+            chatInput.focus();
         }
-
-    } finally {
-
-        isGenerating = false;
-
-        chatInput.focus();
-
     }
 
-}
+    /* =========================================================
+       SEND BUTTON
+    ========================================================= */
 
+    sendBtn.addEventListener(
+        "click",
+        sendMessage
+    );
 
-/* =========================================================
-   KEYBOARD
-========================================================= */
+    /* =========================================================
+       ENTER TO SEND
+    ========================================================= */
 
-chatInput.addEventListener(
-    "keydown",
-    event => {
+    chatInput.addEventListener(
+        "keydown",
+        event => {
 
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            sendMessage();
-
+                sendMessage();
+            }
         }
+    );
 
-    }
-);
+    /* =========================================================
+       AUTO RESIZE INPUT
+    ========================================================= */
 
+    chatInput.addEventListener(
+        "input",
+        () => {
 
-/* =========================================================
-   AUTO RESIZE
-========================================================= */
+            chatInput.style.height =
+                "auto";
 
-chatInput.addEventListener(
-    "input",
-    () => {
+            chatInput.style.height =
+                Math.min(
+                    chatInput.scrollHeight,
+                    180
+                ) + "px";
+        }
+    );
 
-        chatInput.style.height =
-            "auto";
+    /* =========================================================
+       STARTUP
+    ========================================================= */
 
-        chatInput.style.height =
-            Math.min(
-                chatInput.scrollHeight,
-                180
-            ) + "px";
+    chatInput.focus();
 
-    }
-);
+    console.log(
+        "%cOre frontend loaded successfully.",
+        "color:#00ff66;font-weight:bold;"
+    );
 
-
-/* =========================================================
-   INITIAL
-========================================================= */
-
-console.log(
-    "Ore interface loaded."
-);
-
-console.log(
-    "Backend:",
-    CHAT_ENDPOINT
-);
-
-console.log(
-    "Firestore enabled."
-);
-
-console.log(
-    "Default language:",
-    selectedLanguage
-);
+    console.log(
+        "Backend:",
+        "https://isotope-headed-refusal.ngrok-free.dev/api/chat"
+    );
 
 </script>
 
