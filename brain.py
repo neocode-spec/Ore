@@ -1,5 +1,6 @@
 import os
 import time
+import shutil
 import numpy as np
 import onnxruntime as ort
 from transformers import AutoTokenizer
@@ -12,6 +13,13 @@ from transformers import AutoTokenizer
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 MODEL_PATH = os.path.join(BASE_DIR, "ore_model.onnx")
+
+MODEL_PARTS = [
+    os.path.join(BASE_DIR, "ore_model.onnx.part01"),
+    os.path.join(BASE_DIR, "ore_model.onnx.part02"),
+    os.path.join(BASE_DIR, "ore_model.onnx.part03"),
+]
+
 TOKENIZER_PATH = BASE_DIR
 
 MAX_INPUT_TOKENS = 512
@@ -20,6 +28,67 @@ MAX_NEW_TOKENS = 32
 NUM_LAYERS = 12
 NUM_HEADS = 12
 HEAD_DIM = 64
+
+
+# ============================================================
+# RECONSTRUCT SPLIT ONNX MODEL
+# ============================================================
+
+def reconstruct_model():
+
+    # If the complete model already exists, use it.
+    if os.path.exists(MODEL_PATH):
+        print("✅ Complete Ore model already exists")
+        return
+
+    print("\n====================================")
+    print("RECONSTRUCTING ORE MODEL")
+    print("====================================")
+
+    # Check every part exists
+    for part in MODEL_PARTS:
+
+        if not os.path.exists(part):
+            raise FileNotFoundError(
+                f"Ore model part not found: {part}"
+            )
+
+        size_mb = os.path.getsize(part) / (1024 * 1024)
+
+        print(
+            f"Found {os.path.basename(part)} "
+            f"({size_mb:.2f} MB)"
+        )
+
+    print("\nCombining model parts...")
+
+    # Reconstruct exact original ONNX file
+    with open(MODEL_PATH, "wb") as output:
+
+        for part in MODEL_PARTS:
+
+            print(
+                f"Adding {os.path.basename(part)}..."
+            )
+
+            with open(part, "rb") as source:
+
+                shutil.copyfileobj(
+                    source,
+                    output
+                )
+
+    print("\n✅ Ore model reconstructed")
+
+    model_size_mb = (
+        os.path.getsize(MODEL_PATH)
+        / (1024 * 1024)
+    )
+
+    print(
+        f"Reconstructed size: "
+        f"{model_size_mb:.2f} MB"
+    )
 
 
 # ============================================================
@@ -32,12 +101,18 @@ print("====================================")
 
 print(f"Model: {MODEL_PATH}")
 
+# Rebuild the 65.85 MB model from the 3 GitHub parts
+reconstruct_model()
+
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(
         f"Ore model not found: {MODEL_PATH}"
     )
 
-model_size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
+model_size_mb = (
+    os.path.getsize(MODEL_PATH)
+    / (1024 * 1024)
+)
 
 print(f"Size: {model_size_mb:.2f} MB")
 
@@ -94,19 +169,26 @@ required_inputs = {
 }
 
 for layer in range(NUM_LAYERS):
+
     required_inputs.add(
         f"past_key_values.{layer}.key"
     )
+
     required_inputs.add(
         f"past_key_values.{layer}.value"
     )
 
-missing_inputs = required_inputs - actual_inputs
+missing_inputs = (
+    required_inputs - actual_inputs
+)
 
 if missing_inputs:
+
     raise RuntimeError(
-        f"Missing model inputs: {sorted(missing_inputs)}"
+        f"Missing model inputs: "
+        f"{sorted(missing_inputs)}"
     )
+
 
 actual_outputs = {
     output.name
@@ -114,6 +196,7 @@ actual_outputs = {
 }
 
 if "logits" not in actual_outputs:
+
     raise RuntimeError(
         "Model does not contain logits output."
     )
@@ -131,6 +214,7 @@ print("====================================")
 # ============================================================
 
 def create_empty_past(batch_size=1):
+
     """
     The ONNX graph requires KV-cache inputs,
     even when starting with no cached tokens.
@@ -187,6 +271,7 @@ def format_prompt(message, language):
     language = str(language).lower().strip()
 
     if language == "pidgin":
+
         return (
             "Answer the following question in Nigerian Pidgin English.\n\n"
             f"Question: {message}\n"
@@ -218,6 +303,7 @@ def clean_response(text):
     for marker in stop_markers:
 
         if marker in text:
+
             text = text.split(
                 marker,
                 1
@@ -260,6 +346,7 @@ def generate_response(
     ].astype(np.int64)
 
     if input_ids.ndim != 2:
+
         raise RuntimeError(
             f"Unexpected input_ids shape: "
             f"{input_ids.shape}"
@@ -268,6 +355,7 @@ def generate_response(
     batch_size = input_ids.shape[0]
 
     if batch_size != 1:
+
         raise RuntimeError(
             "Ore generation currently "
             "expects batch_size=1."
@@ -326,6 +414,7 @@ def generate_response(
         logits = outputs[0]
 
         if logits.ndim != 3:
+
             raise RuntimeError(
                 f"Unexpected logits shape: "
                 f"{logits.shape}"
@@ -382,6 +471,7 @@ def generate_response(
     )
 
     if not response:
+
         response = (
             "I couldn't generate a response."
         )
