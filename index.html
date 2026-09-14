@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Ore</title>
 
 <!-- Poppins Font -->
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+>
 
 <!-- Emerald Faceted Gem Favicon -->
-
 <link
     rel="icon"
     type="image/svg+xml"
@@ -34,7 +35,16 @@ body {
     margin: 0;
     background: #000000;
     color: #ececec;
-    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif;
+    font-family:
+        "Poppins",
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        "Segoe UI",
+        Roboto,
+        Ubuntu,
+        Cantarell,
+        sans-serif;
 
     user-select: text;
     -webkit-user-select: text;
@@ -101,7 +111,8 @@ svg,
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
-    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+        margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #sidebar.collapsed {
@@ -141,7 +152,9 @@ svg,
     align-items: center;
     justify-content: center;
     color: #9b9b9b;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
     cursor: pointer;
     background: transparent;
     border: none;
@@ -286,7 +299,7 @@ svg,
     z-index: 50;
     display: none;
     background: #171717;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .top-nav-bar {
@@ -423,7 +436,9 @@ svg,
     justify-content: center;
     color: #e3e3e3;
     cursor: pointer;
-    transition: background 0.15s ease, transform 0.15s ease;
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
     border: none;
 }
 
@@ -444,7 +459,9 @@ svg,
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
     border: 1px solid transparent;
 }
 
@@ -468,7 +485,9 @@ svg,
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
     border: none;
 }
 
@@ -490,7 +509,7 @@ svg,
     border-radius: 14px;
     color: #8e8e8e;
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -570,7 +589,7 @@ body.chat-active .center-container {
 .ore-user-bubble {
     max-width: 80%;
     background: #1c1c1e;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 18px;
     padding: 11px 15px;
     color: #ffffff;
@@ -600,7 +619,9 @@ body.chat-active .center-container {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 0 6px rgba(0, 255, 102, 0.7));
+    filter: drop-shadow(
+        0 0 6px rgba(0, 255, 102, 0.7)
+    );
     animation: oreGemPulse 1.2s ease-in-out infinite;
     user-select: none;
     -webkit-user-select: none;
@@ -636,32 +657,43 @@ body.chat-active .center-container {
 }
 
 @keyframes oreGemPulse {
-    0%, 100% {
+    0%,
+    100% {
         transform: scale(0.92);
-        filter: drop-shadow(0 0 4px rgba(0, 255, 102, 0.5));
+        filter:
+            drop-shadow(
+                0 0 4px rgba(0, 255, 102, 0.5)
+            );
         opacity: 0.7;
     }
 
     50% {
         transform: scale(1.12);
-        filter: drop-shadow(0 0 10px rgba(0, 255, 102, 0.9));
+        filter:
+            drop-shadow(
+                0 0 10px rgba(0, 255, 102, 0.9)
+            );
         opacity: 1;
     }
 }
 
 @keyframes oreCursorBlink {
-    0%, 45% {
+    0%,
+    45% {
         opacity: 1;
     }
 
-    46%, 100% {
+    46%,
+    100% {
         opacity: 0;
     }
 }
 
-/* Small screens */
-@media (max-width: 800px) {
+/* =========================================================
+   SMALL SCREENS
+   ========================================================= */
 
+@media (max-width: 800px) {
     #sidebar {
         position: absolute;
         z-index: 100;
@@ -694,418 +726,727 @@ body.chat-active .center-container {
     }
 }
 </style>
-
 </head>
 
 <body>
 
 <div id="app">
 
-<!-- SIDEBAR -->
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
-<aside id="sidebar">
-    <div class="sidebar-inner">
+    <aside id="sidebar">
 
-```
-    <div class="sidebar-header">
+        <div class="sidebar-inner">
 
-        <div class="brand-title">
+            <div class="sidebar-header">
 
-            <svg viewBox="0 0 24 24" class="w-5 h-5">
-                <polygon points="8,3 16,3 14,8 10,8" fill="#ccffdd"/>
-                <polygon points="6,3 8,3 10,8 2,9" fill="#52ff94"/>
-                <polygon points="16,3 18,3 22,9 14,8" fill="#00e65c"/>
-                <polygon points="10,8 14,8 12,21" fill="#00ff66"/>
-                <polygon points="2,9 10,8 12,21" fill="#00b347"/>
-                <polygon points="22,9 14,8 12,21" fill="#008033"/>
-            </svg>
+                <div class="brand-title">
 
-            Ore
+                    <svg viewBox="0 0 24 24" class="w-5 h-5">
+                        <polygon
+                            points="8,3 16,3 14,8 10,8"
+                            fill="#ccffdd"
+                        />
+                        <polygon
+                            points="6,3 8,3 10,8 2,9"
+                            fill="#52ff94"
+                        />
+                        <polygon
+                            points="16,3 18,3 22,9 14,8"
+                            fill="#00e65c"
+                        />
+                        <polygon
+                            points="10,8 14,8 12,21"
+                            fill="#00ff66"
+                        />
+                        <polygon
+                            points="2,9 10,8 12,21"
+                            fill="#00b347"
+                        />
+                        <polygon
+                            points="22,9 14,8 12,21"
+                            fill="#008033"
+                        />
+                    </svg>
 
-        </div>
+                    Ore
 
-        <div class="flex items-center gap-1">
+                </div>
 
-            <button class="icon-btn" title="Search chats">
+                <div class="flex items-center gap-1">
 
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.3-4.3"/>
-                </svg>
+                    <button
+                        class="icon-btn"
+                        title="Search chats"
+                        type="button"
+                    >
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="8"
+                            />
+                            <path d="m21 21-4.3-4.3"/>
+                        </svg>
+                    </button>
 
-            </button>
+                    <button
+                        class="icon-btn"
+                        id="close-sidebar-btn"
+                        title="Close sidebar"
+                        type="button"
+                    >
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <rect
+                                width="18"
+                                height="18"
+                                x="3"
+                                y="3"
+                                rx="2"
+                            />
+                            <path d="M9 3v18"/>
+                        </svg>
+                    </button>
 
-            <button class="icon-btn" id="close-sidebar-btn" title="Close sidebar">
-
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect width="18" height="18" x="3" y="3" rx="2"/>
-                    <path d="M9 3v18"/>
-                </svg>
-
-            </button>
-
-        </div>
-
-    </div>
-
-    <div class="nav-section">
-
-        <div class="nav-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12h14"/>
-            </svg>
-            New chat
-        </div>
-
-        <div class="nav-item justify-between">
-
-            <div class="flex items-center gap-3">
-
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                    <circle cx="9" cy="9" r="2"/>
-                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                </svg>
-
-                Images
+                </div>
 
             </div>
 
-            <span class="badge-updated">UPDATED</span>
-
-        </div>
-
-        <div class="nav-item">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="m16 6 4 14M12 6v14M8 6l-4 14M12 2v4"/>
-            </svg>
-
-            Library
-
-        </div>
-
-        <div class="nav-item">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-            </svg>
-
-            Scheduled
-
-        </div>
-
-        <div class="nav-item">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l5.58-5.58c.94-.94 0-2.48-3.42 0L12 2Z"/>
-                <circle cx="7" cy="7" r="1.5"/>
-            </svg>
-
-            Plugins
-
-        </div>
-
-        <div class="nav-item">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L8.6 3.3A2 2 0 0 0 6.9 2.5H4a2 2 0 0 0-2 2v13.5a2 2 0 0 0 2 2h16z"/>
-            </svg>
-
-            Projects
-
-        </div>
-
-        <div class="nav-item">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="16 18 22 12 16 6"/>
-                <polyline points="8 6 2 12 8 18"/>
-            </svg>
-
-            Codex
-
-        </div>
-
-        <div class="nav-item">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="1"/>
-                <circle cx="19" cy="12" r="1"/>
-                <circle cx="5" cy="12" r="1"/>
-            </svg>
-
-            More
-
-        </div>
-
-        <div class="section-divider">
-            Pinned
-        </div>
-
-        <div class="nav-item">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-
-            Assignment Help
-
-        </div>
-
-        <div class="section-divider">
-
-            <span>Recents</span>
-
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="m6 9 6 6 6-6"/>
-            </svg>
-
-        </div>
-
-    </div>
-
-    <div class="sidebar-bottom">
-
-        <button class="claim-offer-btn">
-
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="8" width="18" height="12" rx="2"/>
-                <path d="M12 5v3M7 8s0-3 2.5-3c2 0 2.5 3 2.5 3M17 8s0-3-2.5-3c-2 0-2.5 3-2.5 3"/>
-            </svg>
-
-            Claim offer
-
-        </button>
-
-        <div class="user-profile">
-
-            <div class="user-avatar">M</div>
-
-            <div class="user-info">
-
-                <span class="user-name">Murphy</span>
-                <span class="user-plan">Free</span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-```
-
-</aside>
-
-<!-- MAIN WORKSPACE -->
-
-<main id="main">
-
-```
-<button id="open-sidebar-btn" class="icon-btn" title="Open sidebar">
-
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect width="18" height="18" x="3" y="3" rx="2"/>
-        <path d="M9 3v18"/>
-    </svg>
-
-</button>
-
-<div class="top-nav-bar">
-
-    <div class="mode-pill">
-
-        <button class="pill-btn active" id="chat-mode-btn">
-            Chat
-        </button>
-
-        <button class="pill-btn flex items-center gap-1" id="work-mode-btn">
-
-            <span style="color:#00ff66;">✦</span>
-            Work
-
-        </button>
-
-    </div>
-
-    <div class="top-right-offer">
-
-        <button class="free-offer-btn">
-
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="8" width="18" height="12" rx="2"/>
-                <path d="M12 5v3"/>
-            </svg>
-
-            Free offer
-
-        </button>
-
-        <button class="icon-btn">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
-                <path d="M21 3v5h-5"/>
-            </svg>
-
-        </button>
-
-    </div>
-
-</div>
-
-<div class="center-container">
-
-    <h1 class="hero-title">
-        How can I help, Murphy?
-    </h1>
-
-    <div class="pixel-chat-bar">
-
-        <textarea
-            class="chat-input"
-            id="chat-input"
-            placeholder="Ask anything"
-            rows="1"
-        ></textarea>
-
-        <div class="pixel-toolbar">
-
-            <div class="toolbar-left">
-
-                <button
-                    class="pixel-icon-btn"
-                    title="Add attachment"
-                    type="button"
-                >
-
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="nav-section">
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
                         <path d="M12 5v14M5 12h14"/>
                     </svg>
 
+                    New chat
+
+                </div>
+
+                <div class="nav-item justify-between">
+
+                    <div class="flex items-center gap-3">
+
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <rect
+                                width="18"
+                                height="18"
+                                x="3"
+                                y="3"
+                                rx="2"
+                                ry="2"
+                            />
+                            <circle
+                                cx="9"
+                                cy="9"
+                                r="2"
+                            />
+                            <path
+                                d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"
+                            />
+                        </svg>
+
+                        Images
+
+                    </div>
+
+                    <span class="badge-updated">
+                        UPDATED
+                    </span>
+
+                </div>
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="m16 6 4 14M12 6v14M8 6l-4 14M12 2v4"/>
+                    </svg>
+
+                    Library
+
+                </div>
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                        />
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+
+                    Scheduled
+
+                </div>
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M12 2H2v10l9.29 9.29c.94.94 2.48 2.48 3.42 0l5.58-5.58c.94-.94 0-2.48-3.42 0L12 2Z"
+                        />
+                        <circle
+                            cx="7"
+                            cy="7"
+                            r="1.5"
+                        />
+                    </svg>
+
+                    Plugins
+
+                </div>
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L8.6 3.3A2 2 0 0 0 6.9 2.5H4a2 2 0 0 0-2 2v13.5a2 2 0 0 0 2 2h16z"
+                        />
+                    </svg>
+
+                    Projects
+
+                </div>
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+
+                    Codex
+
+                </div>
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="1"
+                        />
+                        <circle
+                            cx="19"
+                            cy="12"
+                            r="1"
+                        />
+                        <circle
+                            cx="5"
+                            cy="12"
+                            r="1"
+                        />
+                    </svg>
+
+                    More
+
+                </div>
+
+                <div class="section-divider">
+                    Pinned
+                </div>
+
+                <div class="nav-item">
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                        />
+                    </svg>
+
+                    Assignment Help
+
+                </div>
+
+                <div class="section-divider">
+
+                    <span>Recents</span>
+
+                    <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+
+                </div>
+
+            </div>
+
+            <div class="sidebar-bottom">
+
+                <button
+                    class="claim-offer-btn"
+                    type="button"
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <rect
+                            x="3"
+                            y="8"
+                            width="18"
+                            height="12"
+                            rx="2"
+                        />
+                        <path d="M12 5v3"/>
+                        <path
+                            d="M7 8s0-3 2.5-3c2 0 2.5 3 2.5 3"
+                        />
+                        <path
+                            d="M17 8s0-3-2.5-3c-2 0-2.5 3-2.5 3"
+                        />
+                    </svg>
+
+                    Claim offer
+                </button>
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        M
+                    </div>
+
+                    <div class="user-info">
+
+                        <span class="user-name">
+                            Murphy
+                        </span>
+
+                        <span class="user-plan">
+                            Free
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- =====================================================
+         MAIN WORKSPACE
+         ===================================================== -->
+
+    <main id="main">
+
+        <button
+            id="open-sidebar-btn"
+            class="icon-btn"
+            title="Open sidebar"
+            type="button"
+        >
+            <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+                <rect
+                    width="18"
+                    height="18"
+                    x="3"
+                    y="3"
+                    rx="2"
+                />
+                <path d="M9 3v18"/>
+            </svg>
+        </button>
+
+        <div class="top-nav-bar">
+
+            <div class="mode-pill">
+
+                <button
+                    class="pill-btn active"
+                    id="chat-mode-btn"
+                    type="button"
+                >
+                    Chat
+                </button>
+
+                <button
+                    class="pill-btn flex items-center gap-1"
+                    id="work-mode-btn"
+                    type="button"
+                >
+                    <span style="color:#00ff66;">
+                        ✦
+                    </span>
+                    Work
                 </button>
 
             </div>
 
-            <div class="toolbar-right">
+            <div class="top-right-offer">
 
                 <button
-                    class="pixel-pill-btn"
-                    id="search-web-btn"
+                    class="free-offer-btn"
                     type="button"
-                    onclick="quickPrompt('Search the web for ')"
                 >
-
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.3-4.3"/>
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <rect
+                            x="3"
+                            y="8"
+                            width="18"
+                            height="12"
+                            rx="2"
+                        />
+                        <path d="M12 5v3"/>
                     </svg>
 
-                    <span style="color:#00ff66; font-size:12px;">
-                        ✦
-                    </span>
-
-                    Search
-
+                    Free offer
                 </button>
 
                 <button
-                    class="pixel-pill-btn"
-                    id="think-btn"
+                    class="icon-btn"
                     type="button"
+                    title="Refresh"
+                    onclick="window.location.reload()"
                 >
-
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"/>
-                        <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"/>
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"
+                        />
+                        <path d="M21 3v5h-5"/>
                     </svg>
-
-                    Think
-
-                </button>
-
-                <button
-                    class="pixel-icon-btn"
-                    title="Voice Input"
-                    type="button"
-                >
-
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                        <line x1="12" y1="19" x2="12" y2="22"/>
-                    </svg>
-
-                </button>
-
-                <button
-                    class="pixel-icon-btn"
-                    title="Camera Search"
-                    type="button"
-                >
-
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                        <circle cx="12" cy="13" r="4"/>
-                    </svg>
-
-                </button>
-
-                <button
-                    class="voice-sphere-btn"
-                    title="Live Voice Mode"
-                    type="button"
-                >
-
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"/>
-                    </svg>
-
                 </button>
 
             </div>
 
         </div>
 
-    </div>
+        <!-- Conversation is inserted here by JavaScript -->
 
-    <div class="lang-toggle-bar">
+        <div class="center-container">
 
-        <button
-            class="lang-btn active"
-            id="lang-pidgin"
-            type="button"
-        >
-            Pidgin
-        </button>
+            <h1 class="hero-title">
+                How can I help, Murphy?
+            </h1>
 
-        <button
-            class="lang-btn"
-            id="lang-english"
-            type="button"
-        >
-            English
-        </button>
+            <div class="pixel-chat-bar">
 
-    </div>
+                <textarea
+                    class="chat-input"
+                    id="chat-input"
+                    placeholder="Ask anything"
+                    rows="1"
+                    autocomplete="off"
+                    spellcheck="true"
+                ></textarea>
 
-</div>
-```
+                <div class="pixel-toolbar">
 
-</main>
+                    <div class="toolbar-left">
+
+                        <button
+                            class="pixel-icon-btn"
+                            title="Add attachment"
+                            type="button"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                        </button>
+
+                    </div>
+
+                    <div class="toolbar-right">
+
+                        <button
+                            class="pixel-pill-btn"
+                            id="search-web-btn"
+                            type="button"
+                            onclick="quickPrompt('Search the web for ')"
+                        >
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <circle
+                                    cx="11"
+                                    cy="11"
+                                    r="8"
+                                />
+                                <path d="m21 21-4.3-4.3"/>
+                            </svg>
+
+                            <span
+                                style="color:#00ff66; font-size:12px;"
+                            >
+                                ✦
+                            </span>
+
+                            Search
+                        </button>
+
+                        <button
+                            class="pixel-pill-btn"
+                            id="think-btn"
+                            type="button"
+                        >
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"
+                                />
+                                <path
+                                    d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"
+                                />
+                            </svg>
+
+                            Think
+                        </button>
+
+                        <button
+                            class="pixel-icon-btn"
+                            title="Voice Input"
+                            type="button"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"
+                                />
+                                <path
+                                    d="M19 10v2a7 7 0 0 1-14 0v-2"
+                                />
+                                <line
+                                    x1="12"
+                                    y1="19"
+                                    x2="12"
+                                    y2="22"
+                                />
+                            </svg>
+                        </button>
+
+                        <button
+                            class="pixel-icon-btn"
+                            title="Camera Search"
+                            type="button"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                                />
+                                <circle
+                                    cx="12"
+                                    cy="13"
+                                    r="4"
+                                />
+                            </svg>
+                        </button>
+
+                        <button
+                            class="voice-sphere-btn"
+                            title="Live Voice Mode"
+                            type="button"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path d="M2 10v4"/>
+                                <path d="M6 6v12"/>
+                                <path d="M10 3v18"/>
+                                <path d="M14 8v8"/>
+                                <path d="M18 5v14"/>
+                                <path d="M22 10v4"/>
+                            </svg>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="lang-toggle-bar">
+
+                <button
+                    class="lang-btn active"
+                    id="lang-pidgin"
+                    type="button"
+                >
+                    Pidgin
+                </button>
+
+                <button
+                    class="lang-btn"
+                    id="lang-english"
+                    type="button"
+                >
+                    English
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
 
 <script>
-
 /* =========================================================
    ORE FRONTEND
    ========================================================= */
 
+/*
+ * Ore backend currently running through ngrok.
+ *
+ * IMPORTANT:
+ * This URL belongs to the current Colab/ngrok session.
+ * If the ngrok tunnel changes, update this value.
+ */
+
 const BACKEND_URL =
-    "https://ore-prime.onrender.com";
+    "https://isotope-headed-refusal.ngrok-free.dev";
 
 const CHAT_ENDPOINT =
     `${BACKEND_URL}/api/chat`;
@@ -1124,26 +1465,22 @@ const closeSidebarBtn =
 const openSidebarBtn =
     document.getElementById("open-sidebar-btn");
 
+
 closeSidebarBtn.addEventListener(
     "click",
     () => {
-
-        sidebar.classList.add(
-            "collapsed"
-        );
+        sidebar.classList.add("collapsed");
 
         openSidebarBtn.style.display =
             "flex";
     }
 );
 
+
 openSidebarBtn.addEventListener(
     "click",
     () => {
-
-        sidebar.classList.remove(
-            "collapsed"
-        );
+        sidebar.classList.remove("collapsed");
 
         openSidebarBtn.style.display =
             "none";
@@ -1156,40 +1493,26 @@ openSidebarBtn.addEventListener(
    ========================================================= */
 
 const chatModeBtn =
-    document.getElementById(
-        "chat-mode-btn"
-    );
+    document.getElementById("chat-mode-btn");
 
 const workModeBtn =
-    document.getElementById(
-        "work-mode-btn"
-    );
+    document.getElementById("work-mode-btn");
+
 
 chatModeBtn.addEventListener(
     "click",
     () => {
-
-        chatModeBtn.classList.add(
-            "active"
-        );
-
-        workModeBtn.classList.remove(
-            "active"
-        );
+        chatModeBtn.classList.add("active");
+        workModeBtn.classList.remove("active");
     }
 );
+
 
 workModeBtn.addEventListener(
     "click",
     () => {
-
-        workModeBtn.classList.add(
-            "active"
-        );
-
-        chatModeBtn.classList.remove(
-            "active"
-        );
+        workModeBtn.classList.add("active");
+        chatModeBtn.classList.remove("active");
     }
 );
 
@@ -1199,17 +1522,13 @@ workModeBtn.addEventListener(
    ========================================================= */
 
 const thinkBtn =
-    document.getElementById(
-        "think-btn"
-    );
+    document.getElementById("think-btn");
+
 
 thinkBtn.addEventListener(
     "click",
     () => {
-
-        thinkBtn.classList.toggle(
-            "active"
-        );
+        thinkBtn.classList.toggle("active");
     }
 );
 
@@ -1220,21 +1539,18 @@ thinkBtn.addEventListener(
 
 function quickPrompt(text) {
 
-    const chatInput =
-        document.getElementById(
-            "chat-input"
-        );
+    const input =
+        document.getElementById("chat-input");
 
-    chatInput.value = text;
+    input.value = text;
 
-    chatInput.focus();
+    input.focus();
 
-    chatInput.style.height =
-        "auto";
+    input.style.height = "auto";
 
-    chatInput.style.height =
+    input.style.height =
         Math.min(
-            chatInput.scrollHeight,
+            input.scrollHeight,
             180
         ) + "px";
 }
@@ -1245,29 +1561,20 @@ function quickPrompt(text) {
    ========================================================= */
 
 const chatInput =
-    document.getElementById(
-        "chat-input"
-    );
+    document.getElementById("chat-input");
 
 const centerContainer =
-    document.querySelector(
-        ".center-container"
-    );
+    document.querySelector(".center-container");
 
 const mainWorkspace =
-    document.getElementById(
-        "main"
-    );
+    document.getElementById("main");
 
 const langPidgin =
-    document.getElementById(
-        "lang-pidgin"
-    );
+    document.getElementById("lang-pidgin");
 
 const langEnglish =
-    document.getElementById(
-        "lang-english"
-    );
+    document.getElementById("lang-english");
+
 
 let selectedLanguage =
     "pidgin";
@@ -1284,33 +1591,36 @@ langPidgin.addEventListener(
     "click",
     () => {
 
-        langPidgin.classList.add(
-            "active"
-        );
+        langPidgin.classList.add("active");
 
-        langEnglish.classList.remove(
-            "active"
-        );
+        langEnglish.classList.remove("active");
 
         selectedLanguage =
             "pidgin";
+
+        console.log(
+            "Language changed to:",
+            selectedLanguage
+        );
     }
 );
+
 
 langEnglish.addEventListener(
     "click",
     () => {
 
-        langEnglish.classList.add(
-            "active"
-        );
+        langEnglish.classList.add("active");
 
-        langPidgin.classList.remove(
-            "active"
-        );
+        langPidgin.classList.remove("active");
 
         selectedLanguage =
             "english";
+
+        console.log(
+            "Language changed to:",
+            selectedLanguage
+        );
     }
 );
 
@@ -1320,9 +1630,7 @@ langEnglish.addEventListener(
    ========================================================= */
 
 const conversation =
-    document.createElement(
-        "div"
-    );
+    document.createElement("div");
 
 conversation.id =
     "ore-conversation";
@@ -1340,18 +1648,17 @@ mainWorkspace.insertBefore(
 function createOreDiamond() {
 
     const gem =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     gem.className =
         "ore-diamond-gem";
 
     gem.innerHTML = `
-        <svg viewBox="0 0 24 24"
-             fill="none"
-             xmlns="http://www.w3.org/2000/svg">
-
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
             <polygon
                 points="8,3 16,3 14,8 10,8"
                 fill="#ccffdd"
@@ -1381,7 +1688,6 @@ function createOreDiamond() {
                 points="22,9 14,8 12,21"
                 fill="#008033"
             />
-
         </svg>
     `;
 
@@ -1396,9 +1702,7 @@ function createOreDiamond() {
 function showThinking() {
 
     const wrapper =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     wrapper.className =
         "ore-message ore-message-ore";
@@ -1406,22 +1710,21 @@ function showThinking() {
     wrapper.id =
         "ore-current-response";
 
+
     const header =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     header.className =
         "ore-message-header";
+
 
     header.appendChild(
         createOreDiamond()
     );
 
+
     const label =
-        document.createElement(
-            "span"
-        );
+        document.createElement("span");
 
     label.className =
         "ore-message-label";
@@ -1429,22 +1732,19 @@ function showThinking() {
     label.textContent =
         "Ore";
 
-    header.appendChild(
-        label
-    );
+
+    header.appendChild(label);
+
 
     const responseBox =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     responseBox.className =
         "ore-response";
 
+
     const thinkingText =
-        document.createElement(
-            "span"
-        );
+        document.createElement("span");
 
     thinkingText.className =
         "ore-thinking-text";
@@ -1452,21 +1752,18 @@ function showThinking() {
     thinkingText.textContent =
         "thinking...";
 
+
     responseBox.appendChild(
         thinkingText
     );
 
-    wrapper.appendChild(
-        header
-    );
 
-    wrapper.appendChild(
-        responseBox
-    );
+    wrapper.appendChild(header);
 
-    conversation.appendChild(
-        wrapper
-    );
+    wrapper.appendChild(responseBox);
+
+
+    conversation.appendChild(wrapper);
 
     scrollConversation();
 
@@ -1481,17 +1778,14 @@ function showThinking() {
 function addUserMessage(message) {
 
     const wrapper =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     wrapper.className =
         "ore-message ore-message-user";
 
+
     const label =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     label.className =
         "ore-message-label-user";
@@ -1499,10 +1793,9 @@ function addUserMessage(message) {
     label.textContent =
         "You";
 
+
     const bubble =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     bubble.className =
         "ore-user-bubble";
@@ -1510,17 +1803,13 @@ function addUserMessage(message) {
     bubble.textContent =
         message;
 
-    wrapper.appendChild(
-        label
-    );
 
-    wrapper.appendChild(
-        bubble
-    );
+    wrapper.appendChild(label);
 
-    conversation.appendChild(
-        wrapper
-    );
+    wrapper.appendChild(bubble);
+
+
+    conversation.appendChild(wrapper);
 
     scrollConversation();
 }
@@ -1538,6 +1827,52 @@ function scrollConversation() {
 
 
 /* =========================================================
+   CLEAN ORE RESPONSE
+   ========================================================= */
+
+function cleanOreResponse(response) {
+
+    if (
+        typeof response !==
+        "string"
+    ) {
+        return "";
+    }
+
+
+    let cleaned =
+        response.trim();
+
+
+    /*
+     * Remove the prompt that the GPT-2 model
+     * sometimes repeats in its answer.
+     */
+
+    cleaned =
+        cleaned.replace(
+            /^User:\s*[\s\S]*?\nOre:\s*/i,
+            ""
+        );
+
+
+    /*
+     * Remove a repeated Ore: prefix
+     * if it remains.
+     */
+
+    cleaned =
+        cleaned.replace(
+            /^Ore:\s*/i,
+            ""
+        );
+
+
+    return cleaned.trim();
+}
+
+
+/* =========================================================
    TYPE RESPONSE
    ========================================================= */
 
@@ -1551,7 +1886,9 @@ async function typeOreResponse(
             "ore-current-response"
         );
 
+
     let responseBox;
+
 
     if (currentMsg) {
 
@@ -1570,29 +1907,26 @@ async function typeOreResponse(
     } else {
 
         const wrapper =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         wrapper.className =
             "ore-message ore-message-ore";
 
+
         const header =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         header.className =
             "ore-message-header";
+
 
         header.appendChild(
             createOreDiamond()
         );
 
+
         const label =
-            document.createElement(
-                "span"
-            );
+            document.createElement("span");
 
         label.className =
             "ore-message-label";
@@ -1600,30 +1934,24 @@ async function typeOreResponse(
         label.textContent =
             "Ore";
 
-        header.appendChild(
-            label
-        );
+
+        header.appendChild(label);
+
 
         responseBox =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         responseBox.className =
             "ore-response";
 
-        wrapper.appendChild(
-            header
-        );
 
-        wrapper.appendChild(
-            responseBox
-        );
+        wrapper.appendChild(header);
 
-        conversation.appendChild(
-            wrapper
-        );
+        wrapper.appendChild(responseBox);
+
+        conversation.appendChild(wrapper);
     }
+
 
     if (isError) {
 
@@ -1639,17 +1967,16 @@ async function typeOreResponse(
         return;
     }
 
+
     const cursor =
-        document.createElement(
-            "span"
-        );
+        document.createElement("span");
 
     cursor.className =
         "ore-cursor";
 
-    responseBox.appendChild(
-        cursor
-    );
+
+    responseBox.appendChild(cursor);
+
 
     for (
         let i = 0;
@@ -1659,20 +1986,22 @@ async function typeOreResponse(
 
         cursor.remove();
 
+
         responseBox.textContent +=
             response[i];
 
-        responseBox.appendChild(
-            cursor
-        );
+
+        responseBox.appendChild(cursor);
 
         scrollConversation();
 
+
         let delay = 12;
+
 
         if (
             [".", ",", "!", "?"]
-            .includes(response[i])
+                .includes(response[i])
         ) {
 
             delay = 55;
@@ -1684,6 +2013,7 @@ async function typeOreResponse(
             delay = 35;
         }
 
+
         await new Promise(
             resolve =>
                 setTimeout(
@@ -1692,6 +2022,7 @@ async function typeOreResponse(
                 )
         );
     }
+
 
     cursor.remove();
 
@@ -1709,26 +2040,31 @@ async function sendMessage() {
         return;
     }
 
+
     const message =
         chatInput.value.trim();
+
 
     if (!message) {
         return;
     }
 
+
     isGenerating =
         true;
+
 
     document.body.classList.add(
         "chat-active"
     );
 
+
     conversation.style.display =
         "flex";
 
-    addUserMessage(
-        message
-    );
+
+    addUserMessage(message);
+
 
     chatInput.value =
         "";
@@ -1736,12 +2072,32 @@ async function sendMessage() {
     chatInput.style.height =
         "auto";
 
+
     showThinking();
+
 
     try {
 
         console.log(
-            "Sending message to Ore:",
+            "===================================="
+        );
+
+        console.log(
+            "ORE REQUEST"
+        );
+
+        console.log(
+            "Backend:",
+            BACKEND_URL
+        );
+
+        console.log(
+            "Endpoint:",
+            CHAT_ENDPOINT
+        );
+
+        console.log(
+            "Message:",
             message
         );
 
@@ -1749,6 +2105,11 @@ async function sendMessage() {
             "Language:",
             selectedLanguage
         );
+
+        console.log(
+            "===================================="
+        );
+
 
         const response =
             await fetch(
@@ -1761,7 +2122,14 @@ async function sendMessage() {
                             "application/json",
 
                         "Accept":
-                            "application/json"
+                            "application/json",
+
+                        /*
+                         * Helps prevent the ngrok
+                         * browser warning/interstitial.
+                         */
+                        "ngrok-skip-browser-warning":
+                            "true"
                     },
 
                     body: JSON.stringify({
@@ -1774,32 +2142,37 @@ async function sendMessage() {
                 }
             );
 
+
         console.log(
-            "Ore backend status:",
+            "Ore backend HTTP status:",
             response.status
         );
 
+
         const rawText =
             await response.text();
+
 
         console.log(
             "Ore raw response:",
             rawText
         );
 
+
         if (!response.ok) {
 
             let errorMessage =
                 `Backend returned HTTP ${response.status}`;
 
+
             try {
 
                 const errorData =
-                    JSON.parse(
-                        rawText
-                    );
+                    JSON.parse(rawText);
+
 
                 if (
+                    errorData &&
                     errorData.detail
                 ) {
 
@@ -1816,19 +2189,20 @@ async function sendMessage() {
                 }
             }
 
+
             throw new Error(
                 errorMessage
             );
         }
 
+
         let data;
+
 
         try {
 
             data =
-                JSON.parse(
-                    rawText
-                );
+                JSON.parse(rawText);
 
         } catch (_) {
 
@@ -1837,11 +2211,25 @@ async function sendMessage() {
             );
         }
 
-        const oreResponse =
+
+        console.log(
+            "Parsed Ore data:",
+            data
+        );
+
+
+        let oreResponse =
             typeof data.response ===
             "string"
-                ? data.response.trim()
+                ? data.response
                 : "";
+
+
+        oreResponse =
+            cleanOreResponse(
+                oreResponse
+            );
+
 
         if (!oreResponse) {
 
@@ -1850,9 +2238,17 @@ async function sendMessage() {
             );
         }
 
+
+        console.log(
+            "Clean Ore response:",
+            oreResponse
+        );
+
+
         await typeOreResponse(
             oreResponse
         );
+
 
     } catch (error) {
 
@@ -1861,15 +2257,30 @@ async function sendMessage() {
             error
         );
 
-        const message =
+
+        let errorMessage;
+
+
+        if (
             error instanceof TypeError
-                ? "Could not connect to the Ore backend. The Render service may still be waking up or CORS may need checking."
-                : error.message;
+        ) {
+
+            errorMessage =
+                "Could not connect to the Ore backend. Check that the Colab runtime and ngrok tunnel are still running.";
+
+        } else {
+
+            errorMessage =
+                error.message ||
+                "Something went wrong while contacting Ore.";
+        }
+
 
         await typeOreResponse(
-            message,
+            errorMessage,
             true
         );
+
 
     } finally {
 
@@ -1913,6 +2324,7 @@ chatInput.addEventListener(
         chatInput.style.height =
             "auto";
 
+
         chatInput.style.height =
             Math.min(
                 chatInput.scrollHeight,
@@ -1923,7 +2335,49 @@ chatInput.addEventListener(
 
 
 /* =========================================================
-   INITIAL FRONTEND CHECK
+   NEW CHAT
+   ========================================================= */
+
+const newChatButton =
+    Array.from(
+        document.querySelectorAll(".nav-item")
+    ).find(
+        item =>
+            item.textContent.trim() ===
+            "New chat"
+    );
+
+
+if (newChatButton) {
+
+    newChatButton.addEventListener(
+        "click",
+        () => {
+
+            conversation.innerHTML =
+                "";
+
+            document.body.classList.remove(
+                "chat-active"
+            );
+
+            conversation.style.display =
+                "none";
+
+            chatInput.value =
+                "";
+
+            chatInput.style.height =
+                "auto";
+
+            chatInput.focus();
+        }
+    );
+}
+
+
+/* =========================================================
+   FRONTEND STARTUP
    ========================================================= */
 
 console.log(
@@ -1945,14 +2399,17 @@ console.log(
 );
 
 console.log(
-    "Language:",
+    "Default language:",
     selectedLanguage
+);
+
+console.log(
+    "Status: CONNECTED TO ORE BACKEND CONFIG"
 );
 
 console.log(
     "===================================="
 );
-
 </script>
 
 </body>
